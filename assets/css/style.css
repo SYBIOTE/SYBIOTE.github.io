@@ -616,6 +616,35 @@ section {
   border-left: 1px solid #37b3ed;
 }
 
+.portfolio .portfolio-wrap .portfolio-title {
+  opacity: 1;
+  top:-60px;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  position: absolute;
+  transition: all ease-in-out 0.3s;
+  display: flex;
+  justify-content: center;
+}
+
+.portfolio .portfolio-wrap .portfolio-title a {
+  color: #fff;
+  font-size: 20px;
+  text-align: center;
+  background: rgba(20, 157, 221, 0.75);
+  transition: 0.3s;
+  width: 100%;
+}
+
+.portfolio .portfolio-wrap .portfolio-title a:hover {
+  background: rgba(20, 157, 221, 0.95);
+}
+
+.portfolio .portfolio-wrap .portfolio-title a+a {
+  border-left: 1px solid #37b3ed;
+}
+
 .portfolio .portfolio-wrap:hover::before {
   top: 0;
   left: 0;
@@ -627,6 +656,11 @@ section {
 .portfolio .portfolio-wrap:hover .portfolio-links {
   opacity: 1;
   bottom: 0;
+}
+
+.portfolio .portfolio-wrap:hover .portfolio-title {
+  opacity: 1;
+  top: 0;
 }
 
 /*--------------------------------------------------------------
