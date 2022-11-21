@@ -2213,16 +2213,15 @@
             slideDesc.parentNode.parentNode.removeChild(slideDesc.parentNode);
           }
         } else {
+
           if (slideTitle && slideConfig.title !== '') {
             slideTitle.id = titleID;
             slideTitle.innerHTML = slideConfig.title;
           } else {
             slideTitle.parentNode.removeChild(slideTitle);
           }
-
           if (slideText && slideConfig.description !== '') {
             slideText.id = textID;
-
             if (isMobileDevice && settings.moreLength > 0) {
               slideConfig.smallDescription = this.slideShortDesc(slideConfig.description, settings.moreLength, settings.moreText);
               slideText.innerHTML = slideConfig.smallDescription;
@@ -2233,7 +2232,6 @@
           } else {
             slideText.parentNode.removeChild(slideText);
           }
-
           addClass(slideMedia.parentNode, "desc-".concat(position));
           addClass(slideDesc.parentNode, "description-".concat(position));
         }

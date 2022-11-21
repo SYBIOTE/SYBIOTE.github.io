@@ -574,6 +574,7 @@ section {
   min-width: 100%;
   min-height: 100%
 }
+
 .portfolio .portfolio-wrap::before {
   content: "";
   background: rgba(255, 255, 255, 0.5);
