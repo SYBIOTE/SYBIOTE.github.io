@@ -63,6 +63,28 @@
                     <li><a href="#contact" class="nav-link scrollto"><i class="bx bx-envelope"></i> <span>Contact</span></a></li>
                 </ul>
             </nav><!-- .nav-menu -->
+            <div class="theme-toggle-wrapper text-center mt-4">
+                <label class="theme-switch position-relative d-inline-block" style="width: 60px; height: 30px; cursor: pointer;">
+                    <input type="checkbox" id="themeToggle" class="d-none" />
+                    
+                    <!-- Slider Track -->
+                <div class="slider bg-secondary rounded-pill w-100 h-100 position-relative">
+                <!-- Moon Icon -->
+                <i class="bi bi-moon-fill position-absolute" id="moonIcon"
+                    style="left: 8px; top: 4px; font-size: 16px; color: #555; transition: color 0.3s;"></i>
+
+                <!-- Sun Icon -->
+                <i class="bi bi-sun-fill position-absolute " id="sunIcon"
+                    style="right: 8px; top: 4px; font-size: 16px; color: #f9d71c; transition: color 0.3s;"></i>
+
+                <!-- Thumb -->
+                <span class="thumb position-absolute bg-white rounded-circle"
+                        style="top: 3px; left: 3px; width: 24px; height: 24px; transition: transform 0.3s;"></span>
+                </div>
+                </label>
+        </div>
+
+
         </div>
     </header><!-- End Header -->
     <!-- ======= Hero Section ======= -->
@@ -161,8 +183,6 @@
                     <h2>
                         Resume
                     </h2>
-
-
                 </div>
 
                 <div class="row">
@@ -535,7 +555,26 @@
     <script type="module" src="assets/js/avatar-animations.js"></script>
     <!-- Template Main JS File -->
     <script src="assets/js/main.js"></script>
+    <script>
+        const checkbox = document.getElementById('themeToggle');
+        const body = document.body;
 
+        // Load from localStorage
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark-mode');
+            checkbox.checked = true;
+        }
+
+        checkbox.addEventListener('change', () => {
+            if (checkbox.checked) {
+            body.classList.add('dark-mode');
+            localStorage.setItem('theme', 'dark');
+            } else {
+            body.classList.remove('dark-mode');
+            localStorage.setItem('theme', 'light');
+            }
+        });
+    </script>
 
 </body>
 

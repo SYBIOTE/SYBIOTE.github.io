@@ -1127,3 +1127,91 @@ section {
     padding-right: 20px 15px;
   }
 }
+
+body.dark-mode {
+    background-color: #121212;
+    color: #f0f0f0;
+}
+
+body.dark-mode .section-bg {
+    background: #1e1e1e;
+}
+
+body.dark-mode .portfolio-wrap,
+body.dark-mode .resume,
+body.dark-mode .about,
+body.dark-mode .skills,
+body.dark-mode .services,
+body.dark-mode .contact {
+    background-color: #1a1a1a;
+    color: #f0f0f0;
+}
+
+
+
+body.dark-mode .resume-title {
+    color: #a4a4a4;
+}
+
+body.dark-mode .resume-item h4{
+    color: #a4a4a4;
+}
+
+body.dark-mode .resume-item h5{
+    background: #2c2c2c;
+    color: #a4a4a4;
+}
+
+body.dark-mode .info{
+    background: #2c2c2c;
+    color: #a4a4a4;
+}
+
+
+.theme-switch .slider {
+  position: relative;
+}
+
+.theme-switch .slider .thumb {
+  z-index: 2;
+}
+
+body.dark-mode .theme-switch .slider {
+  background: #333;
+}
+
+body.dark-mode .theme-switch .slider .thumb {
+  transform: translateX(30px);
+}
+
+.theme-switch {
+  position: fixed;
+  bottom: 15px;
+  z-index: 9999;
+}
+.theme-switch .bi-moon-fill {
+  opacity: 1;
+  z-index: 1;
+}
+
+.theme-switch .bi-sun-fill {
+  opacity: 1;
+  z-index: 1;
+}
+
+body.dark-mode .glightbox-clean .gslide-title{
+  color: #c0c0c0 !important;
+}
+
+body.dark-mode .gslide-title {
+  color: #c0c0c0 !important;
+}
+
+body.dark-mode .gdesc-inner {
+  background: #121212 !important;
+  color: #c0c0c0 !important;
+}
+
+body.dark-mode .glightbox-slide .gslide-description {
+  border-color: #333 !important;
+}
