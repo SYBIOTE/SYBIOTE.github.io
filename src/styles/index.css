@@ -1,0 +1,96 @@
+:root {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: dark;
+  color: #FFFFFF;
+  background-color: #0F1113;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Smooth transition variables */
+  --transition-fast: 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --transition-normal: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --transition-slow: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --transition-smooth: 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  
+  /* Hover transition */
+  --transition-hover: 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+a {
+  font-weight: 500;
+  color: #4A90E2;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #1E88E5;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+  max-width: 1280px;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: rgba(255,255,255,0.06);
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+button:hover {
+  border-color: #4A90E2;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+}
+button:focus,
+button:focus-visible {
+  outline: 2px solid #4A90E2;
+  outline-offset: 2px;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #FFFFFF;
+    background-color: #0F1113;
+  }
+  a:hover {
+    color: #1E88E5;
+  }
+  button {
+    background-color: rgba(255,255,255,0.06);
+  }
+}
+
+/* Chat input placeholder styling */
+.chat-input::placeholder {
+  color: rgba(255,255,255,0.72);
+}
