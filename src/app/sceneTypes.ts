@@ -37,7 +37,7 @@ export const sceneConfig: SceneConfig = {
 
 export const defaultAvatarConfig: AvatarConfig = {
   uuid: 'alexandria',
-  modelUrl: AvatarOptions.Savi,
+  modelUrl: AvatarOptions.Rahul,
   position: [0, 0, 0],
   animationUrl: ANIMATION_CLIPS[0].path,
   visible: true

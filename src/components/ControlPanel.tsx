@@ -4,11 +4,8 @@ import { ControlButton } from './common/ControlButton'
 import type { ButtonStyleConfig } from './SectionNavRail'
 import { 
   MicrophoneIcon, 
-  CloudIcon, 
   LightningIcon, 
   SendIcon, 
-  SpeakerIcon, 
-  RobotIcon, 
   ARIcon,
   VoiceDetectedIcon,
   RecordingIcon
@@ -38,7 +35,6 @@ export const ControlPanel = memo(({
   isRecording,
   onEnterARMode,
   vadDetecting = false,
-  ttsActive = false,
   isVisible
 }: ControlPanelProps) => {
   const { t } = useTranslation()

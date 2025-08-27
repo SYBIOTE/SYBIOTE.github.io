@@ -2,7 +2,6 @@ import type { VRM } from '@pixiv/three-vrm'
 
 import { lipsyncConvert } from './lipsync/lipsyncQueue'
 import { applyCurve, defaultVisemeConfig, type VisemeConfig } from './config/visemeConfig'
-import { visemePerformanceMonitor } from './debug/visemePerformance'
 import type { VisemeSequenceItem, VisemeState, VisemeTarget, VRMVisemeTarget, WhisperData } from './visemeTypes'
 import { createEmptyVisemeTarget, createEmptyVRMVisemeTarget } from './visemeTypes'
 
@@ -175,7 +174,6 @@ export function visemesUpdate(volume: VisemeState, _delta: number, config: Visem
     })
   }
 
-  const updateTime = performance.now() - startTime
 }
 /**
  * Apply viseme targets to the actual avatar rig

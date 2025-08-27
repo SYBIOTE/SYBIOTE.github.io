@@ -1,4 +1,3 @@
-import React from 'react'
 import type { ConversationMessage } from '../../services/conversation/conversationType'
 
 interface ChatBubbleProps {
