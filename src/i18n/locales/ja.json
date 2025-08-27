@@ -1,0 +1,217 @@
+{
+  
+  "core":{
+    "name": "Rahul Ghosh",
+    "email": "ghoshr698@gmail.com",
+    "phone": "+91 9051186767",
+    "city": "Bengaluru, India",
+    "website": "https://sybiote.github.io",
+    "freelance": "利用可能",
+    "role": "ソフトウェア、ゲーム、XR開発者。"
+  },
+
+  "sections": {
+    "resume": "履歴書",
+    "portfolio": "ポートフォリオ",
+    "services": "サービス",
+    "contact": "お問い合わせ",
+    "chat": "チャット",
+    "settings": "設定",
+    "audio": "オーディオ",
+    "language": "言語",
+    "accessibility": "アクセシビリティ"
+  },
+
+  "labels": {
+    "email": "メール:",
+    "city": "都市:",
+    "phone": "電話:",
+    "website": "ウェブサイト:",
+    "freelance": "フリーランス:"
+  },
+
+  "profile": {
+    "about": {
+      "title": "について",
+      "summary": "こんにちは、${name}です。コーヒーとコードで現実を曲げています。",
+      "quote": "触れるべきは体験であるべきです。私が目指すのは、ゲームをプレイする人を監督にすることです。- 宮本茂。"
+    }
+  },
+
+  "settings": {
+    "ariaLabel": "設定を開く",
+    "audio": {
+      "masterVolume": "マスター音量",
+      "autoPlay": "オーディオ自動再生"
+    },
+    "language": {
+      "interfaceLanguage": "インターフェース言語"
+    },
+    "accessibility": {
+      "reduceMotion": "モーション削減"
+    }
+  },
+
+  "contact": {
+    "description": "3Dやイマーシブなアプリケーションの構築が必要ですか？それとも、ゲームやXRについて話したいですか？メールでご連絡ください。",
+    "form": {
+      "namePlaceholder": "お名前",
+      "emailPlaceholder": "メール",
+      "messagePlaceholder": "メッセージ",
+      "sendButton": "送信",
+      "messageSent": "メッセージが送信されました（デモ）"
+    }
+  },
+  
+  "chat": {
+    "controls": {
+      "microphone": {
+        "enable": "音声検出を有効にする",
+        "vadListening": "VAD聞き取り中 - 話してSTTを開始",
+        "voiceDetected": "音声検出 - STTアクティブ"
+      },
+      "cloudMode": {
+        "switchToLocal": "ローカルモードに切り替え",
+        "switchToCloud": "クラウドモードに切り替え"
+      },
+      "bargeIn": {
+        "enable": "割り込みを有効にする",
+        "disable": "割り込みを無効にする"
+      },
+      "autoSubmit": {
+        "enable": "自動送信を有効にする",
+        "disable": "自動送信を無効にする"
+      },
+      "agent": {
+        "enable": "エージェントモードを有効にする",
+        "disable": "エージェントモードを無効にする"
+      },
+      "arMode": "ARモードに入る"
+    },
+    "input": {
+      "placeholder": "ここにメッセージを入力してください...",
+      "listening": "🎤 聞き取り中...",
+      "sttReady": "🎤 STT準備完了 - 今話してください",
+      "starting": "🎤 開始中..."
+    },
+    "controlsLabel": "コントロール"
+  },
+  
+  "resume": {
+    "summary": {
+      "title": "概要",
+      "content": "初期コンセプトから最終的な洗練された成果物まで、ゲームとソフトウェアの設計・開発において3年以上の経験を持つ創造的でイノベーション指向のゲームエンジニア。"
+    },
+    "education": {
+      "title": "教育",
+      "degree": "コンピュータ工学学士号および人工知能優等学位",
+      "institution": "Army Institute of Technology, Pune, India — CGPA 8.84",
+      "period": "2019 — 2023"
+    },
+    "leadership": {
+      "title": "リーダーシップと実績",
+      "items": {
+        "godotDojo": "Godot Dojo創設メンバー",
+        "gameClub": "創設者、ゲーム開発・拡張現実クラブ",
+        "codingChallenge": "Credit Suisse Global Coding Challenge 3.0 — 世界ランク102位",
+        "armyAward": "インド陸軍技術優秀賞 — ハイブリッドAI/アルゴリズムベースの迷彩パターン生成ツールを開発、インド全土に展開",
+        "arProgram": "Facebook School of Innovation AR Openプログラム —",
+        "googleCloud": "Google Cloud Skills Boost —",
+        "interests": "興味: XR技術ニュース、日本語、研究論文"
+      }
+    },
+    "experience": {
+      "title": "職歴",
+      "jobs": {
+        "infiniteReality": {
+          "title": "WebXRエンジニア — Infinite Reality",
+          "period": "2024年2月 — 現在",
+          "achievements": [
+            "IRStudioでMonaco Editor統合を伴うクライアントサイドスクリプトシステムを共同主導",
+            "2D/3D UIコンポーネントを設計し、使いやすさを35%向上",
+            "高精度3Dギズモを構築し、編集速度を50%以上向上",
+            "エンジンリファクタリングと最適化: ビルドサイズ-20%、フレーム性能+15%"
+          ]
+        },
+        "etherealEngine": {
+          "title": "WebXRエンジニア — Ethereal Engine (Infinite Realityに買収)",
+          "period": "2023年2月 — 2024年2月",
+          "achievements": [
+            "バックエンドをExpressからKoaに移行、API応答時間-60%、スループット3倍",
+            "現代的なUX標準に合わせたUI刷新を主導",
+            "非プログラマー向けワークフローを可能にするビジュアルスクリプトシステムを設計"
+          ]
+        },
+        "metawarp": {
+          "title": "XRアプリケーション開発者 — Metawarp",
+          "period": "2022年12月 — 2023年2月",
+          "achievements": [
+            "XRおよびGISアプリケーションを開発",
+            "UnityでのMixed Reality分解/組み立てワークフロー",
+            "UnrealでのVRマップ可視化と3Dアノテーション",
+            "VR/MRアプリを72Hzで動作するよう最適化"
+          ]
+        },
+        "jioTesseract": {
+          "title": "XRアプリケーション開発者 — Jio Tesseract",
+          "period": "2022年4月 — 現在",
+          "achievements": [
+            "スタンドアロンウェーブサバイバルゲーム「Narakashur」をリリース",
+            "4つのユニークな敵をデザイン; ウェーブシステム、UI、グローバルリーダーボードを構築",
+            "デバイスハードウェアを活用したユニークなプレイヤーメカニクス"
+          ]
+        },
+        "prodigalTech": {
+          "title": "バックエンドエンジニア — Prodigal Tech (YC S18)",
+          "period": "2022年4月 — 2022年10月",
+          "achievements": [
+            "ETLパイプラインの開発・保守",
+            "技術運用の70%以上をカバーする自動化（パイプライン時間-20%）",
+            "データ品質改善: 20万以上の欠落オーディオファイルをバックフィル",
+            "5人のエンジニアチームでオンコール対応"
+          ]
+        }
+      }
+    }
+  },
+  "portfolio": {
+    "items": {
+      "godotDojo": {
+        "title": "Godot Dojo",
+        "description": "Godot の XR 機能を強化する XR/VR デモのコア開発。"
+      },
+      "wizardVsRobot": {
+        "title": "Wizard vs Robot",
+        "description": "VR ロコモーション、6DoF の敵 AI、ジェスチャー移動。"
+      },
+      "meshSlicerGodot": {
+        "title": "メッシュスライサー（Godot）",
+        "description": "断面テクスチャと力学を備えたランタイムスライシングプラグイン。"
+      },
+      "cppRaytracer": {
+        "title": "C++ レイトレーサー",
+        "description": "Vulkan + ImGui のレイトレーサー（パストレーシングとマテリアル）。"
+      },
+      "vrHorrorPrototype": {
+        "title": "VR ホラー プロトタイプ",
+        "description": "VR 基礎、アバター統合、武器とジェスチャー。"
+      },
+      "threeDGestureRecognition": {
+        "title": "3D ジェスチャー認識",
+        "description": "$p アルゴリズムを 3D に適用。編集可能なテンプレートとランタイム。"
+      },
+      "godotOculusPlatform": {
+        "title": "Godot Oculus プラットフォーム",
+        "description": "OAuth、ルーム、リーダーボード等を公開する C++/GDNative プラグイン。"
+      },
+      "mrEarthViewer": {
+        "title": "MR Earth Viewer",
+        "description": "Unity と Bing Maps SDK による MR 地球可視化。"
+      },
+      "narakashur": {
+        "title": "Narakashur",
+        "description": "Jio Mixed Reality Glasses 向けのスタンドアロン ウェーブ サバイバル ゲーム。"
+      }
+    }
+  }
+}

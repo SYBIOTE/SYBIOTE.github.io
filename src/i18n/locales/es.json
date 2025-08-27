@@ -1,0 +1,217 @@
+{
+  
+  "core":{
+    "name": "Rahul Ghosh",
+    "email": "ghoshr698@gmail.com",
+    "phone": "+91 9051186767",
+    "city": "Bengaluru, India",
+    "website": "https://sybiote.github.io",
+    "freelance": "Disponible",
+    "role": "Desarrollador de Software, Juegos y XR."
+  },
+
+  "sections": {
+    "resume": "Currículum",
+    "portfolio": "Portafolio",
+    "services": "Servicios",
+    "contact": "Contacto",
+    "chat": "Chat",
+    "settings": "Configuración",
+    "audio": "Audio",
+    "language": "Idioma",
+    "accessibility": "Accesibilidad"
+  },
+
+  "labels": {
+    "email": "Correo:",
+    "city": "Ciudad:",
+    "phone": "Teléfono:",
+    "website": "Sitio web:",
+    "freelance": "Freelance:"
+  },
+
+  "profile": {
+    "about": {
+      "title": "Acerca de",
+      "summary": "Hola, soy ${name}. Doblo la realidad con café y código.",
+      "quote": "Debería ser la experiencia, la que conmueva. Lo que busco es hacer que la persona que juega el juego sea el director. - Shigeru Miyamoto."
+    }
+  },
+
+  "settings": {
+    "ariaLabel": "Abrir configuración",
+    "audio": {
+      "masterVolume": "Volumen Principal",
+      "autoPlay": "Reproducción Automática de Audio"
+    },
+    "language": {
+      "interfaceLanguage": "Idioma de la Interfaz"
+    },
+    "accessibility": {
+      "reduceMotion": "Reducir Movimiento"
+    }
+  },
+
+  "contact": {
+    "description": "¿Necesitas construir alguna aplicación 3D o inmersiva, o solo quieres hablar sobre juegos y XR? Contáctame por correo.",
+    "form": {
+      "namePlaceholder": "Tu nombre",
+      "emailPlaceholder": "Correo",
+      "messagePlaceholder": "Mensaje",
+      "sendButton": "Enviar",
+      "messageSent": "Mensaje enviado (demo)"
+    }
+  },
+  
+  "chat": {
+    "controls": {
+      "microphone": {
+        "enable": "Habilitar Detección de Voz",
+        "vadListening": "VAD Escuchando - Habla para Iniciar STT",
+        "voiceDetected": "Voz Detectada - STT Activo"
+      },
+      "cloudMode": {
+        "switchToLocal": "Cambiar a Modo Local",
+        "switchToCloud": "Cambiar a Modo Nube"
+      },
+      "bargeIn": {
+        "enable": "Habilitar Interrupción",
+        "disable": "Deshabilitar Interrupción"
+      },
+      "autoSubmit": {
+        "enable": "Habilitar Envío Automático",
+        "disable": "Deshabilitar Envío Automático"
+      },
+      "agent": {
+        "enable": "Habilitar Modo Agente",
+        "disable": "Deshabilitar Modo Agente"
+      },
+      "arMode": "Entrar en Modo AR"
+    },
+    "input": {
+      "placeholder": "Escribe tu mensaje aquí...",
+      "listening": "🎤 Escuchando...",
+      "sttReady": "🎤 STT Listo - Habla ahora",
+      "starting": "🎤 Iniciando..."
+    },
+    "controlsLabel": "Controles"
+  },
+  
+  "resume": {
+    "summary": {
+      "title": "Resumen",
+      "content": "Ingeniero de juegos creativo y orientado a la innovación con más de 3 años de experiencia diseñando y desarrollando juegos y software desde el concepto inicial hasta los entregables finales y pulidos."
+    },
+    "education": {
+      "title": "Educación",
+      "degree": "Licenciatura en Ingeniería Informática y Honores en Inteligencia Artificial",
+      "institution": "Army Institute of Technology, Pune, India — CGPA 8.84",
+      "period": "2019 — 2023"
+    },
+    "leadership": {
+      "title": "Liderazgo y Logros",
+      "items": {
+        "godotDojo": "Miembro Fundador de Godot Dojo",
+        "gameClub": "Fundador, Club de Desarrollo de Juegos y Realidad Extendida",
+        "codingChallenge": "Credit Suisse Global Coding Challenge 3.0 — Rango global 102",
+        "armyAward": "Premio de Excelencia Tecnológica del Ejército Indio — Desarrolló una herramienta híbrida AI/algoritmo para generación de patrones de camuflaje, desplegada en toda India",
+        "arProgram": "Programa AR Open de Facebook School of Innovation —",
+        "googleCloud": "Google Cloud Skills Boost —",
+        "interests": "Intereses: noticias de tecnología XR, japonés, artículos de investigación"
+      }
+    },
+    "experience": {
+      "title": "Experiencia Profesional",
+      "jobs": {
+        "infiniteReality": {
+          "title": "Ingeniero WebXR — Infinite Reality",
+          "period": "Feb 2024 — Presente",
+          "achievements": [
+            "Co-lideré el sistema de scripting del lado del cliente con integración de Monaco Editor en IRStudio",
+            "Diseñé componentes de UI 2D/3D, mejorando la usabilidad en un 35%",
+            "Construí gizmos 3D de alta precisión, aumentando la velocidad de edición en más del 50%",
+            "Refactorizaciones y optimizaciones del motor: -20% tamaño de compilación, +15% rendimiento de frames"
+          ]
+        },
+        "etherealEngine": {
+          "title": "Ingeniero WebXR — Ethereal Engine (adq. por Infinite Reality)",
+          "period": "Feb 2023 — Feb 2024",
+          "achievements": [
+            "Migré el backend de Express a Koa, -60% tiempos de respuesta API, 3× rendimiento",
+            "Lideré la renovación de UI alineándose con estándares UX modernos",
+            "Arquitecturé sistema de scripting visual habilitando flujos de trabajo para no programadores"
+          ]
+        },
+        "metawarp": {
+          "title": "Desarrollador de Aplicaciones XR — Metawarp",
+          "period": "Dic 2022 — Feb 2023",
+          "achievements": [
+            "Desarrollé aplicaciones XR y GIS",
+            "Flujos de trabajo de desmontaje/montaje de Realidad Mixta en Unity",
+            "Visualización de mapas VR y anotaciones 3D en Unreal",
+            "Optimicé aplicaciones VR/MR para ejecutarse a 72Hz"
+          ]
+        },
+        "jioTesseract": {
+          "title": "Desarrollador de Aplicaciones XR — Jio Tesseract",
+          "period": "Abr 2022 — Presente",
+          "achievements": [
+            "Lancé un juego independiente de supervivencia por oleadas \"Narakashur\"",
+            "Diseñé 4 enemigos únicos; construí sistema de oleadas, UI, tabla de clasificación global",
+            "Aproveché el hardware del dispositivo para mecánicas únicas del jugador"
+          ]
+        },
+        "prodigalTech": {
+          "title": "Ingeniero Backend — Prodigal Tech (YC S18)",
+          "period": "Abr 2022 — Oct 2022",
+          "achievements": [
+            "Desarrollé y mantuve pipelines ETL",
+            "Automatizaciones cubriendo el 70%+ de operaciones técnicas (−20% tiempo de pipeline)",
+            "Mejoras en calidad de datos: rellenado de más de 200k archivos de audio perdidos",
+            "De guardia en un equipo de 5 ingenieros"
+          ]
+        }
+      }
+    }
+  },
+  "portfolio": {
+    "items": {
+      "godotDojo": {
+        "title": "Godot Dojo",
+        "description": "Desarrollador principal en demos XR/VR mejorando la funcionalidad XR de Godot."
+      },
+      "wizardVsRobot": {
+        "title": "Wizard vs Robot",
+        "description": "Locomoción VR, IA enemiga con 6DoF, movimiento por gestos."
+      },
+      "meshSlicerGodot": {
+        "title": "Cortador de Mallas (Godot)",
+        "description": "Plugin de corte en tiempo real con texturas de sección transversal y fuerzas."
+      },
+      "cppRaytracer": {
+        "title": "Trazador de Rayos en C++",
+        "description": "Trazador de rayos con Vulkan + ImGui, path tracing y materiales."
+      },
+      "vrHorrorPrototype": {
+        "title": "Prototipo de Horror VR",
+        "description": "Fundamentos de VR, integración de avatar, armas y gestos."
+      },
+      "threeDGestureRecognition": {
+        "title": "Reconocimiento de Gestos 3D",
+        "description": "Adaptación del algoritmo $p a 3D; plantillas editables y runtime."
+      },
+      "godotOculusPlatform": {
+        "title": "Plataforma Oculus para Godot",
+        "description": "Plugin en C++/GDNative exponiendo OAuth, salas, tablas de clasificación, etc."
+      },
+      "mrEarthViewer": {
+        "title": "Visor de la Tierra MR",
+        "description": "Visualización de la Tierra en MR con Unity y Bing Maps SDK."
+      },
+      "narakashur": {
+        "title": "Narakashur",
+        "description": "Juego de supervivencia por oleadas para gafas Jio Mixed Reality."
+      }
+    }
+  }
+}

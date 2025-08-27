@@ -1,0 +1,217 @@
+{
+  
+  "core":{
+    "name": "Rahul Ghosh",
+    "email": "ghoshr698@gmail.com",
+    "phone": "+91 9051186767",
+    "city": "Bengaluru, India",
+    "website": "https://sybiote.github.io",
+    "freelance": "Verfügbar",
+    "role": "Software-, Spiele- und XR-Entwickler."
+  },
+
+  "sections": {
+    "resume": "Lebenslauf",
+    "portfolio": "Portfolio",
+    "services": "Dienstleistungen",
+    "contact": "Kontakt",
+    "chat": "Chat",
+    "settings": "Einstellungen",
+    "audio": "Audio",
+    "language": "Sprache",
+    "accessibility": "Barrierefreiheit"
+  },
+
+  "labels": {
+    "email": "E-Mail:",
+    "city": "Stadt:",
+    "phone": "Telefon:",
+    "website": "Website:",
+    "freelance": "Freelance:"
+  },
+
+  "profile": {
+    "about": {
+      "title": "Über mich",
+      "summary": "Hallo, ich bin ${name}. Ich verbiege die Realität mit Kaffee und Code.",
+      "quote": "Es sollte die Erfahrung sein, die berührt. Was ich anstrebe, ist, die Person, die das Spiel spielt, zum Regisseur zu machen. - Shigeru Miyamoto."
+    }
+  },
+
+  "settings": {
+    "ariaLabel": "Einstellungen öffnen",
+    "audio": {
+      "masterVolume": "Master-Lautstärke",
+      "autoPlay": "Audio automatisch abspielen"
+    },
+    "language": {
+      "interfaceLanguage": "Interface-Sprache"
+    },
+    "accessibility": {
+      "reduceMotion": "Bewegung reduzieren"
+    }
+  },
+
+  "contact": {
+    "description": "Müssen Sie eine 3D- oder immersive Anwendung erstellen oder möchten Sie einfach über Spiele und XR sprechen? Kontaktieren Sie mich per E-Mail.",
+    "form": {
+      "namePlaceholder": "Ihr Name",
+      "emailPlaceholder": "E-Mail",
+      "messagePlaceholder": "Nachricht",
+      "sendButton": "Senden",
+      "messageSent": "Nachricht gesendet (Demo)"
+    }
+  },
+  
+  "chat": {
+    "controls": {
+      "microphone": {
+        "enable": "Spracherkennung aktivieren",
+        "vadListening": "VAD hört zu - Sprechen Sie, um STT zu starten",
+        "voiceDetected": "Stimme erkannt - STT aktiv"
+      },
+      "cloudMode": {
+        "switchToLocal": "Zu lokalem Modus wechseln",
+        "switchToCloud": "Zu Cloud-Modus wechseln"
+      },
+      "bargeIn": {
+        "enable": "Unterbrechung aktivieren",
+        "disable": "Unterbrechung deaktivieren"
+      },
+      "autoSubmit": {
+        "enable": "Automatisches Senden aktivieren",
+        "disable": "Automatisches Senden deaktivieren"
+      },
+      "agent": {
+        "enable": "Agent-Modus aktivieren",
+        "disable": "Agent-Modus deaktivieren"
+      },
+      "arMode": "AR-Modus betreten"
+    },
+    "input": {
+      "placeholder": "Geben Sie hier Ihre Nachricht ein...",
+      "listening": "🎤 Hört zu...",
+      "sttReady": "🎤 STT bereit - Sprechen Sie jetzt",
+      "starting": "🎤 Startet..."
+    },
+    "controlsLabel": "Steuerung"
+  },
+  
+  "resume": {
+    "summary": {
+      "title": "Zusammenfassung",
+      "content": "Kreativer und innovationsorientierter Spieleingenieur mit über 3 Jahren Erfahrung im Design und der Entwicklung von Spielen und Software vom ersten Konzept bis zu den finalen, polierten Ergebnissen."
+    },
+    "education": {
+      "title": "Bildung",
+      "degree": "Bachelor in Computertechnik und Auszeichnung in Künstlicher Intelligenz",
+      "institution": "Army Institute of Technology, Pune, India — CGPA 8.84",
+      "period": "2019 — 2023"
+    },
+    "leadership": {
+      "title": "Führung und Errungenschaften",
+      "items": {
+        "godotDojo": "Gründungsmitglied von Godot Dojo",
+        "gameClub": "Gründer, Spielentwicklung und Extended Reality Club",
+        "codingChallenge": "Credit Suisse Global Coding Challenge 3.0 — Weltrang 102",
+        "armyAward": "Indian Army Tech Excellence Award — Entwickelte ein hybrides KI/Algorithmus-basiertes Tarnmuster-Generierungstool, in ganz Indien eingesetzt",
+        "arProgram": "AR Open Programm von Facebook School of Innovation —",
+        "googleCloud": "Google Cloud Skills Boost —",
+        "interests": "Interessen: XR-Tech-News, Japanisch, Forschungsarbeiten"
+      }
+    },
+    "experience": {
+      "title": "Berufserfahrung",
+      "jobs": {
+        "infiniteReality": {
+          "title": "WebXR-Ingenieur — Infinite Reality",
+          "period": "Feb 2024 — Gegenwart",
+          "achievements": [
+            "Co-Leitung des clientseitigen Scripting-Systems mit Monaco Editor Integration in IRStudio",
+            "Entwurf von 2D/3D UI-Komponenten, Verbesserung der Benutzerfreundlichkeit um 35%",
+            "Entwicklung hochpräziser 3D-Gizmos, Steigerung der Bearbeitungsgeschwindigkeit um 50%+",
+            "Engine-Refactoring und Optimierungen: -20% Build-Größe, +15% Frame-Performance"
+          ]
+        },
+        "etherealEngine": {
+          "title": "WebXR-Ingenieur — Ethereal Engine (übernommen von Infinite Reality)",
+          "period": "Feb 2023 — Feb 2024",
+          "achievements": [
+            "Migration des Backends von Express zu Koa, -60% API-Antwortzeiten, 3× Durchsatz",
+            "Leitung der UI-Überholung in Übereinstimmung mit modernen UX-Standards",
+            "Architektur eines visuellen Scripting-Systems für Nicht-Programmierer-Workflows"
+          ]
+        },
+        "metawarp": {
+          "title": "XR-Anwendungsentwickler — Metawarp",
+          "period": "Dez 2022 — Feb 2023",
+          "achievements": [
+            "Entwicklung von XR- und GIS-Anwendungen",
+            "Mixed Reality Demontage/Montage-Workflows in Unity",
+            "VR-Kartenvisualisierung und 3D-Annotationen in Unreal",
+            "Optimierung von VR/MR-Apps für 72Hz-Betrieb"
+          ]
+        },
+        "jioTesseract": {
+          "title": "XR-Anwendungsentwickler — Jio Tesseract",
+          "period": "Apr 2022 — Gegenwart",
+          "achievements": [
+            "Veröffentlichung eines eigenständigen Wellen-Überlebensspiels \"Narakashur\"",
+            "Design von 4 einzigartigen Gegnern; Entwicklung von Wellensystem, UI, globaler Bestenliste",
+            "Nutzung der Gerätehardware für einzigartige Spielermechaniken"
+          ]
+        },
+        "prodigalTech": {
+          "title": "Backend-Ingenieur — Prodigal Tech (YC S18)",
+          "period": "Apr 2022 — Okt 2022",
+          "achievements": [
+            "Entwicklung und Wartung von ETL-Pipelines",
+            "Automatisierungen für 70%+ der technischen Operationen (−20% Pipeline-Zeit)",
+            "Datenqualitätsverbesserungen: Nachfüllung von 200k+ verpassten Audio-Dateien",
+            "Bereitschaftsdienst in einem 5-köpfigen Ingenieursteam"
+          ]
+        }
+      }
+    }
+  },
+  "portfolio": {
+    "items": {
+      "godotDojo": {
+        "title": "Godot Dojo",
+        "description": "Hauptentwickler an XR/VR-Demos zur Verbesserung der XR-Funktionalität von Godot."
+      },
+      "wizardVsRobot": {
+        "title": "Wizard vs Robot",
+        "description": "VR-Lokomotion, Gegner-KI mit 6DoF, gestenbasierte Bewegung."
+      },
+      "meshSlicerGodot": {
+        "title": "Mesh Slicer (Godot)",
+        "description": "Laufzeit-Slicing-Plugin mit Querschnittstexturen und Kräften."
+      },
+      "cppRaytracer": {
+        "title": "C++ Raytracer",
+        "description": "Vulkan + ImGui Raytracer mit Path Tracing und Materialien."
+      },
+      "vrHorrorPrototype": {
+        "title": "VR-Horror-Prototyp",
+        "description": "VR-Grundlagen, Avatar-Integration, Waffen und Gesten."
+      },
+      "threeDGestureRecognition": {
+        "title": "3D-Gesterkennung",
+        "description": "$p-Algorithmus auf 3D adaptiert; editierbare Vorlagen und Runtime."
+      },
+      "godotOculusPlatform": {
+        "title": "Godot Oculus Plattform",
+        "description": "C++/GDNative Plugin mit OAuth, Räume, Bestenlisten usw."
+      },
+      "mrEarthViewer": {
+        "title": "MR Earth Viewer",
+        "description": "MR-Erdvisualisierung mit Unity und Bing Maps SDK."
+      },
+      "narakashur": {
+        "title": "Narakashur",
+        "description": "Eigenständiges Wellen-Survival-Spiel für Jio Mixed Reality Brille."
+      }
+    }
+  }
+}

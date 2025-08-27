@@ -1,0 +1,217 @@
+{
+  
+  "core":{
+    "name": "Rahul Ghosh",
+    "email": "ghoshr698@gmail.com",
+    "phone": "+91 9051186767",
+    "city": "Bengaluru, India",
+    "website": "https://sybiote.github.io",
+    "freelance": "Disponible",
+    "role": "Développeur de Logiciels, Jeux et XR."
+  },
+
+  "sections": {
+    "resume": "CV",
+    "portfolio": "Portfolio",
+    "services": "Services",
+    "contact": "Contact",
+    "chat": "Chat",
+    "settings": "Paramètres",
+    "audio": "Audio",
+    "language": "Langue",
+    "accessibility": "Accessibilité"
+  },
+
+  "labels": {
+    "email": "Email :",
+    "city": "Ville :",
+    "phone": "Téléphone :",
+    "website": "Site web :",
+    "freelance": "Freelance :"
+  },
+
+  "profile": {
+    "about": {
+      "title": "À propos",
+      "summary": "Salut, je suis ${name}. Je plie la réalité avec du café et du code.",
+      "quote": "Ce devrait être l'expérience qui touche. Ce que je vise, c'est de faire du joueur le réalisateur. - Shigeru Miyamoto."
+    }
+  },
+
+  "settings": {
+    "ariaLabel": "Ouvrir les paramètres",
+    "audio": {
+      "masterVolume": "Volume Principal",
+      "autoPlay": "Lecture Automatique Audio"
+    },
+    "language": {
+      "interfaceLanguage": "Langue de l'Interface"
+    },
+    "accessibility": {
+      "reduceMotion": "Réduire le Mouvement"
+    }
+  },
+
+  "contact": {
+    "description": "Besoin de construire une application 3D ou immersive, ou juste envie de parler de jeux et XR ? Contactez-moi par email.",
+    "form": {
+      "namePlaceholder": "Votre nom",
+      "emailPlaceholder": "Email",
+      "messagePlaceholder": "Message",
+      "sendButton": "Envoyer",
+      "messageSent": "Message envoyé (démo)"
+    }
+  },
+  
+  "chat": {
+    "controls": {
+      "microphone": {
+        "enable": "Activer la Détection Vocale",
+        "vadListening": "VAD en Écoute - Parlez pour Démarrer STT",
+        "voiceDetected": "Voix Détectée - STT Actif"
+      },
+      "cloudMode": {
+        "switchToLocal": "Passer en Mode Local",
+        "switchToCloud": "Passer en Mode Cloud"
+      },
+      "bargeIn": {
+        "enable": "Activer l'Interruption",
+        "disable": "Désactiver l'Interruption"
+      },
+      "autoSubmit": {
+        "enable": "Activer l'Envoi Automatique",
+        "disable": "Désactiver l'Envoi Automatique"
+      },
+      "agent": {
+        "enable": "Activer le Mode Agent",
+        "disable": "Désactiver le Mode Agent"
+      },
+      "arMode": "Entrer en Mode AR"
+    },
+    "input": {
+      "placeholder": "Tapez votre message ici...",
+      "listening": "🎤 En écoute...",
+      "sttReady": "🎤 STT Prêt - Parlez maintenant",
+      "starting": "🎤 Démarrage..."
+    },
+    "controlsLabel": "Contrôles"
+  },
+  
+  "resume": {
+    "summary": {
+      "title": "Résumé",
+      "content": "Ingénieur de jeux créatif et orienté innovation avec plus de 3 ans d'expérience dans la conception et le développement de jeux et logiciels, du concept initial aux livrables finaux polis."
+    },
+    "education": {
+      "title": "Éducation",
+      "degree": "Licence en Ingénierie Informatique et Mention en Intelligence Artificielle",
+      "institution": "Army Institute of Technology, Pune, India — CGPA 8.84",
+      "period": "2019 — 2023"
+    },
+    "leadership": {
+      "title": "Leadership et Réalisations",
+      "items": {
+        "godotDojo": "Membre Fondateur de Godot Dojo",
+        "gameClub": "Fondateur, Club de Développement de Jeux et Réalité Étendue",
+        "codingChallenge": "Credit Suisse Global Coding Challenge 3.0 — Rang mondial 102",
+        "armyAward": "Prix d'Excellence Technologique de l'Armée Indienne — Développé un outil hybride IA/algorithme de génération de motifs de camouflage, déployé dans toute l'Inde",
+        "arProgram": "Programme AR Open par Facebook School of Innovation —",
+        "googleCloud": "Google Cloud Skills Boost —",
+        "interests": "Intérêts : actualités tech XR, japonais, articles de recherche"
+      }
+    },
+    "experience": {
+      "title": "Expérience Professionnelle",
+      "jobs": {
+        "infiniteReality": {
+          "title": "Ingénieur WebXR — Infinite Reality",
+          "period": "Fév 2024 — Présent",
+          "achievements": [
+            "Co-dirigé le système de script côté client avec intégration Monaco Editor dans IRStudio",
+            "Conçu des composants UI 2D/3D, améliorant l'utilisabilité de 35%",
+            "Construit des gizmos 3D haute précision, augmentant la vitesse d'édition de 50%+",
+            "Refactorisation et optimisations du moteur : -20% taille de build, +15% performance des frames"
+          ]
+        },
+        "etherealEngine": {
+          "title": "Ingénieur WebXR — Ethereal Engine (acq. par Infinite Reality)",
+          "period": "Fév 2023 — Fév 2024",
+          "achievements": [
+            "Migré le backend d'Express vers Koa, -60% temps de réponse API, 3× débit",
+            "Dirigé la refonte UI s'alignant avec les standards UX modernes",
+            "Architecturé un système de script visuel permettant des workflows pour non-programmeurs"
+          ]
+        },
+        "metawarp": {
+          "title": "Développeur d'Applications XR — Metawarp",
+          "period": "Déc 2022 — Fév 2023",
+          "achievements": [
+            "Développé des applications XR et GIS",
+            "Workflows de démontage/assemblage en Réalité Mixte dans Unity",
+            "Visualisation de cartes VR et annotations 3D dans Unreal",
+            "Optimisé les apps VR/MR pour fonctionner à 72Hz"
+          ]
+        },
+        "jioTesseract": {
+          "title": "Développeur d'Applications XR — Jio Tesseract",
+          "period": "Avr 2022 — Présent",
+          "achievements": [
+            "Livré un jeu de survie par vagues autonome \"Narakashur\"",
+            "Conçu 4 ennemis uniques ; construit système de vagues, UI, classement global",
+            "Exploité le matériel de l'appareil pour des mécaniques de joueur uniques"
+          ]
+        },
+        "prodigalTech": {
+          "title": "Ingénieur Backend — Prodigal Tech (YC S18)",
+          "period": "Avr 2022 — Oct 2022",
+          "achievements": [
+            "Développé et maintenu des pipelines ETL",
+            "Automatisations couvrant 70%+ des opérations techniques (−20% temps de pipeline)",
+            "Améliorations de la qualité des données : rempli 200k+ fichiers audio manqués",
+            "De garde dans une équipe de 5 ingénieurs"
+          ]
+        }
+      }
+    }
+  },
+  "portfolio": {
+    "items": {
+      "godotDojo": {
+        "title": "Godot Dojo",
+        "description": "Développeur principal sur des démos XR/VR améliorant la fonctionnalité XR de Godot."
+      },
+      "wizardVsRobot": {
+        "title": "Wizard vs Robot",
+        "description": "Locomotion VR, IA ennemie avec 6DoF, mouvement basé sur les gestes."
+      },
+      "meshSlicerGodot": {
+        "title": "Découpeur de Maillages (Godot)",
+        "description": "Plugin de découpe à l'exécution avec textures de section et forces."
+      },
+      "cppRaytracer": {
+        "title": "Lanceur de Rayons C++",
+        "description": "Ray tracer Vulkan + ImGui avec path tracing et matériaux."
+      },
+      "vrHorrorPrototype": {
+        "title": "Prototype d'Horreur VR",
+        "description": "Bases VR, intégration d'avatar, armes et gestes."
+      },
+      "threeDGestureRecognition": {
+        "title": "Reconnaissance de Gestes 3D",
+        "description": "Algorithme $p adapté en 3D ; modèles éditables et runtime."
+      },
+      "godotOculusPlatform": {
+        "title": "Plateforme Oculus pour Godot",
+        "description": "Plugin C++/GDNative exposant OAuth, salons, classements, etc."
+      },
+      "mrEarthViewer": {
+        "title": "Visionneuse Terre MR",
+        "description": "Visualisation MR de la Terre avec Unity et Bing Maps SDK."
+      },
+      "narakashur": {
+        "title": "Narakashur",
+        "description": "Jeu de survie par vagues pour lunettes Jio Mixed Reality."
+      }
+    }
+  }
+}
