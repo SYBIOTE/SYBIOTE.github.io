@@ -2,6 +2,7 @@ import { getSystemPrompt } from "./systemPrompt"
 
 export const SYSTEM_PROMPT = getSystemPrompt()
 
+export const DIRECTED_RESPONSES_URL = '/assets/directed-responses.json'
 export const AVAILABLE_LOCAL_MODELS = [
     'gemma-2-2b-it-q4f16_1-MLC',
     'Llama-3.1-8B-Instruct-q4f32_1-MLC',

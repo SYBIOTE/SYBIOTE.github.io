@@ -1,3 +1,4 @@
+import { DIRECTED_RESPONSES_URL } from '../config/llmConfig'
 import type { LLMParams, LLMResult } from '../llmTypes'
 
 export interface DirectedResponse {
@@ -23,7 +24,7 @@ async function loadDirectedResponses(): Promise<DirectedConfig> {
   }
 
   try {
-    const response = await fetch('/src/assets/directed-responses.json')
+    const response = await fetch(DIRECTED_RESPONSES_URL)
     if (!response.ok) {
       throw new Error(`Failed to load responses: ${response.statusText}`)
     }
