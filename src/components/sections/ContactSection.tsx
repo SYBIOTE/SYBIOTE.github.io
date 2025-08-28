@@ -1,6 +1,6 @@
 import type { CSSProperties, FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import emailjs from '@emailjs/browser'
 
 const container: CSSProperties = {
@@ -54,6 +54,16 @@ const buttonStyle: CSSProperties = {
   backdropFilter: 'blur(10px)'
 }
 
+// Add CSS animation keyframes
+const fadeInOutKeyframes = `
+  @keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(-10px); }
+    20% { opacity: 1; transform: translateY(0); }
+    80% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-10px); }
+  }
+`
+
 export const ContactSection = () => {
   const { t } = useTranslation()
   const [formData, setFormData] = useState({
@@ -63,6 +73,28 @@ export const ContactSection = () => {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
+
+  // Add CSS animation to document head
+  useEffect(() => {
+    const style = document.createElement('style')
+    style.textContent = fadeInOutKeyframes
+    document.head.appendChild(style)
+    
+    return () => {
+      document.head.removeChild(style)
+    }
+  }, [])
+
+  // Auto-hide success message after 3 seconds
+  useEffect(() => {
+    if (submitStatus === 'success') {
+      const timer = setTimeout(() => {
+        setSubmitStatus('idle')
+      }, 3000)
+      
+      return () => clearTimeout(timer)
+    }
+  }, [submitStatus])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -84,8 +116,8 @@ export const ContactSection = () => {
         'service_n1cikoc', // Replace with your EmailJS service ID
         'template_aj5oot7', // Replace with your EmailJS template ID
         {
-          from_name: formData.name,
-          from_email: formData.email,
+          name: formData.name,
+          email: formData.email,
           message: formData.message,
           to_email: 'ghoshr698@gmail.com', // Your email address
         },
@@ -128,7 +160,9 @@ export const ContactSection = () => {
             borderRadius: '8px', 
             padding: '0.75rem', 
             marginBottom: '1rem',
-            color: '#22c55e'
+            color: '#22c55e',
+            animation: 'fadeInOut 3s ease-in-out',
+            opacity: 1
           }}>
             {t("contact.form.messageSent")}
           </div>

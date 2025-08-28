@@ -59,7 +59,9 @@
       "emailPlaceholder": "ईमेल",
       "messagePlaceholder": "संदेश",
       "sendButton": "भेजें",
-      "messageSent": "संदेश भेजा गया"
+      "messageSent": "संदेश भेजा गया",
+      "errorMessage": "संदेश भेजने में विफल। कृपया पुनः प्रयास करें।",
+      "sendingButton": "भेज रहा है..."
     }
   },
   

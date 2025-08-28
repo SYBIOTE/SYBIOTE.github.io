@@ -59,7 +59,9 @@
       "emailPlaceholder": "Email",
       "messagePlaceholder": "Message",
       "sendButton": "Send",
-      "messageSent": "Message sent"
+      "messageSent": "Message sent",
+      "errorMessage": "Failed to send message. Please try again.",
+      "sendingButton": "Sending..."
     }
   },
   

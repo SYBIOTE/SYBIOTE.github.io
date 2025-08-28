@@ -59,7 +59,9 @@
       "emailPlaceholder": "Correo",
       "messagePlaceholder": "Mensaje",
       "sendButton": "Enviar",
-      "messageSent": "Mensaje enviado"
+      "messageSent": "Mensaje enviado",
+      "errorMessage": "Error al enviar el mensaje. Por favor, inténtalo de nuevo.",
+      "sendingButton": "Enviando..."
     }
   },
   
