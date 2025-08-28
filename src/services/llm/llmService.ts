@@ -190,8 +190,62 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
       const text = request.text?.trim()
       if (!text || !text.length) return
 
-      // Early return if loading or not ready
+      // If model is loading or not ready, use directed responses as fallback
       if (state.loading || !state.ready) {
+        console.log('LLM: Model not ready, using directed responses as fallback')
+        
+        if (onStatus) {
+          onStatus({
+            color: 'loading',
+            text: state.loading ? 'Model loading, using fallback responses...' : 'Model not ready, using fallback responses...'
+          })
+        }
+        
+        setState((prev) => ({ ...prev, _latest_interrupt: request.interrupt }))
+
+        const baseParams = {
+          userMessage: text + "default",
+          interrupt: request.interrupt,
+          messages: state.messages,
+          latestInterrupt: state._latest_interrupt,
+          responseCallback: onResponse,
+          updateMessages: (userMsg: string, assistantMsg: string) => {
+            setState((prev) => ({
+              ...prev,
+              messages: [
+                ...prev.messages,
+                { role: 'user', content: userMsg },
+                { role: 'assistant', content: assistantMsg }
+              ]
+            }))
+          },
+          setThinking: (thinking: boolean) => {
+            setState((prev) => ({ ...prev, thinking }))
+          },
+          statusCallback: onStatus,
+          processThinkBlocks
+        }
+
+        try {
+          const result = await llmDirected(baseParams)
+          if (!result.success && result.error) {
+            console.error('LLM: Directed fallback failed:', result.error)
+            if (onStatus) {
+              onStatus({
+                color: 'error',
+                text: 'Failed to process request with fallback'
+              })
+            }
+          }
+        } catch (error) {
+          console.error('LLM: Fallback error:', error)
+          if (onStatus) {
+            onStatus({
+              color: 'error',
+              text: 'Error processing request with fallback'
+            })
+          }
+        }
         return
       }
 

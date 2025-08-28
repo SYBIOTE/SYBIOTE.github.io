@@ -138,7 +138,7 @@ export const SectionPanel = ({
             justifyContent: 'space-between',
             flexDirection: 'row',
             padding: '0 0.75rem',
-            borderBottom: '1px solid rgba(255,255,255,0.15)',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.79)',
             backdropFilter: 'blur(20px)',
             WebkitBackdropFilter: 'blur(20px)',
             borderTopLeftRadius: '24px',
@@ -158,7 +158,7 @@ export const SectionPanel = ({
               justifyContent: 'center',
               background: 'transparent',
               border: 'none',
-              color: '#333',
+              color: '#fff',
               cursor: 'pointer',
               padding: '0.5rem',
               borderRadius: '9999px',
@@ -167,13 +167,13 @@ export const SectionPanel = ({
               minHeight: '32px'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.color = '#222'
+              e.currentTarget.style.color = '#fff'
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.color = '#333'
+              e.currentTarget.style.color = '#fff'
             }}
           >
-            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
               <path d="M18 6L6 18"/>
               <path d="M6 6L18 18"/>
             </svg>

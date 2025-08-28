@@ -228,6 +228,7 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
   const llmService = useLLMService({
     config: llmConfig,
     onStatus: (status: LLMStatusUpdate) => {
+      console.log('LLM status:', status)
       callbacks.onLLMStatus?.(status)
     },
     onResponse: (response: LLMResponse) => {
