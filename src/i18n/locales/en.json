@@ -1,0 +1,217 @@
+{
+  
+  "core":{
+    "name": "Rahul Ghosh",
+    "email": "ghoshr698@gmail.com",
+    "phone": "+91 9051186767",
+    "city": "Bengaluru, India",
+    "website": "https://sybiote.github.io",
+    "freelance": "Available",
+    "role": "Software, Game & XR Developer."
+  },
+
+  "sections": {
+    "resume": "Resume",
+    "portfolio": "Portfolio",
+    "services": "Services",
+    "contact": "Contact",
+    "chat": "Chat",
+    "settings": "Settings",
+    "audio": "Audio",
+    "language": "Language",
+    "accessibility": "Accessibility"
+  },
+
+  "labels": {
+    "email": "Email:",
+    "city": "City:",
+    "website": "Website:",
+    "phone": "Phone:",
+    "freelance": "Freelance:"
+  },
+
+  "profile": {
+    "about": {
+      "title": "About",
+      "summary": "Hello there, I am {{name}}. I bend reality with coffee and code.",
+      "quote": "It should be the experience, that is touching. What I strive for is to make the person playing the game the director. - Shigeru Miyamoto."
+    }
+  },
+
+  "settings": {
+    "ariaLabel": "Open settings",
+    "audio": {
+      "masterVolume": "Master Volume",
+      "autoPlay": "Auto-play Audio"
+    },
+    "language": {
+      "interfaceLanguage": "Interface Language"
+    },
+    "accessibility": {
+      "reduceMotion": "Reduce Motion"
+    }
+  },
+
+  "contact": {
+    "description": "Need to build any 3D or immersive application, or just want to talk about games and XR? Reach out via email.",
+    "form": {
+      "namePlaceholder": "Your name",
+      "emailPlaceholder": "Email",
+      "messagePlaceholder": "Message",
+      "sendButton": "Send",
+      "messageSent": "Message sent (demo)"
+    }
+  },
+  
+  "chat": {
+    "controls": {
+      "microphone": {
+        "enable": "Enable Voice Detection",
+        "vadListening": "VAD Listening - Speak to Start STT",
+        "voiceDetected": "Voice Detected - STT Active"
+      },
+      "cloudMode": {
+        "switchToLocal": "Switch to Local Mode",
+        "switchToCloud": "Switch to Cloud Mode"
+      },
+      "bargeIn": {
+        "enable": "Enable Barge-in",
+        "disable": "Disable Barge-in"
+      },
+      "autoSubmit": {
+        "enable": "Enable Auto-submit",
+        "disable": "Disable Auto-submit"
+      },
+      "agent": {
+        "enable": "Enable Agent Mode",
+        "disable": "Disable Agent Mode"
+      },
+      "arMode": "Enter AR Mode"
+    },
+    "input": {
+      "placeholder": "Type your message here...",
+      "listening": "🎤 Listening...",
+      "sttReady": "🎤 STT Ready - Speak now",
+      "starting": "🎤 Starting..."
+    },
+    "controlsLabel": "Controls"
+  },
+  
+  "resume": {
+    "summary": {
+      "title": "Summary",
+      "content": "Creative and innovation-oriented Game engineer with 3+ years of experience designing and developing games and software from initial concept to final, polished deliverables."
+    },
+    "education": {
+      "title": "Education",
+      "degree": "Bachelors in Computer Engineering & Honours in Artificial Intelligence",
+      "institution": "Army Institute of Technology, Pune, India — CGPA 8.84",
+      "period": "2019 — 2023"
+    },
+    "leadership": {
+      "title": "Leadership and Achievements",
+      "items": {
+        "godotDojo": "Founding Member of Godot Dojo",
+        "gameClub": "Founder, Game Development and Extended Reality club",
+        "codingChallenge": "Credit Suisse Global Coding Challenge 3.0 — Global rank 102",
+        "armyAward": "Indian Army Tech Excellence Award — Developed a hybrid AI/algorithm-based camouflage pattern generation tool, deployed across India",
+        "arProgram": "AR Open program by Facebook School of Innovation —",
+        "googleCloud": "Google Cloud Skills Boost —",
+        "interests": "Interests: XR tech news, Japanese, research papers"
+      }
+    },
+    "experience": {
+      "title": "Professional Experience",
+      "jobs": {
+        "infiniteReality": {
+          "title": "WebXR Engineer — Infinite Reality",
+          "period": "Feb 2024 — Present",
+          "achievements": [
+            "Co-led client-side scripting system with Monaco Editor integration in IRStudio",
+            "Designed 2D/3D UI components, improving usability by 35%",
+            "Built high-precision 3D gizmos, increasing editing speed by 50%+",
+            "Engine refactors and optimizations: -20% build size, +15% frame performance"
+          ]
+        },
+        "etherealEngine": {
+          "title": "WebXR Engineer — Ethereal Engine (acq. by Infinite Reality)",
+          "period": "Feb 2023 — Feb 2024",
+          "achievements": [
+            "Migrated backend from Express to Koa, -60% API response times, 3× throughput",
+            "Led UI overhaul aligning with modern UX standards",
+            "Architected visual scripting system enabling non-programmer workflows"
+          ]
+        },
+        "metawarp": {
+          "title": "XR Application Developer — Metawarp",
+          "period": "Dec 2022 — Feb 2023",
+          "achievements": [
+            "Developed XR and GIS applications",
+            "Mixed Reality disassembly/assembly workflows in Unity",
+            "VR map visualization and 3D annotations in Unreal",
+            "Optimized VR/MR apps to run at 72Hz"
+          ]
+        },
+        "jioTesseract": {
+          "title": "XR Application Developer — Jio Tesseract",
+          "period": "Apr 2022 — Present",
+          "achievements": [
+            "Shipped a standalone wave survival game \"Narakashur\"",
+            "Designed 4 unique enemies; built wave system, UI, global leaderboard",
+            "Leveraged device hardware for unique player mechanics"
+          ]
+        },
+        "prodigalTech": {
+          "title": "Backend Engineer — Prodigal Tech (YC S18)",
+          "period": "Apr 2022 — Oct 2022",
+          "achievements": [
+            "Developed and maintained ETL pipelines",
+            "Automations covering 70%+ of technical operations (−20% pipeline time)",
+            "Data quality improvements: backfilled 200k+ missed audio files",
+            "On-call in a team of 5 engineers"
+          ]
+        }
+      }
+    }
+  },
+  "portfolio": {
+    "items": {
+      "godotDojo": {
+        "title": "Godot Dojo",
+        "description": "Core developer on XR/VR demos enhancing Godot's XR functionality."
+      },
+      "wizardVsRobot": {
+        "title": "Wizard vs Robot",
+        "description": "VR locomotion, enemy AI with 6DoF, gesture-based movement."
+      },
+      "meshSlicerGodot": {
+        "title": "Mesh Slicer (Godot)",
+        "description": "Runtime slicing plugin with cross-section textures and forces."
+      },
+      "cppRaytracer": {
+        "title": "C++ Raytracer",
+        "description": "Vulkan + ImGui ray tracer with path tracing and materials."
+      },
+      "vrHorrorPrototype": {
+        "title": "VR Horror Prototype",
+        "description": "VR essentials, avatar integration, weapons and gestures."
+      },
+      "threeDGestureRecognition": {
+        "title": "3D Gesture Recognition",
+        "description": "Adapted $p algorithm to 3D; authorable templates and runtime."
+      },
+      "godotOculusPlatform": {
+        "title": "Godot Oculus Platform",
+        "description": "C++/GDNative plugin exposing OAuth, rooms, leaderboards, etc."
+      },
+      "mrEarthViewer": {
+        "title": "MR Earth Viewer",
+        "description": "MR Earth visualization built with Unity and Bing Maps SDK."
+      },
+      "narakashur": {
+        "title": "Narakashur",
+        "description": "Standalone wave survival game for Jio Mixed Reality Glasses."
+      }
+    }
+  }
+}
