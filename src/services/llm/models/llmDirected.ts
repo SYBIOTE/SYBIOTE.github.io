@@ -2,13 +2,17 @@ import type { LLMParams, LLMResult } from '../llmTypes'
 
 export interface DirectedResponse {
   id: string
-  trigger: string
   response: string
   emotion?: string
 }
 
-export interface DirectedConfig {
+export interface TriggerGroup {
+  trigger: string
   responses: DirectedResponse[]
+}
+
+export interface DirectedConfig {
+  triggers: TriggerGroup[]
 }
 
 let directedConfig: DirectedConfig | null = null
@@ -37,18 +41,32 @@ function findResponse(userMessage: string, config: DirectedConfig): DirectedResp
   const lowerMessage = userMessage.toLowerCase().trim()
 
   // Find exact trigger match first
-  const exactMatch = config.responses.find((response) => response.trigger.toLowerCase() === lowerMessage)
-  if (exactMatch) return exactMatch
+  const exactMatch = config.triggers.find((triggerGroup) => triggerGroup.trigger.toLowerCase() === lowerMessage)
+  if (exactMatch) {
+    // Randomly select from available responses
+    const randomIndex = Math.floor(Math.random() * exactMatch.responses.length)
+    return exactMatch.responses[randomIndex]
+  }
 
   // Find partial trigger match
-  const partialMatch = config.responses.find((response) => lowerMessage.includes(response.trigger.toLowerCase()))
-  if (partialMatch) return partialMatch
+  const partialMatch = config.triggers.find((triggerGroup) => lowerMessage.includes(triggerGroup.trigger.toLowerCase()))
+  if (partialMatch) {
+    // Randomly select from available responses
+    const randomIndex = Math.floor(Math.random() * partialMatch.responses.length)
+    return partialMatch.responses[randomIndex]
+  }
 
   return null
 }
 
 function getDefaultResponse(config: DirectedConfig): DirectedResponse | null {
-  return config.responses.find((response) => response.trigger === 'default') || null
+  const defaultTrigger = config.triggers.find((triggerGroup) => triggerGroup.trigger === 'default')
+  if (defaultTrigger) {
+    // Randomly select from available default responses
+    const randomIndex = Math.floor(Math.random() * defaultTrigger.responses.length)
+    return defaultTrigger.responses[randomIndex]
+  }
+  return null
 }
 
 export async function llmDirected(params: LLMParams): Promise<LLMResult> {

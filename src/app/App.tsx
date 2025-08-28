@@ -57,7 +57,7 @@ export const App = () => {
         display: 'flex',
         flexDirection: 'column',
         height: '100vh',
-        width: '50%',
+        width: '100vh',
         overflow: 'hidden',
         background: 'radial-gradient(circle at top, #0F1113 0%, #1B1E20 100%)',
         color: '#FFFFFF',
