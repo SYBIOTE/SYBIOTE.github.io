@@ -130,32 +130,32 @@
       "responses": [
         {
           "id": "name1",
-          "response": "My name is AI Assistant. I'm here to help you with various tasks and questions.",
+          "response": "I am Rahul's AI representative. I'm here to help you with various tasks and questions.",
           "emotion": "friendly"
         },
         {
           "id": "name2",
-          "response": "You can call me AI Assistant! I'm your helpful digital companion.",
+          "response": "You can call me Rahul's AI representative!",
           "emotion": "cheerful"
         },
         {
           "id": "name3",
-          "response": "I'm AI Assistant, your friendly digital helper! What can I do for you?",
+          "response": "I'm Rahul's AI representative, your friendly digital helper! What can I do for you?",
           "emotion": "enthusiastic"
         },
         {
           "id": "name4",
-          "response": "Call me AI Assistant! I'm here to assist you with whatever you need.",
+          "response": "Call me Rahul's AI representative! I'm here to assist you with whatever you need.",
           "emotion": "helpful"
         },
         {
           "id": "name5",
-          "response": "My name is AI Assistant, and I'm excited to help you today!",
+          "response": "My name is Rahul's AI representative, and I'm excited to help you today!",
           "emotion": "excited"
         },
         {
           "id": "name6",
-          "response": "I'm AI Assistant, your AI companion ready to tackle any questions!",
+          "response": "I'm Rahul's AI representative, ready to tackle any questions!",
           "emotion": "confident"
         }
       ]
@@ -286,7 +286,7 @@
       ]
     },
     {
-      "trigger": "loading",
+      "trigger": "wait",
       "responses": [
         {
           "id": "loading1",
@@ -327,12 +327,7 @@
           "id": "loading8",
           "response": "I'm booting up! Excited to help you once I'm ready.",
           "emotion": "enthusiastic"
-        }
-      ]
-    },
-    {
-      "trigger": "wait",
-      "responses": [
+        },
         {
           "id": "wait1",
           "response": "Thanks for your patience! I'm still initializing, but I can provide basic responses in the meantime.",
@@ -372,12 +367,7 @@
           "id": "wait8",
           "response": "Your patience is appreciated! I'm almost ready to help you with everything.",
           "emotion": "thankful"
-        }
-      ]
-    },
-    {
-      "trigger": "ready",
-      "responses": [
+        },
         {
           "id": "ready1",
           "response": "I'm getting ready to help you! Just a moment while I finish loading.",
@@ -417,12 +407,7 @@
           "id": "ready8",
           "response": "Nearly ready! I'm excited to show you what I can do!",
           "emotion": "thrilled"
-        }
-      ]
-    },
-    {
-      "trigger": "default",
-      "responses": [
+        },
         {
           "id": "default1",
           "response": "I'm still loading my full capabilities, but I'm here to help! Please bear with me while I get ready.",
