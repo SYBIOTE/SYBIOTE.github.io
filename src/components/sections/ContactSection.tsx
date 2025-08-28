@@ -1,5 +1,7 @@
 import type { CSSProperties, FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useState } from 'react'
+import emailjs from '@emailjs/browser'
 
 const container: CSSProperties = {
   width: '100%',
@@ -54,9 +56,54 @@ const buttonStyle: CSSProperties = {
 
 export const ContactSection = () => {
   const { t } = useTranslation()
-  const handleSubmit = (e: FormEvent) => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: ''
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
-    alert(t("contact.form.messageSent"))
+    setIsSubmitting(true)
+    setSubmitStatus('idle')
+
+    try {
+      // Using EmailJS to send emails
+      // You'll need to set up your EmailJS account and get these credentials
+      const result = await emailjs.send(
+        'service_n1cikoc', // Replace with your EmailJS service ID
+        'template_aj5oot7', // Replace with your EmailJS template ID
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          message: formData.message,
+          to_email: 'ghoshr698@gmail.com', // Your email address
+        },
+        'jtyEaVhw3Qlskk8aL' // Replace with your EmailJS public key
+      )
+
+      if (result.status === 200) {
+        setSubmitStatus('success')
+        setFormData({ name: '', email: '', message: '' })
+      } else {
+        throw new Error('Failed to send email')
+      }
+    } catch (error) {
+      console.error('Error sending email:', error)
+      setSubmitStatus('error')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
   return (
     <div style={container}  className='no-scrollbar'>
@@ -74,15 +121,71 @@ export const ContactSection = () => {
         </div>
       </div>
       <div style={card}>
+        {submitStatus === 'success' && (
+          <div style={{ 
+            background: 'rgba(34, 197, 94, 0.1)', 
+            border: '1px solid rgba(34, 197, 94, 0.3)', 
+            borderRadius: '8px', 
+            padding: '0.75rem', 
+            marginBottom: '1rem',
+            color: '#22c55e'
+          }}>
+            {t("contact.form.messageSent")}
+          </div>
+        )}
+        {submitStatus === 'error' && (
+          <div style={{ 
+            background: 'rgba(239, 68, 68, 0.1)', 
+            border: '1px solid rgba(239, 68, 68, 0.3)', 
+            borderRadius: '8px', 
+            padding: '0.75rem', 
+            marginBottom: '1rem',
+            color: '#ef4444'
+          }}>
+            {t("contact.form.errorMessage") || "Failed to send message. Please try again."}
+          </div>
+        )}
         <form onSubmit={handleSubmit}>
           <div style={fieldRow}>
-            <input required placeholder={t("contact.form.namePlaceholder")} style={inputStyle} />
-            <input required type="email" placeholder={t("contact.form.emailPlaceholder")} style={inputStyle} />
+            <input 
+              required 
+              name="name"
+              value={formData.name}
+              onChange={handleInputChange}
+              placeholder={t("contact.form.namePlaceholder")} 
+              style={inputStyle} 
+            />
+            <input 
+              required 
+              name="email"
+              type="email" 
+              value={formData.email}
+              onChange={handleInputChange}
+              placeholder={t("contact.form.emailPlaceholder")} 
+              style={inputStyle} 
+            />
           </div>
           <div>
-            <textarea required placeholder={t("contact.form.messagePlaceholder")} style={{ ...inputStyle, minHeight: '8rem', width: '100%', resize: 'vertical' }} />
+            <textarea 
+              required 
+              name="message"
+              value={formData.message}
+              onChange={handleInputChange}
+              placeholder={t("contact.form.messagePlaceholder")} 
+              style={{ ...inputStyle, minHeight: '8rem', width: '100%', resize: 'vertical' }} 
+            />
           </div>
-          <button type="submit" style={buttonStyle}>{t("contact.form.sendButton")}</button>
+          <button 
+            type="submit" 
+            disabled={isSubmitting}
+            style={{ 
+              ...buttonStyle, 
+              opacity: isSubmitting ? 0.6 : 1,
+              cursor: isSubmitting ? 'not-allowed' : 'pointer'
+            }}
+          >
+            {isSubmitting ? t("contact.form.sendingButton") || "Sending..." : t("contact.form.sendButton")}
+          </button>
         </form>
       </div>
     </div>
