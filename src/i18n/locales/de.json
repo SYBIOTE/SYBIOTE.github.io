@@ -174,6 +174,35 @@
       }
     }
   },
+  "services": {
+    "items": {
+      "gameDevelopment": {
+        "name": "Spieleentwicklung",
+        "desc": "Full-Stack-Spieleentwicklung vom Konzept bis zum Deployment, einschließlich Gameplay-Mechaniken, Systemdesign und Optimierung."
+      },
+      "xrDevelopment": {
+        "name": "XR-Entwicklung",
+        "desc": "Virtual Reality (VR), Augmented Reality (AR) und Mixed Reality (MR) Anwendungen mit immersiven Benutzererfahrungen."
+      },
+      "gameEngineProgramming": {
+        "name": "Spiele-Engine-Programmierung",
+        "desc": "Entwicklung benutzerdefinierter Spiele-Engines, Engine-Modifikationen und Low-Level-Systemprogrammierung für optimale Leistung."
+      },
+      "3dModelling": {
+        "name": "3D-Modellierung",
+        "desc": "3D-Asset-Erstellung, Charaktermodelierung, Umgebungsdesign und Optimierung für Echtzeit-Rendering."
+      },
+      "gameBackend": {
+        "name": "Spiele-Backend",
+        "desc": "Server-seitige Spielelogik, Multiplayer-Systeme, Datenbankdesign und Cloud-Infrastruktur für Spiele."
+      },
+      "gameTesting": {
+        "name": "Spieletests",
+        "desc": "Qualitätssicherung, Playtesting, Leistungsoptimierung und Bug-Fixes für polierte Spielerfahrungen."
+      }
+    }
+  },
+  
   "portfolio": {
     "items": {
       "godotDojo": {
