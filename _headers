@@ -1,0 +1,12 @@
+# Set proper MIME types for JavaScript modules
+*.js
+  Content-Type: application/javascript
+
+*.mjs
+  Content-Type: application/javascript
+
+*.css
+  Content-Type: text/css
+
+*.html
+  Content-Type: text/html
