@@ -1,13 +1,13 @@
 import { useState, type ReactNode, type CSSProperties } from 'react'
-import { getSectionIcon } from './common/icons'
-import { SectionPanel } from './common/SectionPanel'
-import { ChatPanel } from './chat/ChatPanel'
-import { ResumeSection } from './sections/ResumeSection'
-import { PortfolioSection } from './sections/PortfolioSection'
-import { ServicesSection } from './sections/ServicesSection'
-import { ContactSection } from './sections/ContactSection'
+import { getSectionIcon } from '../common/icons'
+import { SectionPanel } from '../common/SectionPanel'
+import { ChatPanel } from '../chat/ChatPanel'
+import { ResumeSection } from './ResumeSection'
+import { PortfolioSection } from './PortfolioSection'
+import { ServicesSection } from './ServicesSection'
+import { ContactSection } from './ContactSection'
 import { useTranslation } from 'react-i18next'
-import type { ConversationMessage } from '../services/conversation/conversationType'
+import type { ConversationMessage } from '../../services/conversation/conversationType'
 
 export interface ButtonStyleConfig {
   collapsedSize: string
@@ -123,19 +123,13 @@ interface SectionItem {
 interface SectionNavRailProps {
   buttonConfig?: Partial<ButtonStyleConfig>
   sections?: SectionItem[]
-  railStyle?: CSSProperties
-  contentBaseHref?: string
-  panelOverlayStyle?: CSSProperties
-  panelContainerStyle?: CSSProperties
-  panelIframeStyle?: CSSProperties
   messages?: ConversationMessage[] // Use proper type
 }
 
 export const SectionNavRail = ({
   buttonConfig,
   sections: sectionsProp,
-  railStyle,
-  messages = [] // Default to empty array
+  messages = [], // Default to empty array
 }: SectionNavRailProps) => {
   const { t } = useTranslation()
   const resolvedButtonConfig: ButtonStyleConfig = { ...defaultButtonConfig, ...(buttonConfig ?? {}) }
@@ -166,7 +160,6 @@ export const SectionNavRail = ({
         flexDirection: 'column',
         gap: '0.5rem',
         zIndex: 1003,
-        ...(railStyle ?? {})
       }}
     >
       {sections.map((s) => (

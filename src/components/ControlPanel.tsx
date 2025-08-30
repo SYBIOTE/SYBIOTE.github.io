@@ -1,7 +1,7 @@
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ControlButton } from './common/ControlButton'
-import type { ButtonStyleConfig } from './SectionNavRail'
+import type { ButtonStyleConfig } from './sections/SectionNavRail'
 import { 
   MicrophoneIcon, 
   LightningIcon, 

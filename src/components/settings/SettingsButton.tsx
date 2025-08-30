@@ -4,7 +4,7 @@ import { SettingsIcon } from '../common/icons/SettingsIcon'
 import { useTranslation } from 'react-i18next'
 
 // Import ButtonStyleConfig from SectionNavRail for consistency
-import type { ButtonStyleConfig } from '../SectionNavRail'
+import type { ButtonStyleConfig } from '../sections/SectionNavRail'
 
 const settingsButtonConfig: Partial<ButtonStyleConfig> = {
   iconSize: '2rem'

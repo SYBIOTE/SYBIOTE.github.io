@@ -1,5 +1,5 @@
 import type { XRStore } from '@react-three/xr'
-import { useCallback, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { AvatarViewport } from '../components/scene/Viewport3D'
 import { ChatOverlay } from '../components/chat/ChatOverlay'
@@ -13,8 +13,10 @@ import { defaultTTSConfig } from '../services/tts/ttsConfig'
 import { defaultSTTConfig } from '../services/stt/sttConfig'
 import { defaultLLMConfig } from '../services/llm/config/llmConfig'
 import { useSimpleStore } from '@hexafield/simple-store/react'
-import SectionNavRail from '../components/SectionNavRail'
+import SectionNavRail from '../components/sections/SectionNavRail'
 import SettingsButton from '../components/settings/SettingsButton'
+import { type ConversationMessage } from '../services/conversation/conversationType'
+import { ControlOverlay } from '../components/control/ControlOverlay'
 
 export const config = {
   vad: defaultVadConfig,
@@ -33,7 +35,6 @@ export const App = () => {
     xrStore.current = store
   }, [])
 
-
   const agentConfig = useMemo(
     () => ({
       ...config,
@@ -44,6 +45,12 @@ export const App = () => {
   )
 
   const agent = useAgent(agentConfig)
+
+
+  const chatMessages = useMemo(
+    () => agent.state.messages.map((id) => agent.services.conversation.actions.getMessagebyId(id)),
+    [agent.state.messages, agent.services.conversation.actions]
+  )
 
   const handleAppStateChange = useCallback((newAppState: AppConfig) => {
     setAppState(newAppState)
@@ -83,12 +90,16 @@ export const App = () => {
         />
 
         <LogoOverlay />
-        <SectionNavRail messages={agent.state.messages} />
+        <SectionNavRail messages={chatMessages} />
         <ChatOverlay
+          config={appState}
+          agent={agent}
+        />
+        <ControlOverlay
           config={appState}
           handleAppStateChange={handleAppStateChange}
           agent={agent}
-          xrStore={xrStore.current!}    
+          xrStore={xrStore.current!}
         />
         <SettingsButton />
       </div>
