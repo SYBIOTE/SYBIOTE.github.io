@@ -18,24 +18,22 @@ export const useConversationService = () => {
       
       setState((prev) => ({
         ...prev,
-        messages: [...prev.messages, newMessage]
+        messages: [...prev.messages, newMessage.id],
+        messageMap: { ...prev.messageMap, [newMessage.id]: newMessage },
+        lastAgentResponseId: isUser ? prev.lastAgentResponseId : newMessage.id,
+        lastUserMessageId: !isUser ? prev.lastUserMessageId : newMessage.id
       }))
-    },
+    },  
     [setState]
   )
 
   const streamMessage = useCallback(
     (fragment: string, finished: boolean) => {
       setState((prev) => {
-        const lastLLMStreamingMessage = prev.messages.find((msg) => msg.isUser === false && msg.text.endsWith('...'))
-
-        if (lastLLMStreamingMessage) {
-          const updatedMessages = prev.messages.map((msg) =>
-            msg.id === lastLLMStreamingMessage.id
-              ? { ...msg, text: msg.text.slice(0, -3) + fragment + (finished ? '' : '...') }
-              : msg
-          )
-          return { ...prev, messages: updatedMessages }
+        const lastLLMStreamingMessage = prev.messageMap[prev.lastAgentResponseId]
+        if (lastLLMStreamingMessage?.text.endsWith('...')) {
+          prev.messageMap[prev.lastAgentResponseId].text = lastLLMStreamingMessage.text.slice(0, -3) + fragment + (finished ? '' : '...')
+          return { ...prev, messageMap: { ...prev.messageMap, [prev.lastAgentResponseId]: lastLLMStreamingMessage } }
         } else {
           // Add new message
           const newMessage: ConversationMessage = {
@@ -44,38 +42,34 @@ export const useConversationService = () => {
             isUser: false,
             timestamp: Date.now()
           }
-          return { ...prev, messages: [...prev.messages, newMessage] }
+          return {  ...prev,
+            messages: [...prev.messages, newMessage.id],
+            messageMap: { ...prev.messageMap, [newMessage.id]: newMessage },
+            lastAgentResponseId: newMessage.id,
+            lastUserMessageId: prev.lastUserMessageId
+          }
         }
       })
     },
-    [addMessage, setState, state.messages]
+    [setState, state.messageMap]
   )
 
-  const updateCurrentMessage = useCallback(
-    (message: string) => {
-      setState((prev) => ({
-        ...prev,
-        currentMessage: message
-      }))
-    },
-    [setState]
-  )
-
-  const clearCurrentMessage = useCallback(() => {
-    setState((prev) => ({
-      ...prev,
-      currentMessage: ''
-    }))
+  const clearAllMessages = useCallback(() => {
+    setState(initialConversationState)
   }, [setState])
+
+  const getMessagebyId = useCallback((id: string) => {
+    return state.messageMap[id]
+  }, [state.messageMap])
 
   const actions = useMemo(
     () => ({
       addMessage,
       streamMessage,
-      updateCurrentMessage,
-      clearCurrentMessage
+      clearAllMessages,
+      getMessagebyId
     }),
-    [addMessage, streamMessage, updateCurrentMessage, clearCurrentMessage]
+    [addMessage, streamMessage, clearAllMessages, getMessagebyId]
   )
 
   return useMemo(

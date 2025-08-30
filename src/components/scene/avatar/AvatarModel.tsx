@@ -8,12 +8,13 @@ import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/Addons.js'
 import type { GLTFParser } from 'three/examples/jsm/Addons.js'
 
-import { ANIMATION_CLIPS } from '../services/animation/config/animationClips'
-import { useAnimationService } from '../services/animation/useAnimationService'
-import type { useEmoteService } from '../services/emote/useEmoteService'
-import type { useVisemeService } from '../services/visemes/useVisemeService'
+
 import { AvatarOptions } from './AvatarOptions'
 import { Vector3 } from 'three'
+import  {ANIMATION_CLIPS } from '../../../services/animation/config/animationClips'
+import type { useAnimationService } from '../../../services/animation/useAnimationService'
+import type { useEmoteService } from '../../../services/emote/useEmoteService'
+import type { useVisemeService } from '../../../services/visemes/useVisemeService'
 
 const AVATAR_MODEL = AvatarOptions.Rahul
 
@@ -324,7 +325,7 @@ const AvatarModelComponent = ({ visemeService, emoteService, animationService, o
       } else {
         // Apply to morph targets if available
         if (morphTargetsRef.current.length > 0) {
-          const dictionary = emoteService.getters.getState().dictionary
+          const dictionary = emoteService.state.emote.dictionary
           if (dictionary) {
             // Filter to only meshes with morph targets
             const validMorphs = morphTargetsRef.current.filter((mesh) => mesh.morphTargetInfluences !== undefined) as {

@@ -15,7 +15,7 @@ import {
   startPerformance,
   emoteUpdate as emoteUpdate
 } from './emoteService'
-import type { EmoteResult, EmoteState, EmotionType, FacialTarget, PerformanceData } from './emoteTypes'
+import type { EmoteResult, EmoteState, EmotionType, PerformanceData } from './emoteTypes'
 import { initiateGaze } from './modules/gazeService'
 
 export const useEmoteService = (initialConfig?: Partial<EmoteConfig>) => {
@@ -49,10 +49,6 @@ export const useEmoteService = (initialConfig?: Partial<EmoteConfig>) => {
     setConfig((prev) => ({ ...prev, ...newConfig }))
   }, [])
 
-  const getConfig = useCallback(() => {
-    return config
-  }, [config])
-
   const onBargeIn = useCallback(() => {
     handleBargeIn(emoteStateRef.current)
   }, [])
@@ -79,18 +75,6 @@ export const useEmoteService = (initialConfig?: Partial<EmoteConfig>) => {
     []
   )
 
-  const getCurrentTargets = useCallback((): Partial<FacialTarget> => {
-    return emoteStateRef.current.targets
-  }, [])
-
-  const getCurrentEmotion = useCallback((): EmotionType => {
-    return emoteStateRef.current.currentEmotion
-  }, [])
-
-  const isPerforming = useCallback((): boolean => {
-    return emoteStateRef.current.isPerforming
-  }, [])
-
   const setAvatarReferences = useCallback(
     (references: { bones?: Record<string, unknown>; node?: Object3D; camera: Camera }): void => {
       const state = emoteStateRef.current
@@ -100,6 +84,14 @@ export const useEmoteService = (initialConfig?: Partial<EmoteConfig>) => {
     },
     []
   )
+
+
+  const state = useMemo(() => 
+    ({
+      emote: emoteStateRef.current,
+      config: config
+    })
+  , [emoteStateRef.current])
 
   const actions = useMemo(
     () => ({
@@ -131,22 +123,11 @@ export const useEmoteService = (initialConfig?: Partial<EmoteConfig>) => {
     ]
   )
 
-  const getters = useMemo(
-    () => ({
-      getCurrentTargets,
-      getCurrentEmotion,
-      isPerforming,
-      getConfig,
-      getState: () => emoteStateRef.current
-    }),
-    [getCurrentTargets, getCurrentEmotion, isPerforming, getConfig]
-  )
-
   return useMemo(
     () => ({
+      state,
       actions,
-      getters
     }),
-    [actions, getters]
+    [actions, state]
   )
 }

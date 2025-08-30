@@ -18,7 +18,6 @@ import {
   updateAnimation
 } from './animationService'
 import type { AnimationClip, AnimationPerformanceData, AnimationState } from './animationTypes'
-import { getAvailablePersonalities } from './config/personalityConfig'
 
 export const useAnimationService = () => {
   const animationStateRef = useRef<AnimationState>(initializeAnimationState())
@@ -64,56 +63,35 @@ export const useAnimationService = () => {
     return getPersonalityAnimationClips(personality)
   }, [])
 
-  const getCurrentPersonality = useCallback((): string => {
-    return animationStateRef.current.cyclingState.currentPersonality
-  }, [])
-
-  const isEnabled = useCallback((): boolean => {
-    return animationStateRef.current.enabled
-  }, [])
-
-  const isTransitioning = useCallback((): boolean => {
-    return animationStateRef.current.isTransitioning
-  }, [])
-
-  return useMemo(
+  const actions = useMemo(
     () => ({
-      actions: {
-        setPersonality,
-        performAction,
-        enqueue: (performanceData: AnimationPerformanceData) =>
-          enqueueAnimation(animationStateRef.current, performanceData),
-        clearQueue: () => clearAnimationQueue(animationStateRef.current),
-        enableCycling,
-        reset,
-        setup,
-        update
-      },
-      // Info methods
-      getters: {
-        getCurrentInfo,
-        getCurrentPersonality,
-        getAvailableClips,
-        getAvailablePersonalities,
-        isEnabled,
-        isTransitioning,
-        getState: () => animationStateRef.current
-      }
-    }),
-    [
       setPersonality,
       performAction,
+      enqueue: (performanceData: AnimationPerformanceData) =>
+        enqueueAnimation(animationStateRef.current, performanceData),
+      clearQueue: () => clearAnimationQueue(animationStateRef.current),
       enableCycling,
       reset,
       setup,
       update,
       getCurrentInfo,
-      getCurrentPersonality,
       getAvailableClips,
-      getAvailablePersonalities,
-      isEnabled,
-      isTransitioning
-    ]
+    }),
+    [setPersonality, performAction, enqueueAnimation, clearAnimationQueue, enableCycling, reset, setup, update, getCurrentInfo, getAvailableClips]
+  )
+
+  const state = useMemo(
+    () => animationStateRef.current
+    ,
+    [animationStateRef.current]
+  )
+
+  return useMemo(
+    () => ({
+      actions,
+      state
+    }),
+    [actions, state]
   )
 }
 

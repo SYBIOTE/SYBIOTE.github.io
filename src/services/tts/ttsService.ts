@@ -379,6 +379,12 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
     }
   }, [])
 
+
+  const state = useMemo(() => ({
+    isSpeaking: isProcessing.current,
+    audioQueue: messageQueue.current.length
+  }), [isProcessing.current, messageQueue.current.length])
+
   const actions = useMemo(
     () => ({
       speak,
@@ -391,10 +397,9 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
 
   return useMemo(
     () => ({
-      isSpeaking: isProcessing,
-      audioQueue: messageQueue.current.length,
+      state,
       actions
     }),
-    [isProcessing, messageQueue.current.length, actions]
+    [state, actions]
   )
 }

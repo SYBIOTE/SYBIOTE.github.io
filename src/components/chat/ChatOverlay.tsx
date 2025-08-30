@@ -5,7 +5,7 @@ import { ChatInput } from './ChatInput'
 import { useTranslation } from 'react-i18next'
 import type { XRStore } from '@react-three/xr'
 import { AppConfigState, type AppConfig } from '../../app/appConfig'
-import { shouldTriggerBargeIn } from '../../services/integration/emotionIntegration'
+import { shouldTriggerBargeIn } from '../../integration/emotionIntegration'
 import type { AgentService } from '../../services/useAgent'
 import { ControlPanel } from '../ControlPanel'
 
@@ -25,14 +25,14 @@ export const ChatOverlay = memo(({
 }: ChatOverlayProps) => {
   const { t } = useTranslation()
   const [isButtonsVisible, setIsButtonsVisible] = useState(true)
-
+  const [currentInputMessage, setCurrentInputMessage] = useState('')
   
   const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      handleSubmit(agent.state.currentMessage)
+      handleSubmit(currentInputMessage)
     }
-  }, [agent.actions, agent.state.currentMessage])
+  }, [agent.actions, currentInputMessage])
 
   const handleSubmit = useCallback((message: string) => {
     if(shouldTriggerBargeIn({text: message, isUser: true, id: '', timestamp: 0})) {
@@ -54,8 +54,8 @@ export const ChatOverlay = memo(({
     <>
       {/* Chat Input */}
       <ChatInput
-        message={agent.state.currentMessage}
-        onMessageChange={agent.actions.updateCurrentMessage}
+        message={currentInputMessage}
+        onMessageChange={setCurrentInputMessage}
         onSubmit={handleSubmit}
         onKeyPress={handleKeyPress}
         isRecording={config.microphone}

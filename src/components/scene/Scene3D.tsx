@@ -4,11 +4,11 @@ import { createXRStore, XR, type XRStore } from '@react-three/xr'
 import { memo, useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 
-import type { SceneConfig } from '../app/sceneTypes'
-import type { useAnimationService } from '../services/animation/useAnimationService'
-import type { useEmoteService } from '../services/emote/useEmoteService'
-import type { useVisemeService } from '../services/visemes/useVisemeService'
-import { AvatarModel } from './AvatarModel'
+import type { SceneConfig } from '../../app/sceneTypes'
+import type { useAnimationService } from '../../services/animation/useAnimationService'
+import type { useEmoteService } from '../../services/emote/useEmoteService'
+import type { useVisemeService } from '../../services/visemes/useVisemeService'
+import { AvatarModel } from './avatar/AvatarModel'
 
 interface Scene3DProps {
   sceneConfig: SceneConfig

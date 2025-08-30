@@ -1,11 +1,12 @@
 import type { XRStore } from '@react-three/xr'
 import { memo } from 'react'
 
-import type { SceneConfig } from '../app/sceneTypes'
-import type { useAnimationService } from '../services/animation/useAnimationService'
-import type { useEmoteService } from '../services/emote/useEmoteService'
-import type { useVisemeService } from '../services/visemes/useVisemeService'
-import { Scene3D } from '../scene/Scene3D'
+
+import { Scene3D } from './Scene3D'
+import type { SceneConfig } from '../../app/sceneTypes'
+import type { useAnimationService } from '../../services/animation/useAnimationService'
+import type { useEmoteService } from '../../services/emote/useEmoteService'
+import type { useVisemeService } from '../../services/visemes/useVisemeService'
 
 interface AvatarViewportProps {
   sceneConfig: SceneConfig
@@ -15,7 +16,7 @@ interface AvatarViewportProps {
   setXRStore?: (store: XRStore) => void
 }
 
-const AvatarViewportComponent = ({
+const viewport3DComponent = ({
   sceneConfig,
   visemeService,
   emoteService,
@@ -59,4 +60,4 @@ const AvatarViewportComponent = ({
 }
 
 // Memoize the component to prevent re-renders when services don't change
-export const AvatarViewport = memo(AvatarViewportComponent)
+export const AvatarViewport = memo(viewport3DComponent)

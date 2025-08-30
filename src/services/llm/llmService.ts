@@ -364,12 +364,20 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
     }))
   }, [])
 
-  return {
-    state,
-    actions: {
+  const actions = useMemo(
+    () => ({
       load,
       processUserInput,
       clearHistory
-    }
-  }
+    }),
+    [load, processUserInput, clearHistory]
+  )
+
+  return useMemo(
+    () => ({
+      state,
+      actions
+    }),
+    [state, actions]
+  )
 }

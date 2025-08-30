@@ -1,5 +1,7 @@
+export type ConversationId = string
+
 export interface ConversationMessage {
-  id: string
+  id: ConversationId
   text: string
   isUser: boolean
   timestamp: number
@@ -8,11 +10,15 @@ export interface ConversationMessage {
 }
 
 export interface ConversationState {
-  messages: ConversationMessage[]
-  currentMessage: string
+  messageMap: Record<ConversationId, ConversationMessage>
+  messages: ConversationId[]
+  lastAgentResponseId: ConversationId
+  lastUserMessageId: ConversationId
 }
 
 export const initialConversationState: ConversationState = {
+  messageMap: {},
   messages: [],
-  currentMessage: ''
+  lastAgentResponseId: '',
+  lastUserMessageId: '',
 }

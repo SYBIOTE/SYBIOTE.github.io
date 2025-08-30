@@ -1,9 +1,8 @@
 import type { XRStore } from '@react-three/xr'
 import { useCallback, useMemo, useRef } from 'react'
 
-import { AvatarViewport } from '../components/AvatarViewport'
+import { AvatarViewport } from '../components/scene/Viewport3D'
 import { ChatOverlay } from '../components/chat/ChatOverlay'
-import { ChatPanel } from '../components/chat/ChatPanel'
 import { LogoOverlay } from '../components/LogoOverlay'
 import { useAgent } from '../services/useAgent'
 import { useResponsiveLayout } from './layoutService'
@@ -92,7 +91,6 @@ export const App = () => {
           xrStore={xrStore.current!}    
         />
         <SettingsButton />
-        <ChatPanel messages={agent.state.messages} />
       </div>
     </div>
   )

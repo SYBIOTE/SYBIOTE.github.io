@@ -1,4 +1,4 @@
-import { AvatarOptions } from "../scene/AvatarOptions"
+import { AvatarOptions } from "../components/scene/avatar/AvatarOptions"
 import { ANIMATION_CLIPS } from "../services/animation/config/animationClips"
 
 export interface SceneConfig {

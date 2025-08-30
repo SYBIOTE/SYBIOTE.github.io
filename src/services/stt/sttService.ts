@@ -291,6 +291,13 @@ export const useSTTService = ({
     }
   }, [])
 
+
+  const state = useMemo(() => ({
+    isListening,
+    allowed,
+    desired
+  }), [isListening, allowed, desired])
+
   const actions = useMemo(
     () => ({
       setAllowed: setAllowedState,
@@ -303,11 +310,9 @@ export const useSTTService = ({
 
   return useMemo(
     () => ({
-      isListening,
-      allowed,
-      desired,
+      state,
       actions
     }),
-    [isListening, allowed, desired, actions]
+    [state, actions]
   )
 }

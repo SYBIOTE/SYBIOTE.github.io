@@ -3,12 +3,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { useAnimationService } from './animation/useAnimationService'
 import { useConversationService } from './conversation/UseConversationService'
-import type { ConversationMessage } from './conversation/conversationType'
+import type { ConversationId, ConversationMessage } from './conversation/conversationType'
 import type { EmotionType, PerformanceData } from './emote/emoteTypes'
 import { useEmoteService } from './emote/useEmoteService'
 import { useLLMService } from './llm/llmService'
 import type { LLMPerformRequest, LLMResponse, LLMStatusUpdate } from './llm/llmTypes'
-import { createReactionFromMessage } from './integration/reactionIntegration'
+import { createReactionFromMessage } from '../integration/reactionIntegration'
 import { useSTTService } from './stt/sttService'
 import { useVADService } from './vad/vadService'
 import { useTTSService } from './tts/ttsService'
@@ -18,7 +18,7 @@ import { defaultVadConfig, type VADConfig, type VADResult } from './vad/vadConfi
 import { defaultTTSConfig, type TTSConfig, type WhisperData } from './tts/ttsConfig'
 import { defaultSTTConfig, type STTConfig } from './stt/sttConfig'
 import { defaultLLMConfig, type LLMConfig } from './llm/config/llmConfig'
-import { shouldTriggerBargeIn } from './integration/emotionIntegration'
+import { shouldTriggerBargeIn } from '../integration/emotionIntegration'
 
 // STT service result interface (defined locally in sttService.ts)
 interface STTPerformResult {
@@ -105,8 +105,7 @@ export interface AgentService {
     ttsAudioQueue: number
 
     // Conversation state
-    messages: ConversationMessage[]
-    currentMessage: string
+    messages: ConversationId[]
   }
 
   // Actions
@@ -139,10 +138,11 @@ export interface AgentService {
 
     // Chat actions
     addMessage: (text: string, isUser: boolean) => void
-    updateCurrentMessage: (message: string) => void
-    clearCurrentMessage: () => void
+    streamMessage: (fragment: string, finished: boolean) => void
+    clearAllMessages: () => void
+    getMessagebyId: (id: ConversationId) => ConversationMessage
 
-    // Convenience actions
+    // Convenience actions  
     submitMessage: (message: string) => void
     toggleMicrophone: (isRecording: boolean) => void
     triggerBargein: () => void
@@ -214,7 +214,6 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
 
   // Internal state
   const [currentInterimTranscript, setCurrentInterimTranscript] = useState('')
-  const [vadDetecting, setVadDetecting] = useState(false)
   const interruptCounterRef = useRef(performance.now())
 
   // Initialize conversation service
@@ -273,7 +272,6 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
   const vad = useVADService({
     config: vadConfig,
     onVADResult: (result) => {
-      setVadDetecting(result.isSpeech)
       callbacks.onVADResult?.(result)
     },
     onSpeechStart: callbacks.onSpeechStart,
@@ -288,7 +286,7 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
         const interrupt = Date.now()
         // Handle barge-in if detected
         if (shouldTriggerBargeIn({ text: result.text, isUser: true, id: '', timestamp: interrupt })) {
-          if(tts.isSpeaking){tts.actions.stopSpeaking()}
+          if(tts.state.isSpeaking){tts.actions.stopSpeaking()}
           emotes.actions.onBargeIn()
           console.log('STT: Stop command detected - barge-in activated')
         }
@@ -312,6 +310,8 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
       } else {
         setCurrentInterimTranscript(result.text)
       }
+
+      console.log('STT: result:', result)
       callbacks.onSTTResult?.(result)
     },
     onInterimTranscript: (text) => {
@@ -321,18 +321,18 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
   })
 
   // Service coordination effects
-  useEffect(() => {
-    stt.actions.setDesired(vad.isDetecting)
-  }, [vadDetecting, stt.actions])
+  useEffect(() => { 
+    stt.actions.setDesired(vad.state.isDetecting)
+  }, [vad.state.isDetecting, stt.actions])
 
   useEffect(() => {
     // Always allow STT if barge-in is enabled, otherwise only allow if not speaking
     if (appConfig.bargeInEnabled) {
       stt.actions.setAllowed(true)
     } else {
-      stt.actions.setAllowed(!tts.isSpeaking.current)
+      stt.actions.setAllowed(!tts.state.isSpeaking)
     }
-  }, [appConfig.bargeInEnabled, tts.isSpeaking, stt.actions])
+  }, [appConfig.bargeInEnabled, tts.state.isSpeaking, stt.actions])
 
   // Convenience action implementations
   const submitMessage = useCallback(
@@ -341,7 +341,6 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
         const userMessage = message.trim()
 
         conversation.actions.addMessage(userMessage, true)
-        conversation.actions.clearCurrentMessage()
 
         const interrupt = Date.now()
         interruptCounterRef.current = interrupt
@@ -353,7 +352,6 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
           bargein: appConfig.bargeInEnabled,
           interrupt
         })
-        conversation.actions.clearCurrentMessage()
       }
     },
     [appConfig.bargeInEnabled, conversation.actions, llmService.actions]
@@ -371,12 +369,12 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
     const interrupt = Date.now()
     interruptCounterRef.current = interrupt
 
-    if (tts.isSpeaking) {
+    if (tts.state.isSpeaking) {
       tts.actions.stopSpeaking()
     }
 
     emotes.actions.onBargeIn()
-  }, [tts.isSpeaking, tts.actions, emotes])
+  }, [tts.state.isSpeaking, tts.actions, emotes])
 
   // Memoize the services object to prevent unnecessary re-renders
   const services = useMemo(
@@ -419,9 +417,9 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
 
       // Chat actions
       addMessage: conversation.actions.addMessage,
-      updateCurrentMessage: conversation.actions.updateCurrentMessage,
-      clearCurrentMessage: conversation.actions.clearCurrentMessage,
-
+      streamMessage: conversation.actions.streamMessage,
+      clearAllMessages: conversation.actions.clearAllMessages,
+      getMessagebyId: conversation.actions.getMessagebyId,
       // Convenience actions
       submitMessage,
       toggleMicrophone,
@@ -461,8 +459,8 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
       tts.actions.playAudioBuffer,
       tts.actions.getQueueStatus,
       conversation.actions.addMessage,
-      conversation.actions.updateCurrentMessage,
-      conversation.actions.clearCurrentMessage,
+      conversation.actions.streamMessage,
+      conversation.actions.clearAllMessages,
       submitMessage,
       toggleMicrophone,
       triggerBargein,
@@ -486,36 +484,34 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
 
   const state = useMemo(
     () => ({
-      vadIsListening: vad.isListening,
-      vadIsDetecting: vadDetecting,
-      sttIsListening: stt.isListening,
-      sttAllowed: stt.allowed,
-      sttDesired: stt.desired,
+      vadIsListening: vad.state.isListening,
+      vadIsDetecting: vad.state.isDetecting,
+      sttIsListening: stt.state.isListening,
+      sttAllowed: stt.state.allowed,
+      sttDesired: stt.state.desired,
       currentTranscript: currentInterimTranscript,
       llmReady: llmService.state.ready,
       llmLoading: llmService.state.loading,
       llmThinking: llmService.state.thinking,
       llmMessages: llmService.state.messages,
-      ttsIsSpeaking: tts.isSpeaking.current,
-      ttsAudioQueue: tts.audioQueue,
+      ttsIsSpeaking: tts.state.isSpeaking,
+      ttsAudioQueue: tts.state.audioQueue,
       messages: conversation.state.messages,
-      currentMessage: conversation.state.currentMessage
     }),
-    [
-      vad.isListening,
-      vadDetecting,
-      stt.isListening,
-      stt.allowed,
-      stt.desired,
+    [ 
+      vad.state.isListening,
+      vad.state.isDetecting,
+      stt.state.isListening,
+      stt.state.allowed,
+      stt.state.desired,
       currentInterimTranscript,
       llmService.state.ready,
       llmService.state.loading,
       llmService.state.thinking,
       llmService.state.messages,
-      tts.isSpeaking.current,
-      tts.audioQueue,
-      conversation.state.messages,
-      conversation.state.currentMessage
+      tts.state.isSpeaking,
+      tts.state.audioQueue,
+      conversation.state.messages,  
     ]
   )
 

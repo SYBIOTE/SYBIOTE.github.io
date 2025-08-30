@@ -67,9 +67,6 @@ export const useVisemeService = (initialConfig?: Partial<VisemeConfig>) => {
     setConfig((prev) => ({ ...prev, ...newConfig }))
   }, [])
 
-  const getConfig = useCallback(() => {
-    return config
-  }, [config])
 
   const getPerformanceMetrics = useCallback(() => {
     return {
@@ -96,15 +93,12 @@ export const useVisemeService = (initialConfig?: Partial<VisemeConfig>) => {
     [generateSequence, update, applyToRig, setupForVRM, setupForMorphTargets, reset, updateConfig]
   )
 
-  const getters = useMemo(
-    () => ({
-      getCurrentTargets,
-      getSequence,
-      getConfig,
-      getState: () => visemeStateRef.current
-    }),
-    [getCurrentTargets, getSequence, getConfig]
-  )
+  const state = useMemo(() => ({
+    viseme: visemeStateRef.current,
+    config: config    
+  }), [visemeStateRef.current, config])
+
+
 
   const debug = useMemo(() => ({
     getPerformanceMetrics,
@@ -114,9 +108,9 @@ export const useVisemeService = (initialConfig?: Partial<VisemeConfig>) => {
   return useMemo(
     () => ({
       actions,
-      getters,
+      state,
       debug
     }),
-    [actions, getters , debug]
+    [actions, state, debug]
   )
 }
