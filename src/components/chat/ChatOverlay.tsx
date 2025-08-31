@@ -16,20 +16,22 @@ export const ChatOverlay = memo(({
   agent,
 }: ChatOverlayProps) => {
   const [currentInputMessage, setCurrentInputMessage] = useState('')
+  const handleSubmit = useCallback((message: string) => {
+    if(shouldTriggerBargeIn({text: message, isUser: true, id: '', timestamp: 0})) {
+      agent.actions.triggerBargein()
+    }
+    agent.actions.submitMessage(message)
+    setCurrentInputMessage('')
+  }, [agent.actions, shouldTriggerBargeIn])
   
   const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       handleSubmit(currentInputMessage)
     }
-  }, [agent.actions, currentInputMessage])
+  }, [agent.actions, currentInputMessage, handleSubmit])
 
-  const handleSubmit = useCallback((message: string) => {
-    if(shouldTriggerBargeIn({text: message, isUser: true, id: '', timestamp: 0})) {
-      agent.actions.triggerBargein()
-    }
-    agent.actions.submitMessage(message)
-  }, [agent.actions])
+
 
   return (
     <>

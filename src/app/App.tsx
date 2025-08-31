@@ -1,7 +1,7 @@
 import type { XRStore } from '@react-three/xr'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef } from 'react'
 
-import { AvatarViewport } from '../components/scene/Viewport3D'
+import { Viewport3D } from '../components/scene/Viewport3D'
 import { ChatOverlay } from '../components/chat/ChatOverlay'
 import { LogoOverlay } from '../components/LogoOverlay'
 import { useAgent } from '../services/useAgent'
@@ -15,7 +15,6 @@ import { defaultLLMConfig } from '../services/llm/config/llmConfig'
 import { useSimpleStore } from '@hexafield/simple-store/react'
 import SectionNavRail from '../components/sections/SectionNavRail'
 import SettingsButton from '../components/settings/SettingsButton'
-import { type ConversationMessage } from '../services/conversation/conversationType'
 import { ControlOverlay } from '../components/control/ControlOverlay'
 
 export const config = {
@@ -55,7 +54,7 @@ export const App = () => {
   const handleAppStateChange = useCallback((newAppState: AppConfig) => {
     setAppState(newAppState)
     agentConfig.vad.microphoneEnabled = newAppState.microphone
-  }, [agentConfig])
+  }, [agentConfig, setAppState])
 
   return (
     <div
@@ -81,11 +80,12 @@ export const App = () => {
           width: '100%'
         }}
       >
-        <AvatarViewport
+        <Viewport3D
           sceneConfig={sceneConfig}
           visemeService={agent.services.visemes}
           emoteService={agent.services.emotes}
           animationService={agent.services.animations}
+          conversationService={agent.services.conversation}
           setXRStore={setXRStore}
         />
 

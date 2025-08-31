@@ -604,6 +604,16 @@
           "emotion": "excited"
         }
       ]
+    },
+    {
+      "trigger": "long",
+      "responses": [
+        {
+          "id": "long1",
+          "response": "This is a long message to test how subtitles handle extended text in the 3D scene. If you can read this entire sentence, the subtitle box is working as expected!",
+          "emotion": "helpful"
+        }
+      ]
     }
   ]
 } 

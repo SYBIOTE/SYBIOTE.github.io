@@ -51,14 +51,6 @@ export const useVisemeService = (initialConfig?: Partial<VisemeConfig>) => {
     []
   )
 
-  const getCurrentTargets = useCallback(() => {
-    return visemeStateRef.current.targets
-  }, [])
-
-  const getSequence = useCallback(() => {
-    return visemeStateRef.current.sequence
-  }, [])
-
   const reset = useCallback(() => {
     visemeStateRef.current = initializeVisemeState()
   }, [])
