@@ -1,11 +1,12 @@
 import type { XRStore } from '@react-three/xr'
-import { useCallback, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { Viewport3D } from '../components/scene/Viewport3D'
 import { ChatOverlay } from '../components/chat/ChatOverlay'
 import { LogoOverlay } from '../components/LogoOverlay'
 import { useAgent } from '../services/useAgent'
 import { useResponsiveLayout } from './layoutService'
+import LLMLoadingBar from '../components/LLMLoadingBar'
 import { sceneConfig } from './sceneTypes'
 import { AppConfigState, type AppConfig } from './appConfig'
 import { defaultVadConfig } from '../services/vad/vadConfig'
@@ -43,7 +44,16 @@ export const App = () => {
     [ appState.autoSubmitEnabled, appState.bargeInEnabled]
   )
 
-  const agent = useAgent(agentConfig)
+  const [statusState, setStatusState] = useState<{ color: 'ready' | 'loading' | 'error'; text: string }>({
+    color: 'loading',
+    text: 'Loading local model…'
+  })
+
+  const agent = useAgent(agentConfig, {
+    onLLMStatus: (status) => {
+      setStatusState({ color: status.color, text: status.text })
+    }
+  })
 
 
   const chatMessages = useMemo(
@@ -102,6 +112,11 @@ export const App = () => {
           xrStore={xrStore.current!}
         />
         <SettingsButton />
+        <LLMLoadingBar
+          statusText={statusState.text}
+          statusColor={statusState.color}
+          visible={agentConfig.llm.llm_provider === 'mlc'}
+        />
       </div>
     </div>
   )

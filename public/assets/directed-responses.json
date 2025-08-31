@@ -613,12 +613,12 @@
         },
         {
           "id": "default_fallback1",
-          "response": "I can help with Rahul's portfolio, services, resume, and contact. What would you like to explore?",
-          "emotion": "helpful"
+          "response": "My main capabilities are still loading. Could you please wait a moment?",
+          "emotion": "patient"
         },
         {
           "id": "default_fallback2",
-          "response": "Tell me what you're looking for—projects, experience, contact, or services.",
+          "response": "Let me think about that in the meantime we can discuss Rahuls' portfolio",
           "emotion": "confident"
         },
         {
@@ -628,17 +628,73 @@
         },
         {
           "id": "default_fallback4",
-          "response": "I'm here to help with anything on this site. How can I assist?",
+          "response": "I didnt quite understand that",
           "emotion": "welcoming"
         },
         {
           "id": "default_fallback5",
-          "response": "Ask me about featured projects, the resume, or how to get in touch.",
+          "response": "let me figure that out, still thinking about it",
           "emotion": "informative"
         },
         {
           "id": "default_fallback6",
-          "response": "Looking for something specific about Rahul's work? I can guide you.",
+          "response": "Yeah my main LLM is loading, it will load shortly please wait, im here to keep you company in the meantime",
+          "emotion": "supportive"
+        }
+      ]
+    },
+    {
+      "triggers": [
+        "contact", "get in touch", "reach out", "email", "phone",
+        "call", "hire", "availability", "freelance", "location",
+        "city", "where are you", "website", "site", "link"
+      ],
+      "responses": [
+        {
+          "id": "contact1",
+          "response": "You can email Rahul at ghoshr698@gmail.com or use the Contact section on this site.",
+          "emotion": "helpful"
+        },
+        {
+          "id": "contact2",
+          "response": "Rahul's phone is +91 9051186767. Email works best: ghoshr698@gmail.com.",
+          "emotion": "informative"
+        },
+        {
+          "id": "contact3",
+          "response": "Rahul is based in Bengaluru, India. Website: https://sybiote.github.io",
+          "emotion": "friendly"
+        },
+        {
+          "id": "contact4",
+          "response": "For quick replies, email ghoshr698@gmail.com. You can also open the Contact section to send a message.",
+          "emotion": "professional"
+        },
+        {
+          "id": "contact5",
+          "response": "Freelance: Available. Best contact: ghoshr698@gmail.com. Phone: +91 9051186767.",
+          "emotion": "confident"
+        }
+      ]
+    },
+    {
+      "triggers": [
+        "projects", "portfolio", "work", "showcase", "demos", "examples"
+      ],
+      "responses": [
+        {
+          "id": "projects1",
+          "response": "Featured projects include Godot Dojo, Wizard vs Robot, Mesh Slicer (Godot), C++ Raytracer, VR Horror Prototype, 3D Gesture Recognition, Godot Oculus Platform, MR Earth Viewer, and Narakashur.",
+          "emotion": "enthusiastic"
+        },
+        {
+          "id": "projects2",
+          "response": "Ask about any project by name—e.g., Narakashur, Godot Dojo, Mesh Slicer, or MR Earth Viewer—and I’ll share details.",
+          "emotion": "helpful"
+        },
+        {
+          "id": "projects3",
+          "response": "You can explore the Portfolio section for videos and descriptions of Rahul's work.",
           "emotion": "supportive"
         }
       ]
