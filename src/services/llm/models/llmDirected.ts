@@ -8,7 +8,9 @@ export interface DirectedResponse {
 }
 
 export interface TriggerGroup {
-  trigger: string
+  // Backward compatibility: support legacy single trigger as well as new multiple triggers
+  trigger?: string
+  triggers?: string[]
   responses: DirectedResponse[]
 }
 
@@ -38,21 +40,31 @@ async function loadDirectedResponses(): Promise<DirectedConfig> {
   }
 }
 
+function getTriggerList(group: TriggerGroup): string[] {
+  if (Array.isArray(group.triggers) && group.triggers.length > 0) return group.triggers
+  if (group.trigger) return [group.trigger]
+  return []
+}
+
 function findResponse(userMessage: string, config: DirectedConfig): DirectedResponse | null {
   const lowerMessage = userMessage.toLowerCase().trim()
 
-  // Find exact trigger match first
-  const exactMatch = config.triggers.find((triggerGroup) => triggerGroup.trigger.toLowerCase() === lowerMessage)
+  // Find exact trigger match first (any trigger in the set)
+  const exactMatch = config.triggers.find((group) => {
+    const triggers = getTriggerList(group).map((t) => t.toLowerCase())
+    return triggers.includes(lowerMessage)
+  })
   if (exactMatch) {
-    // Randomly select from available responses
     const randomIndex = Math.floor(Math.random() * exactMatch.responses.length)
     return exactMatch.responses[randomIndex]
   }
 
-  // Find partial trigger match
-  const partialMatch = config.triggers.find((triggerGroup) => lowerMessage.includes(triggerGroup.trigger.toLowerCase()))
+  // Find partial trigger match (message contains any trigger)
+  const partialMatch = config.triggers.find((group) => {
+    const triggers = getTriggerList(group).map((t) => t.toLowerCase())
+    return triggers.some((t) => lowerMessage.includes(t))
+  })
   if (partialMatch) {
-    // Randomly select from available responses
     const randomIndex = Math.floor(Math.random() * partialMatch.responses.length)
     return partialMatch.responses[randomIndex]
   }
@@ -61,11 +73,14 @@ function findResponse(userMessage: string, config: DirectedConfig): DirectedResp
 }
 
 function getDefaultResponse(config: DirectedConfig): DirectedResponse | null {
-  const defaultTrigger = config.triggers.find((triggerGroup) => triggerGroup.trigger === 'default')
-  if (defaultTrigger) {
-    // Randomly select from available default responses
-    const randomIndex = Math.floor(Math.random() * defaultTrigger.responses.length)
-    return defaultTrigger.responses[randomIndex]
+  // Look for a group that includes a 'default' trigger (case-insensitive)
+  const defaultGroup = config.triggers.find((group) => {
+    const triggers = getTriggerList(group).map((t) => t.toLowerCase())
+    return triggers.includes('default')
+  })
+  if (defaultGroup) {
+    const randomIndex = Math.floor(Math.random() * defaultGroup.responses.length)
+    return defaultGroup.responses[randomIndex]
   }
   return null
 }

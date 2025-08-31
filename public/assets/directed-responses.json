@@ -1,7 +1,10 @@
 {
   "triggers": [
     {
-      "trigger": "hello",
+      "triggers": [
+        "hello", "hi", "hey", "hey there", "hiya", "yo",
+        "hi there", "greetings", "what's up", "sup"
+      ],
       "responses": [
         {
           "id": "welcome1",
@@ -46,7 +49,10 @@
       ]
     },
     {
-      "trigger": "weather",
+      "triggers": [
+        "weather", "forecast", "rain", "sunny", "temperature",
+        "climate", "outside weather", "what's the weather", "weather like"
+      ],
       "responses": [
         {
           "id": "weather1",
@@ -81,7 +87,10 @@
       ]
     },
     {
-      "trigger": "help",
+      "triggers": [
+        "help", "assist", "support", "can you help", "need help",
+        "help me", "i need help", "question", "can you", "how do i"
+      ],
       "responses": [
         {
           "id": "help1",
@@ -126,7 +135,10 @@
       ]
     },
     {
-      "trigger": "name",
+      "triggers": [
+        "name", "who are you", "your name", "what's your name",
+        "who is this", "who am i talking to", "who are ya"
+      ],
       "responses": [
         {
           "id": "name1",
@@ -161,7 +173,10 @@
       ]
     },
     {
-      "trigger": "time",
+      "triggers": [
+        "time", "what time", "current time", "tell time", "clock",
+        "date and time", "what's the time"
+      ],
       "responses": [
         {
           "id": "time1",
@@ -196,7 +211,10 @@
       ]
     },
     {
-      "trigger": "thank",
+      "triggers": [
+        "thank", "thanks", "thank you", "thx", "much appreciated",
+        "appreciate it", "cheers"
+      ],
       "responses": [
         {
           "id": "thanks1",
@@ -241,7 +259,10 @@
       ]
     },
     {
-      "trigger": "bye",
+      "triggers": [
+        "bye", "goodbye", "see you", "see ya", "later",
+        "farewell", "cya", "talk later"
+      ],
       "responses": [
         {
           "id": "goodbye1",
@@ -286,7 +307,10 @@
       ]
     },
     {
-      "trigger": "wait",
+      "triggers": [
+        "wait", "hold on", "one moment", "loading", "still loading",
+        "booting", "starting", "initializing", "not ready"
+      ],
       "responses": [
         {
           "id": "loading1",
@@ -407,51 +431,14 @@
           "id": "ready8",
           "response": "Nearly ready! I'm excited to show you what I can do!",
           "emotion": "thrilled"
-        },
-        {
-          "id": "default1",
-          "response": "I'm still loading my full capabilities, but I'm here to help! Please bear with me while I get ready.",
-          "emotion": "apologetic"
-        },
-        {
-          "id": "default2",
-          "response": "I'm not quite ready yet, but I'm happy to chat! My full features will be available soon.",
-          "emotion": "patient"
-        },
-        {
-          "id": "default3",
-          "response": "Still getting everything set up, but I can provide some basic responses while I finish loading!",
-          "emotion": "optimistic"
-        },
-        {
-          "id": "default4",
-          "response": "I'm in the process of loading up! In the meantime, I can handle basic conversations.",
-          "emotion": "informative"
-        },
-        {
-          "id": "default5",
-          "response": "My systems are still initializing, but I'm happy to chat while I get ready!",
-          "emotion": "friendly"
-        },
-        {
-          "id": "default6",
-          "response": "I'm warming up my engines! Bear with me while I finish loading my full capabilities.",
-          "emotion": "playful"
-        },
-        {
-          "id": "default7",
-          "response": "Loading in progress! I can still help with basic questions while I get everything ready.",
-          "emotion": "helpful"
-        },
-        {
-          "id": "default8",
-          "response": "I'm getting there! Just a bit more time and I'll be fully operational.",
-          "emotion": "determined"
         }
       ]
     },
     {
-      "trigger": "how are you",
+      "triggers": [
+        "how are you", "how's it going", "how are ya", "how you doing",
+        "how do you feel", "what's up"
+      ],
       "responses": [
         {
           "id": "howareyou1",
@@ -486,7 +473,9 @@
       ]
     },
     {
-      "trigger": "good morning",
+      "triggers": [
+        "good morning", "morning", "gm", "good mornin"
+      ],
       "responses": [
         {
           "id": "goodmorning1",
@@ -516,7 +505,9 @@
       ]
     },
     {
-      "trigger": "good night",
+      "triggers": [
+        "good night", "goodnight", "night", "gn", "sleep well"
+      ],
       "responses": [
         {
           "id": "goodnight1",
@@ -546,7 +537,10 @@
       ]
     },
     {
-      "trigger": "awesome",
+      "triggers": [
+        "awesome", "great", "fantastic", "amazing", "excellent",
+        "wonderful", "brilliant", "nice"
+      ],
       "responses": [
         {
           "id": "awesome1",
@@ -576,7 +570,9 @@
       ]
     },
     {
-      "trigger": "cool",
+      "triggers": [
+        "cool", "nice", "sweet", "dope", "sick", "neat", "rad"
+      ],
       "responses": [
         {
           "id": "cool1",
@@ -606,12 +602,44 @@
       ]
     },
     {
-      "trigger": "long",
+      "triggers": [
+        "default"
+      ],
       "responses": [
         {
-          "id": "long1",
-          "response": "This is a long message to test how subtitles handle extended text in the 3D scene. If you can read this entire sentence, the subtitle box is working as expected!",
+          "id": "default_fallback0",
+          "response": "I didnt quite catch that. Could you please rephrase?",
+          "emotion": "friendly"
+        },
+        {
+          "id": "default_fallback1",
+          "response": "I can help with Rahul's portfolio, services, resume, and contact. What would you like to explore?",
           "emotion": "helpful"
+        },
+        {
+          "id": "default_fallback2",
+          "response": "Tell me what you're looking for—projects, experience, contact, or services.",
+          "emotion": "confident"
+        },
+        {
+          "id": "default_fallback3",
+          "response": "I didn't catch a specific request. Try asking about projects, skills, or how to reach Rahul.",
+          "emotion": "friendly"
+        },
+        {
+          "id": "default_fallback4",
+          "response": "I'm here to help with anything on this site. How can I assist?",
+          "emotion": "welcoming"
+        },
+        {
+          "id": "default_fallback5",
+          "response": "Ask me about featured projects, the resume, or how to get in touch.",
+          "emotion": "informative"
+        },
+        {
+          "id": "default_fallback6",
+          "response": "Looking for something specific about Rahul's work? I can guide you.",
+          "emotion": "supportive"
         }
       ]
     }
