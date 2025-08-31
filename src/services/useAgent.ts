@@ -2,7 +2,7 @@ import type { VRM } from '@pixiv/three-vrm'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { useAnimationService } from './animation/useAnimationService'
-import { useConversationService } from './conversation/ConversationService'
+import { useConversationService } from './conversation/useConversationService'
 import type { ConversationId, ConversationMessage } from './conversation/conversationType'
 import type { EmotionType, PerformanceData } from './emote/emoteTypes'
 import { useEmoteService } from './emote/useEmoteService'
