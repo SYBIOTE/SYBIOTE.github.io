@@ -7,7 +7,7 @@ import type { SceneConfig } from '../../app/sceneTypes'
 import type { useAnimationService } from '../../services/animation/useAnimationService'
 import type { useEmoteService } from '../../services/emote/useEmoteService'
 import type { useVisemeService } from '../../services/visemes/useVisemeService'
-import type { useConversationService } from '../../services/conversation/useConversationService'
+import type { useConversationService } from '../../services/conversation/ConversationService'
 
 interface AvatarViewportProps {
   sceneConfig: SceneConfig

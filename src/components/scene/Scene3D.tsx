@@ -10,7 +10,7 @@ import type { useEmoteService } from '../../services/emote/useEmoteService'
 import type { useVisemeService } from '../../services/visemes/useVisemeService'
 import { AvatarModel } from './avatar/AvatarModel'
 import SubtitleBox from './SubtitleBox3d'
-import type { useConversationService } from '../../services/conversation/useConversationService'
+import type { useConversationService } from '../../services/conversation/ConversationService'
 
 interface Scene3DProps {
   sceneConfig: SceneConfig
