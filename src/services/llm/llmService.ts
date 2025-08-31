@@ -39,11 +39,19 @@ import { llmCloud } from './models/llmCloud'
 import { llmDirected } from './models/llmDirected'
 import { llmLocal } from './models/llmLocal'
 import { llmOllama } from './models/llmOllama'
-import { defaultLLMConfig, SYSTEM_PROMPT, type LLMConfig,  } from './config/llmConfig'
+import { defaultLLMConfig, SYSTEM_PROMPT, type LLMConfig, AVAILABLE_LOCAL_MODELS } from './config/llmConfig'
 import type { LLMStatusUpdate, LLMResponse, LLMState, LLMPerformRequest } from './llmTypes'
 
-// Constants from the original implementation
-const selectedModel = 'Llama-3.2-3B-Instruct-q4f16_1-MLC'
+// Pick a conservative default model for low-memory devices
+function pickConservativeLocalModel(cfg: LLMConfig): string {
+
+  const deviceMemoryGb = (navigator as unknown as { deviceMemory?: number }).deviceMemory || 4
+  // Prefer the smallest model on <=4GB, modest model on <=8GB
+  if (deviceMemoryGb <= 4) return 'SmolLM2-360M-Instruct-q4f16_1-MLC'
+  if (deviceMemoryGb <= 8) return 'gemma-2-2b-it-q4f16_1-MLC'
+  // Fall back to configured model or a reasonable mid-size
+  return cfg.mlc_model || 'Llama-3.2-3B-Instruct-q4f16_1-MLC'
+}
 
 // Worker string for WebLLM
 const workerString = `
@@ -65,7 +73,7 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
     thinking: false,
     ready: false,
     loading: false,
-    selectedModel,
+    selectedModel: pickConservativeLocalModel(config),
     engine: null,
     _latest_interrupt: 0
   })
@@ -90,6 +98,23 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
     setState((prev) => ({ ...prev, loading: true }))
 
     try {
+      // Guard: require WebGPU support
+      const hasWebGPU = typeof (navigator as unknown as { gpu?: unknown }).gpu !== 'undefined'
+      if (!hasWebGPU) {
+        console.warn('LLM: WebGPU not available, skipping local model load and using fallback responses')
+        setState((prev) => ({ ...prev, loading: false, ready: false, engine: null }))
+        if (onStatus) {
+          onStatus({ color: 'error', text: 'WebGPU not available; using fallback responses' })
+        }
+        return
+      }
+
+      // Choose a safe model for the current device unless explicitly overridden
+      const modelToLoad = pickConservativeLocalModel(config)
+      const safeModel = AVAILABLE_LOCAL_MODELS.includes(modelToLoad) ? modelToLoad : pickConservativeLocalModel(config)
+      
+      setState((prev) => ({ ...prev, selectedModel: safeModel }))
+      
       const initProgressCallback = (status: { text: string }) => {
         if (onStatus) {
           onStatus({
@@ -118,7 +143,7 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
       if (onStatus) {
         onStatus({
           color: state.ready ? 'ready' : 'loading',
-          text: `Loading local model ${selectedModel}`
+          text: `Loading local model ${safeModel}`
         })
       }
 
@@ -127,7 +152,7 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
         type: 'module'
       })
 
-      const engine = await webllm.CreateWebWorkerMLCEngine(worker, selectedModel, { initProgressCallback })
+      const engine = await webllm.CreateWebWorkerMLCEngine(worker, safeModel, { initProgressCallback })
 
       completed(engine)
     } catch (err) {

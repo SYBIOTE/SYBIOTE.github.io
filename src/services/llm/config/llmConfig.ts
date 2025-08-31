@@ -4,11 +4,11 @@ export const SYSTEM_PROMPT = getSystemPrompt()
 
 export const DIRECTED_RESPONSES_URL = '/assets/directed-responses.json'
 export const AVAILABLE_LOCAL_MODELS = [
-    'gemma-2-2b-it-q4f16_1-MLC',
-    'Llama-3.1-8B-Instruct-q4f32_1-MLC',
-    'Llama-3.2-3B-Instruct-q4f16_1-MLC',
-    'SmolLM2-360M-Instruct-q4f16_1-MLC'
-  ]
+  'SmolLM2-360M-Instruct-q4f16_1-MLC',
+  'gemma-2-2b-it-q4f16_1-MLC',
+  'Llama-3.2-3B-Instruct-q4f16_1-MLC',
+  'Llama-3.1-8B-Instruct-q4f32_1-MLC'
+]
   
   export const COMMON_REMOTE_MODELS = [
     'gpt-4',
@@ -46,6 +46,7 @@ export interface LLMConfig {
 
   export const defaultLLMConfig: LLMConfig = {
     llm_provider: import.meta.env.VITE_LLM_PROVIDER || 'mlc',
+    // Default to the smallest local model for broader device compatibility
     mlc_model: import.meta.env.VITE_LLM_LOCAL_MODEL || 'Llama-3.2-3B-Instruct-q4f16_1-MLC',
     ollama_url: import.meta.env.VITE_LLM_OLLAMA_API_URL || '',
     ollama_model: import.meta.env.VITE_LLM_OLLAMA_MODEL || 'gemma3:1b',

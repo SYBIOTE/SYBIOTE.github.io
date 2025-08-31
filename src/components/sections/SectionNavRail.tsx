@@ -1,4 +1,4 @@
-import { useState, type ReactNode, type CSSProperties } from 'react'
+import { useState, type ReactNode } from 'react'
 import { getSectionIcon } from '../common/icons'
 import { SectionPanel } from '../common/SectionPanel'
 import { ChatPanel } from '../chat/ChatPanel'
