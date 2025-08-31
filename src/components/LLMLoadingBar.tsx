@@ -83,7 +83,7 @@ export const LLMLoadingBar = ({ statusText = 'Loading local model…', statusCol
   }
 
   const tooltipText = useMemo(() => {
-    if (status === 'idle') return ''
+    if (status === 'idle') return 'Initializing'
     if (status === 'ready') return 'Local model ready'
     if (status === 'error') return 'Failed to load model'
 
