@@ -265,6 +265,50 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
               // Use global volume if available, otherwise fall back to config volume
               utterance.volume = (window as any).globalTTSVolume ?? config.volume
 
+              // Parse voice gender from config and select appropriate voice
+              const voices = speechSynthesis.getVoices()
+              const isMale = config.voice.toLowerCase().includes('male')
+              const isFemale = config.voice.toLowerCase().includes('female')
+
+              // Helper function to find voice by language and gender
+              const findVoiceByLang = (lang: string, isMale: boolean) => {
+                return voices.find(voice => {
+                  if (voice.lang !== lang) return false
+                  
+                  const name = voice.name.toLowerCase()
+                  if (isMale) {
+                    // For male voices, look for male indicators or exclude female indicators
+                    return name.includes('male') || name.includes('rishi') || 
+                          (!name.includes('female') && !name.includes('veena') && !name.includes('alice'))
+                  } else {
+                    // For female voices, look for female indicators
+                    return name.includes('female') || name.includes('veena') || name.includes('alice')
+                  }
+                })
+              }
+
+              if (isMale) {
+                // Priority: Indian English -> UK English -> US English -> Default
+                const maleVoice = findVoiceByLang('en-IN', true) || 
+                                findVoiceByLang('en-GB', true) || 
+                                findVoiceByLang('en-US', true) ||
+                                voices.find(v => v.name.toLowerCase().includes('male'))
+                
+                if (maleVoice) {
+                  utterance.voice = maleVoice
+                  console.log('TTS: Using male voice:', maleVoice.name, maleVoice.lang)
+                }
+              } else if (isFemale) {
+                const femaleVoice = findVoiceByLang('en-IN', false) || 
+                                  findVoiceByLang('en-GB', false) || 
+                                  findVoiceByLang('en-US', false) ||
+                                  voices.find(v => v.name.toLowerCase().includes('female'))
+                
+                if (femaleVoice) {
+                  utterance.voice = femaleVoice
+                  console.log('TTS: Using female voice:', femaleVoice.name, femaleVoice.lang)
+                }
+              }
               utterance.onend = () => resolve()
               utterance.onerror = (event) => reject(new Error(`Browser TTS Error: ${event.error}`))
 
