@@ -54,7 +54,9 @@ export const ChatBubble = ({ message }: ChatBubbleProps) => {
             : '1px solid rgba(255,255,255,0.15)',
           boxShadow: '0 0.125rem 0.25rem rgba(0,0,0,0.04)',
           fontSize: '0.875rem',
-          lineHeight: '1.4'
+          lineHeight: '1.4',
+          transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          cursor: message.isUser ? 'pointer' : 'default'
         }}
       >
         <div style={{ marginBottom: '0.125rem', fontSize: '0.625rem', opacity: 0.7 }}>

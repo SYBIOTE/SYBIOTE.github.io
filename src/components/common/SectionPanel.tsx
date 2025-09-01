@@ -139,9 +139,7 @@ export const SectionPanel = ({
             borderTopLeftRadius: '24px',
             borderBottomLeftRadius: '24px',
             // Blue gradient effect from right to left, capped at 20% - shows when panel is open
-            background: visible 
-              ? 'linear-gradient(270deg, rgba(30,136,229,0.08) 0%, rgba(30,136,229,0.01) 10%, transparent 20%)'
-              : 'transparent',
+            background: 'transparent',
             transition: 'background 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
             transitionDelay: visible ? '0.2s' : '0s',
             pointerEvents: 'none', // Allow clicks to pass through
@@ -179,20 +177,27 @@ export const SectionPanel = ({
               alignItems: 'center',
               justifyContent: 'center',
               background: 'transparent',
-              border: 'none',
+              border: '1px solid rgba(255,255,255,0.15)',
               color: '#fff',
               cursor: 'pointer',
               padding: '0.5rem',
               borderRadius: '9999px',
-              transition: 'color 0.3s ease',
+              transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
               minWidth: '32px',
-              minHeight: '32px'
+              minHeight: '32px',
+              boxShadow: 'none'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.color = '#fff'
+              e.currentTarget.style.background = 'linear-gradient(135deg, rgba(30,136,229,0.3) 0%, rgba(30,136,229,0.15) 100%)'
+              e.currentTarget.style.borderColor = 'rgba(30,136,229,0.4)'
+              e.currentTarget.style.transform = 'scale(1.05) translateY(-2px)'
+              e.currentTarget.style.boxShadow = '0 0.5rem 1rem rgba(30,136,229,0.25)'
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.color = '#fff'
+              e.currentTarget.style.background = 'transparent'
+              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'
+              e.currentTarget.style.transform = 'scale(1) translateY(0)'
+              e.currentTarget.style.boxShadow = 'none'
             }}
           >
             <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">

@@ -106,7 +106,25 @@ const PortfolioCard = ({ item, onImageClick }: PortfolioCardProps) => {
   }
   
   return (
-    <div style={showVideo && item.videoId ? cardVideo : (item.image || item.videoId) ? cardClickable : card}>
+    <div 
+      style={showVideo && item.videoId ? cardVideo : (item.image || item.videoId) ? cardClickable : card}
+      onMouseEnter={(e) => {
+        if (!showVideo) {
+          e.currentTarget.style.background = 'radial-gradient(ellipse at center, rgba(255,255,255,0.02) 0%, rgba(255, 255, 255, 0.02) 70%, rgba(30,136,229,0.12) 100%)'
+          e.currentTarget.style.borderColor = 'rgba(30,136,229,0.3)'
+          e.currentTarget.style.transform = 'translateY(-2px)'
+          e.currentTarget.style.boxShadow = '0 0.5rem 1rem rgba(30,136,229,0.15)'
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!showVideo) {
+          e.currentTarget.style.background = 'rgba(255,255,255,0.06)'
+          e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)'
+          e.currentTarget.style.transform = 'translateY(0)'
+          e.currentTarget.style.boxShadow = 'none'
+        }
+      }}
+    >
       {showVideo && item.videoId ? (
         <div style={{ ...videoWrapper, marginBottom: '0.5rem' }}>
           <iframe

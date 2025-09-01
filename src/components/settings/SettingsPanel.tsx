@@ -71,7 +71,9 @@ const closeButton: CSSProperties = {
   padding: '0.5rem',
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'center'
+  justifyContent: 'center',
+  transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+  boxShadow: 'none'
 }
 
 const section: CSSProperties = {
@@ -104,19 +106,26 @@ const slider: CSSProperties = {
   width: '120px',
   height: '6px',
   borderRadius: '3px',
-  background: 'rgba(255, 255, 255, 0.2)',
+  background: 'linear-gradient(90deg, rgba(30,136,229,0.3) 0%, rgba(30,136,229,0.1) 100%)',
   outline: 'none',
-  cursor: 'pointer'
+  cursor: 'pointer',
+  border: '1px solid rgba(30,136,229,0.2)',
+  transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+  boxShadow: 'none'
 }
 
 const select: CSSProperties = {
-  background: 'rgba(255, 255, 255, 0.1)',
-  border: '1px solid rgba(255, 255, 255, 0.2)',
-  borderRadius: '6px',
+  background: 'linear-gradient(135deg, rgba(30,136,229,0.15) 0%, rgba(30,136,229,0.05) 100%)',
+  border: '1px solid rgba(30,136,229,0.3)',
+  borderRadius: '8px',
   color: '#fff',
-  padding: '0.5rem',
+  padding: '0.6rem 0.8rem',
   fontSize: '0.9rem',
-  cursor: 'pointer'
+  cursor: 'pointer',
+  transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+  boxShadow: '0 0.125rem 0.25rem rgba(30,136,229,0.1)',
+  backdropFilter: 'blur(8px)',
+  minWidth: '140px'
 }
 
 const toggle: CSSProperties = {
@@ -126,12 +135,15 @@ const toggle: CSSProperties = {
   background: 'rgba(255, 255, 255, 0.2)',
   borderRadius: '12px',
   cursor: 'pointer',
-  transition: 'background 200ms ease'
+  transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+  border: '1px solid rgba(255, 255, 255, 0.15)',
+  boxShadow: 'none'
 }
 
 const toggleActive: CSSProperties = {
   ...toggle,
-  background: 'rgba(132, 134, 136, 0.41)'
+  background: 'linear-gradient(135deg, rgba(30,136,229,0.3) 0%, rgba(30,136,229,0.15) 100%)',
+  borderColor: 'rgba(30,136,229,0.4)'
 }
 
 const toggleThumb: CSSProperties = {
@@ -169,6 +181,19 @@ export const SettingsPanel = ({ isOpen, onClose }: SettingsPanelProps) => {
       if (savedSettings) {
         const parsed = JSON.parse(savedSettings) as Partial<AppSettings>
         setSettings(prev => ({ ...prev, ...parsed, language: locale }))
+        
+        // Initialize volume for existing audio elements
+        if (parsed.volume !== undefined) {
+          const volumeValue = parsed.volume / 100
+          const audioElements = document.querySelectorAll('audio, video')
+          audioElements.forEach((element: any) => {
+            if (element.volume !== undefined) {
+              element.volume = volumeValue
+            }
+          })
+          ;(window as any).globalVolume = volumeValue
+          ;(window as any).globalTTSVolume = volumeValue
+        }
       }
     } catch (error) {
       console.warn('Could not load settings:', error)
@@ -190,6 +215,34 @@ export const SettingsPanel = ({ isOpen, onClose }: SettingsPanelProps) => {
     // Special handling for language changes
     if (key === 'language') {
       setLocale(value as SupportedLocale)
+    }
+    
+    // Special handling for volume changes
+    if (key === 'volume') {
+      const volumeValue = (value as number) / 100
+      
+      // Set volume for all audio elements on the page
+      const audioElements = document.querySelectorAll('audio, video')
+      audioElements.forEach((element: any) => {
+        if (element.volume !== undefined) {
+          element.volume = volumeValue
+        }
+      })
+      
+      // Store volume in global variables for other components to use
+      ;(window as any).globalVolume = volumeValue
+      ;(window as any).globalTTSVolume = volumeValue
+      
+      // Update TTS volume for browser speech synthesis
+      if ('speechSynthesis' in window) {
+        // Store the volume for future speech synthesis calls
+        ;(window as any).speechSynthesisVolume = volumeValue
+      }
+      
+      // Dispatch custom event for volume change
+      window.dispatchEvent(new CustomEvent('volumeChanged', { 
+        detail: { volume: volumeValue, volumePercent: value } 
+      }))
     }
   }
 
@@ -225,7 +278,22 @@ export const SettingsPanel = ({ isOpen, onClose }: SettingsPanelProps) => {
             <SettingsIcon size="1.5rem" />
             <h2 style={title}>{t("sections.settings")}</h2>
           </div>
-          <button style={closeButton} onClick={onClose}>
+          <button 
+            style={closeButton} 
+            onClick={onClose}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'linear-gradient(135deg, rgba(30,136,229,0.3) 0%, rgba(30,136,229,0.15) 100%)'
+              e.currentTarget.style.borderColor = 'rgba(30,136,229,0.4)'
+              e.currentTarget.style.transform = 'scale(1.05) translateY(-2px)'
+              e.currentTarget.style.boxShadow = '0 0.5rem 1rem rgba(30,136,229,0.25)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'
+              e.currentTarget.style.transform = 'scale(1) translateY(0)'
+              e.currentTarget.style.boxShadow = 'none'
+            }}
+          >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="18" y1="6" x2="6" y2="18" />
               <line x1="6" y1="6" x2="18" y2="18" />
@@ -244,6 +312,18 @@ export const SettingsPanel = ({ isOpen, onClose }: SettingsPanelProps) => {
               value={settings.volume}
               onChange={(e) => updateSetting('volume', parseInt(e.target.value))}
               style={slider}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'linear-gradient(90deg, rgba(30,136,229,0.5) 0%, rgba(30,136,229,0.2) 100%)'
+                e.currentTarget.style.borderColor = 'rgba(30,136,229,0.4)'
+                e.currentTarget.style.transform = 'translateY(-2px)'
+                e.currentTarget.style.boxShadow = '0 0.5rem 1rem rgba(30,136,229,0.15)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'linear-gradient(90deg, rgba(30,136,229,0.3) 0%, rgba(30,136,229,0.1) 100%)'
+                e.currentTarget.style.borderColor = 'rgba(30,136,229,0.2)'
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = 'none'
+              }}
             />
             <span style={{ ...settingLabel, minWidth: '3ch', textAlign: 'right' }}>
               {settings.volume}%
@@ -254,6 +334,22 @@ export const SettingsPanel = ({ isOpen, onClose }: SettingsPanelProps) => {
             <div
               style={settings.autoPlay ? toggleActive : toggle}
               onClick={() => updateSetting('autoPlay', !settings.autoPlay)}
+              onMouseEnter={(e) => {
+                if (!settings.autoPlay) {
+                  e.currentTarget.style.background = 'radial-gradient(ellipse at center, rgba(255,255,255,0.02) 0%, rgba(255, 255, 255, 0.02) 70%, rgba(30,136,229,0.12) 100%)'
+                  e.currentTarget.style.borderColor = 'rgba(30,136,229,0.3)'
+                  e.currentTarget.style.transform = 'translateY(-2px)'
+                  e.currentTarget.style.boxShadow = '0 0.5rem 1rem rgba(30,136,229,0.15)'
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!settings.autoPlay) {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.15)'
+                  e.currentTarget.style.transform = 'translateY(0)'
+                  e.currentTarget.style.boxShadow = 'none'
+                }
+              }}
             >
               <div style={settings.autoPlay ? toggleThumbActive : toggleThumb} />
             </div>
@@ -268,9 +364,26 @@ export const SettingsPanel = ({ isOpen, onClose }: SettingsPanelProps) => {
               style={select}
               value={settings.language}
               onChange={(e) => updateSetting('language', e.target.value as SupportedLocale)}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'linear-gradient(135deg, rgba(30,136,229,0.3) 0%, rgba(30,136,229,0.15) 100%)'
+                e.currentTarget.style.borderColor = 'rgba(30,136,229,0.5)'
+                e.currentTarget.style.transform = 'translateY(-2px)'
+                e.currentTarget.style.boxShadow = '0 0.5rem 1rem rgba(30,136,229,0.25)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'linear-gradient(135deg, rgba(30,136,229,0.15) 0%, rgba(30,136,229,0.05) 100%)'
+                e.currentTarget.style.borderColor = 'rgba(30,136,229,0.3)'
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = '0 0.125rem 0.25rem rgba(30,136,229,0.1)'
+              }}
             >
               {languages.map((lang) => (
-                <option key={lang.code} value={lang.code} style={{ background: '#374151' }}>
+                <option key={lang.code} value={lang.code} style={{ 
+                  background: 'linear-gradient(135deg, rgba(30,136,229,0.2) 0%, rgba(30,136,229,0.1) 100%)',
+                  color: '#fff',
+                  border: '1px solid rgba(30,136,229,0.3)',
+                  padding: '0.5rem'
+                }}>
                   {lang.name}
                 </option>
               ))}
@@ -285,6 +398,22 @@ export const SettingsPanel = ({ isOpen, onClose }: SettingsPanelProps) => {
             <div
               style={settings.reducedMotion ? toggleActive : toggle}
               onClick={() => updateSetting('reducedMotion', !settings.reducedMotion)}
+              onMouseEnter={(e) => {
+                if (!settings.reducedMotion) {
+                  e.currentTarget.style.background = 'radial-gradient(ellipse at center, rgba(255,255,255,0.02) 0%, rgba(255, 255, 255, 0.02) 70%, rgba(30,136,229,0.12) 100%)'
+                  e.currentTarget.style.borderColor = 'rgba(30,136,229,0.3)'
+                  e.currentTarget.style.transform = 'translateY(-2px)'
+                  e.currentTarget.style.boxShadow = '0 0.5rem 1rem rgba(30,136,229,0.15)'
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!settings.reducedMotion) {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.15)'
+                  e.currentTarget.style.transform = 'translateY(0)'
+                  e.currentTarget.style.boxShadow = 'none'
+                }
+              }}
             >
               <div style={settings.reducedMotion ? toggleThumbActive : toggleThumb} />
             </div>

@@ -55,9 +55,8 @@ export const ControlPanel = memo(({
     >
       <div
         style={{
-          background: isVisible 
-            ? 'linear-gradient(0deg, rgba(30,136,229,0.25) 0%, rgba(75, 108, 140, 0.08) 10% , transparent 20%)'
-            : 'rgba(255,255,255,0.06)',
+        
+          background: 'rgba(255,255,255,0.06)',
           backdropFilter: 'blur(12px)',
           border: '1px solid rgba(255,255,255,0.15)',
           color: '#FFFFFF',

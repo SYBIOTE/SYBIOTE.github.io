@@ -19,7 +19,9 @@ const sectionCard: CSSProperties = {
   padding: '0.75rem 0.85rem',
   marginBottom: '0.6rem',
   backdropFilter: 'blur(8px)',
-  transition: 'border-color 0.2s ease, background 0.2s ease'
+  transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+  cursor: 'pointer',
+  boxShadow: 'none'
 }
 
 const subTitle: CSSProperties = {
@@ -53,7 +55,21 @@ interface SectionCardProps {
 }
 
 const SectionCard = ({ title, children }: SectionCardProps) => (
-  <div style={sectionCard}>
+  <div 
+    style={sectionCard}
+    onMouseEnter={(e) => {
+      e.currentTarget.style.background = 'radial-gradient(ellipse at center, rgba(255,255,255,0.02) 0%, rgba(255, 255, 255, 0.02) 70%, rgba(30,136,229,0.12) 100%)'
+      e.currentTarget.style.borderColor = 'rgba(30,136,229,0.3)'
+      e.currentTarget.style.transform = 'translateY(-2px)'
+      e.currentTarget.style.boxShadow = '0 0.5rem 1rem rgba(30,136,229,0.15)'
+    }}
+    onMouseLeave={(e) => {
+      e.currentTarget.style.background = 'rgba(126, 126, 126, 0.19)'
+      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'
+      e.currentTarget.style.transform = 'translateY(0)'
+      e.currentTarget.style.boxShadow = 'none'
+    }}
+  >
     <div style={subTitle}>{title}</div>
     {children}
   </div>

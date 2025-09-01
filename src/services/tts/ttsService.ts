@@ -73,8 +73,15 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
         .decodeAudioData(audioBuffer.slice(0))
         .then((decodedAudio) => {
           const source = audioContext.createBufferSource()
+          const gainNode = audioContext.createGain()
+          
+          // Use global volume if available, otherwise use config volume
+          const volume = (window as any).globalTTSVolume ?? config.volume
+          gainNode.gain.value = volume
+          
           source.buffer = decodedAudio
-          source.connect(audioContext.destination)
+          source.connect(gainNode)
+          gainNode.connect(audioContext.destination)
 
           source.onended = () => {
             resolve()
@@ -87,7 +94,7 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
           reject(error)
         })
     })
-  }, [])
+  }, [config.volume])
 
   // Generate audio using browser speech synthesis
   const generateBrowserAudio = useCallback(async (_message: QueuedMessage) => {
@@ -255,7 +262,8 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
               const utterance = new SpeechSynthesisUtterance(nextMessage.text)
               utterance.rate = config.speed
               utterance.pitch = config.pitch
-              utterance.volume = config.volume
+              // Use global volume if available, otherwise fall back to config volume
+              utterance.volume = (window as any).globalTTSVolume ?? config.volume
 
               utterance.onend = () => resolve()
               utterance.onerror = (event) => reject(new Error(`Browser TTS Error: ${event.error}`))

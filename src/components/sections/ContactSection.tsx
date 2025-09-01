@@ -56,7 +56,8 @@ const buttonStyle: CSSProperties = {
   backdropFilter: 'blur(10px)',
   fontSize: '0.9rem',
   fontWeight: 500,
-  transition: 'all 0.2s ease'
+  transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+  boxShadow: 'none'
 }
 
 // Add CSS animation keyframes
@@ -221,6 +222,22 @@ export const ContactSection = () => {
               ...buttonStyle, 
               opacity: isSubmitting ? 0.6 : 1,
               cursor: isSubmitting ? 'not-allowed' : 'pointer'
+            }}
+            onMouseEnter={(e) => {
+              if (!isSubmitting) {
+                e.currentTarget.style.background = 'linear-gradient(135deg, rgba(30,136,229,0.3) 0%, rgba(30,136,229,0.15) 100%)'
+                e.currentTarget.style.borderColor = 'rgba(30,136,229,0.4)'
+                e.currentTarget.style.transform = 'scale(1.05) translateY(-2px)'
+                e.currentTarget.style.boxShadow = '0 0.5rem 1rem rgba(30,136,229,0.25)'
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isSubmitting) {
+                e.currentTarget.style.background = 'rgba(255,255,255,0.1)'
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'
+                e.currentTarget.style.transform = 'scale(1) translateY(0)'
+                e.currentTarget.style.boxShadow = 'none'
+              }
             }}
           >
             {isSubmitting ? t("contact.form.sendingButton") || "Sending..." : t("contact.form.sendButton")}

@@ -8,7 +8,7 @@ const container: CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   padding: '0.75rem 0rem',
-  color: 'rgba(240, 245, 255, 0.9)',
+  color: 'rgba(240, 245, 255, 0.2)',
   overflowY: 'auto',
   overflowX: 'hidden'
 }
@@ -25,14 +25,16 @@ const card: CSSProperties = {
   borderRadius: '12px',
   padding: '0.75rem',
   backdropFilter: 'blur(8px)',
-  transition: 'transform 0.2s ease, border-color 0.2s ease, background 0.2s ease',
-  cursor: 'pointer'
+  transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+  cursor: 'pointer',
+  boxShadow: 'none'
 }
 
 const cardHover: CSSProperties = {
   transform: 'translateY(-2px)',
-  borderColor: 'rgba(255,255,255,0.18)',
-  background: 'rgba(255,255,255,0.1)'
+  borderColor: 'rgba(30,136,229,0.3)',
+  background: 'radial-gradient(ellipse at center, rgba(255,255,255,0.02) 0%, rgba(255, 255, 255, 0.02) 70%, rgba(30,136,229,0.12) 100%)',
+  boxShadow: '0 0.5rem 1rem rgba(30,136,229,0.15)'
 }
 
 
