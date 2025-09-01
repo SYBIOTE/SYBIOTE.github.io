@@ -1,5 +1,5 @@
 import type { XRStore } from '@react-three/xr'
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { Viewport3D } from '../components/scene/Viewport3D'
 import { ChatOverlay } from '../components/chat/ChatOverlay'
@@ -17,6 +17,7 @@ import { useSimpleStore } from '@hexafield/simple-store/react'
 import SectionNavRail from '../components/sections/SectionNavRail'
 import SettingsButton from '../components/settings/SettingsButton'
 import { ControlOverlay } from '../components/control/ControlOverlay'
+import { initializeViewport } from '../utils/viewportUtils'
 
 export const config = {
   vad: defaultVadConfig,
@@ -33,6 +34,12 @@ export const App = () => {
   const [appState, setAppState] = useSimpleStore(AppConfigState)
   const setXRStore = useCallback((store: XRStore) => {
     xrStore.current = store
+  }, [])
+
+  // Initialize viewport utilities for mobile browser compatibility
+  useEffect(() => {
+    const cleanup = initializeViewport()
+    return cleanup
   }, [])
 
   const agentConfig = useMemo(
@@ -71,7 +78,7 @@ export const App = () => {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        height: '100vh',
+        height: '100dvh', // Dynamic viewport height for mobile browsers
         width: '100vw',
         maxWidth: '100vw',
         overflow: 'hidden',
@@ -83,9 +90,9 @@ export const App = () => {
         boxSizing: 'border-box',
         // Mobile-specific optimizations
         ...(isMobile && {
-          height: '100vh',
+          height: '100dvh', // Use dynamic viewport height
           width: '100vw',
-          maxHeight: '100vh',
+          maxHeight: '100dvh',
           maxWidth: '100vw',
           position: 'fixed',
           top: 0,
@@ -106,15 +113,15 @@ export const App = () => {
           height: '100%',
           width: '100%',
           minHeight: 0, // Allow flex item to shrink
-          maxHeight: '100vh',
+          maxHeight: '100dvh', // Use dynamic viewport height
           maxWidth: '100vw',
           overflow: 'hidden',
           boxSizing: 'border-box',
           // Mobile-specific viewport sizing
           ...(isMobile && {
-            height: '100vh',
+            height: '100dvh', // Use dynamic viewport height
             width: '100vw',
-            maxHeight: '100vh',
+            maxHeight: '100dvh',
             maxWidth: '100vw'
           }),
           // Desktop viewport sizing
