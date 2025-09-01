@@ -8,7 +8,7 @@ const container: CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   padding: '0.75rem 0rem',
-  color: '#E6EAF2',
+  color: 'rgba(240, 245, 255, 0.9)',
   overflowY: 'auto',
   overflowX: 'hidden',
   position: 'relative'
@@ -22,13 +22,13 @@ const grid: CSSProperties = {
 
 const card: CSSProperties = {
   position: 'relative',
-  background: 'rgba(255,255,255,0.04)',
-  border: '1px solid rgba(255,255,255,0.08)',
+  background: 'rgba(255,255,255,0.06)',
+  border: '1px solid rgba(255,255,255,0.12)',
   borderRadius: '12px',
   padding: '0.65rem',
   backdropFilter: 'blur(8px)',
   overflow: 'hidden',
-  transition: 'transform 0.2s ease, border-color 0.2s ease'
+  transition: 'transform 0.2s ease, border-color 0.2s ease, background 0.2s ease'
 }
 
 const cardClickable: CSSProperties = {
@@ -143,8 +143,18 @@ const PortfolioCard = ({ item, onImageClick }: PortfolioCardProps) => {
           )}
         </div>
       ) : null}
-      <div style={{ fontWeight: 600 }}>{t(`portfolio.items.${item.id}.title`)}</div>
-      <div style={{ color: '#A8B3C8', fontSize: '0.9rem', marginTop: '0.25rem' }}>
+      <div style={{ 
+        fontWeight: 600, 
+        color: 'rgba(255, 255, 255, 0.95)',
+        fontSize: '1rem',
+        lineHeight: 1.3
+      }}>{t(`portfolio.items.${item.id}.title`)}</div>
+      <div style={{ 
+        color: 'rgba(220, 230, 255, 0.8)', 
+        fontSize: '0.9rem', 
+        marginTop: '0.25rem',
+        lineHeight: 1.4
+      }}>
         {t(`portfolio.items.${item.id}.description`)}
       </div>
     </div>

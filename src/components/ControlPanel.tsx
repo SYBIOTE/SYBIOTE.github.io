@@ -55,7 +55,9 @@ export const ControlPanel = memo(({
     >
       <div
         style={{
-          background: 'rgba(255,255,255,0.06)',
+          background: isVisible 
+            ? 'linear-gradient(0deg, rgba(30,136,229,0.25) 0%, rgba(75, 108, 140, 0.08) 10% , transparent 20%)'
+            : 'rgba(255,255,255,0.06)',
           backdropFilter: 'blur(12px)',
           border: '1px solid rgba(255,255,255,0.15)',
           color: '#FFFFFF',
@@ -71,7 +73,7 @@ export const ControlPanel = memo(({
           width: 'fit-content',
           margin: '0 auto',
           maxWidth: isMobile ? '17.5rem' : '25rem',
-          transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
         }}
       >
         <ControlButton

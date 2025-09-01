@@ -27,7 +27,7 @@ export const config = {
 
 
 export const App = () => {
-  useResponsiveLayout() // Layout service for responsive behavior
+  const { isMobile } = useResponsiveLayout() // Layout service for responsive behavior
 
   const xrStore = useRef<XRStore | null>(null)
   const [appState, setAppState] = useSimpleStore(AppConfigState)
@@ -72,22 +72,56 @@ export const App = () => {
         display: 'flex',
         flexDirection: 'column',
         height: '100vh',
-        width: '100vh',
+        width: '100vw',
+        maxWidth: '100vw',
         overflow: 'hidden',
         background: 'radial-gradient(circle at top, #0F1113 0%, #1B1E20 100%)',
         color: '#FFFFFF',
         fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
         fontWeight: 400,
-        lineHeight: 1.5
+        lineHeight: 1.5,
+        boxSizing: 'border-box',
+        // Mobile-specific optimizations
+        ...(isMobile && {
+          height: '100vh',
+          width: '100vw',
+          maxHeight: '100vh',
+          maxWidth: '100vw',
+          position: 'fixed',
+          top: 0,
+          left: 0
+        }),
+        // Desktop vertical layout
+        ...(!isMobile && {
+          justifyContent: 'center',
+          alignItems: 'center'
+        })
       }}
     >
-      {/* Main 3D Viewport - Full Screen */}
+      {/* Main 3D Viewport - Responsive */}
       <div
         style={{
           flex: 1,
           position: 'relative',
           height: '100%',
-          width: '100%'
+          width: '100%',
+          minHeight: 0, // Allow flex item to shrink
+          maxHeight: '100vh',
+          maxWidth: '100vw',
+          overflow: 'hidden',
+          boxSizing: 'border-box',
+          // Mobile-specific viewport sizing
+          ...(isMobile && {
+            height: '100vh',
+            width: '100vw',
+            maxHeight: '100vh',
+            maxWidth: '100vw'
+          }),
+          // Desktop viewport sizing
+          ...(!isMobile && {
+            height: '100%',
+            width: '100%'
+          })
         }}
       >
         <Viewport3D

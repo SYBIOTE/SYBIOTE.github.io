@@ -107,6 +107,22 @@ export const ChatInput = memo(({
                   boxShadow: '0 0.125rem 0.5rem rgba(255,107,53,0.2)'
                 })
               }}
+              onMouseEnter={(e) => {
+                if (!isRecording) {
+                  e.currentTarget.style.background = 'radial-gradient(ellipse at center, rgba(255,255,255,0.02) 0%, rgba(255, 255, 255, 0.02) 70%, rgba(30,136,229,0.12) 100%)'
+                  e.currentTarget.style.borderColor = 'rgba(30,136,229,0.3)'
+                  e.currentTarget.style.transform = 'translateY(-2px)'
+                  e.currentTarget.style.boxShadow = '0 0.5rem 1rem rgba(30,136,229,0.15)'
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isRecording) {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.06)'
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'
+                  e.currentTarget.style.transform = 'translateY(0)'
+                  e.currentTarget.style.boxShadow = '0 0.125rem 0.25rem rgba(0,0,0,0.04)'
+                }
+              }}
               rows={1}
               placeholder={placeholder}
               value={displayValue}
@@ -147,10 +163,10 @@ export const ChatInput = memo(({
                   backdropFilter: 'blur(12px)'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(74,144,226,0.15)'
-                  e.currentTarget.style.borderColor = 'rgba(74,144,226,0.3)'
-                  e.currentTarget.style.transform = 'scale(1.05) translateY(-1px)'
-                  e.currentTarget.style.boxShadow = '0 0.25rem 0.75rem rgba(0,0,0,0.25)'
+                  e.currentTarget.style.background = 'linear-gradient(135deg, rgba(30,136,229,0.3) 0%, rgba(30,136,229,0.15) 100%)'
+                  e.currentTarget.style.borderColor = 'rgba(30,136,229,0.4)'
+                  e.currentTarget.style.transform = 'scale(1.05) translateY(-2px)'
+                  e.currentTarget.style.boxShadow = '0 0.5rem 1rem rgba(30,136,229,0.25)'
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.background = 'rgba(255,255,255,0.06)'

@@ -48,15 +48,18 @@ export const LogoOverlay = ({
           id="logo-overlay-card"
           style={{
             position: 'relative',
-            background: 'rgba(255,255,255,0.06)',
+            background: isExpanded 
+              ? 'linear-gradient(180deg, rgba(30,136,229,0.12) 0%, rgba(255,255,255,0.06) 40%, rgba(255,255,255,0.06) 100%)'
+              : 'rgba(255,255,255,0.06)',
             backdropFilter: 'blur(12px)',
+            borderTop: isExpanded ? '1px solid rgba(59, 147, 224, 0.12)' : '1px solid rgba(255,255,255,0.15)',
             border: '1px solid rgba(255,255,255,0.15)',
             borderRadius: '0.5rem',
             padding: isExpanded 
               ? 'clamp(16px, 2.5vw, 24px) clamp(20px, 3.5vw, 32px)'
               : 'clamp(8px, 1.5vw, 12px) clamp(16px, 3vw, 24px)',
             boxShadow: '0 0.125rem 0.25rem rgba(0,0,0,0.04)',
-            transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), background 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), border-color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
             width: isExpanded ? 'min(92vw, 720px)' : 'fit-content',
             maxWidth: isExpanded ? '720px' : 'none',
             minWidth: isExpanded ? 'auto' : 'fit-content'
@@ -82,10 +85,14 @@ export const LogoOverlay = ({
                 height: 'clamp(36px, 6vw, 56px)',
                 borderRadius: '50%',
                 objectFit: 'cover',
-                border: '1px solid rgba(255,255,255,0.15)',
-                boxShadow: '0 0.125rem 0.25rem rgba(0,0,0,0.04)',
+                border: isExpanded 
+                  ? '2px solid rgba(30,136,229,0.4)'
+                  : '1px solid rgba(255,255,255,0.15)',
+                boxShadow: isExpanded 
+                  ? '0 0.25rem 0.5rem rgba(30,136,229,0.2)'
+                  : '0 0.125rem 0.25rem rgba(0,0,0,0.04)',
                 flexShrink: 0,
-                transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), border-color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
               }}
               src={photoSrc}
               alt={displayName}
@@ -105,9 +112,11 @@ export const LogoOverlay = ({
                   fontSize: 'clamp(14px, 2.2vw, 18px)',
                   fontWeight: 700,
                   letterSpacing: '0.02em',
-                  textShadow: '0 1px 2px rgba(0,0,0,0.4)',
+                  textShadow: isExpanded 
+                    ? '0 1px 2px rgba(0,0,0,0.4), 0 0 8px rgba(30,136,229,0.3)'
+                    : '0 1px 2px rgba(0,0,0,0.4)',
                   whiteSpace: 'nowrap',
-                  transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                  transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), text-shadow 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
                 }}
               >
                 {displayName}
@@ -115,12 +124,14 @@ export const LogoOverlay = ({
               <span
                 id="logo-overlay-cue"
                 style={{
-                  color: 'rgba(255,255,255,0.55)',
+                  color: isExpanded 
+                    ? 'rgba(30,136,229,0.8)'
+                    : 'rgba(255,255,255,0.55)',
                   fontSize: 'clamp(14px, 1.6vw, 20px)',
                   lineHeight: 1,
-                  opacity: isExpanded ? 0.8 : 0.5,
+                  opacity: isExpanded ? 0.9 : 0.5,
                   transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-                  transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                  transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
                 }}
                 aria-hidden="true"
               >
@@ -146,7 +157,7 @@ export const LogoOverlay = ({
               display: 'flex', 
               alignItems: 'center', 
               gap: '8px',
-              borderTop: '1px solid rgba(255,255,255,0.1)',
+              borderTop: '1px solid rgba(30,136,229,0.2)',
               paddingTop: '12px'
             }}>
               <span id="logo-overlay-about-title" style={{ 

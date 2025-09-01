@@ -39,7 +39,7 @@ const defaultButtonConfig: ButtonStyleConfig = {
   border: '1px solid rgba(255,255,255,0.15)',
   borderRadius: '9999px',
   backgroundCollapsed: 'rgba(255,255,255,0.06)',
-  backgroundExpanded: 'linear-gradient(90deg, rgba(30,136,229,0.25) 0%, rgba(30,136,229,0.08) 100%)',
+  backgroundExpanded: 'linear-gradient(90deg, rgba(30,136,229,0.25) 0%, rgba(255,255,255,0.02) 100%)',
   textColor: '#FFFFFF',
   backdropFilter: 'blur(12px)',
   transition: 'width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), background 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), border-color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)'

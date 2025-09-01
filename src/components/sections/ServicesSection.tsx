@@ -8,7 +8,7 @@ const container: CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   padding: '0.75rem 0rem',
-  color: '#E6EAF2',
+  color: 'rgba(240, 245, 255, 0.9)',
   overflowY: 'auto',
   overflowX: 'hidden'
 }
@@ -20,8 +20,8 @@ const grid: CSSProperties = {
 }
 
 const card: CSSProperties = {
-  background: 'rgba(255,255,255,0.04)',
-  border: '1px solid rgba(255,255,255,0.08)',
+  background: 'rgba(255,255,255,0.06)',
+  border: '1px solid rgba(255,255,255,0.12)',
   borderRadius: '12px',
   padding: '0.75rem',
   backdropFilter: 'blur(8px)',
@@ -31,8 +31,8 @@ const card: CSSProperties = {
 
 const cardHover: CSSProperties = {
   transform: 'translateY(-2px)',
-  borderColor: 'rgba(255,255,255,0.12)',
-  background: 'rgba(255,255,255,0.06)'
+  borderColor: 'rgba(255,255,255,0.18)',
+  background: 'rgba(255,255,255,0.1)'
 }
 
 
@@ -63,8 +63,18 @@ export const ServicesSection = () => {
             onMouseEnter={() => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}
           >
-            <div style={{ fontWeight: 600, color: '#E6EAF2' }}>{s.name}</div>
-            <div style={{ color: '#A8B3C8', fontSize: '0.9rem', marginTop: '0.25rem' }}>{s.desc}</div>
+            <div style={{ 
+              fontWeight: 600, 
+              color: 'rgba(255, 255, 255, 0.95)',
+              fontSize: '1rem',
+              lineHeight: 1.3
+            }}>{s.name}</div>
+            <div style={{ 
+              color: 'rgba(220, 230, 255, 0.8)', 
+              fontSize: '0.9rem', 
+              marginTop: '0.25rem',
+              lineHeight: 1.4
+            }}>{s.desc}</div>
           </div>
         ))}
       </div>

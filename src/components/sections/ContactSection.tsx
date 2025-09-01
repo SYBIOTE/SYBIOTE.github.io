@@ -9,7 +9,7 @@ const container: CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   padding: '0.75rem 0rem',
-  color: '#E6EAF2',
+  color: 'rgba(240, 245, 255, 0.9)',
   overflowY: 'auto',
   overflowX: 'hidden'
 }
@@ -32,12 +32,14 @@ const fieldRow: CSSProperties = {
 const inputStyle: CSSProperties = {
   padding: '0.6rem 0.75rem 0.6rem 0.75rem',
   borderRadius: '10px',
-  border: '1px solid rgba(255,255,255,0.12)',
-  background: 'rgba(255,255,255,0.06)',
-  color: '#E6EAF2',
+  border: '1px solid rgba(255,255,255,0.15)',
+  background: 'rgba(255,255,255,0.08)',
+  color: 'rgba(240, 245, 255, 0.95)',
   outline: 'none',
   width: '100%',
-  boxSizing: 'border-box'
+  boxSizing: 'border-box',
+  fontSize: '0.95rem',
+  transition: 'border-color 0.2s ease, background 0.2s ease'
 }
 
 const buttonStyle: CSSProperties = {
@@ -45,13 +47,16 @@ const buttonStyle: CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
   gap: '0.5rem',
-  border: '1px solid rgba(255,255,255,0.15)',
-  background: 'rgba(255,255,255,0.06)',
-  color: '#fff',
+  border: '1px solid rgba(255,255,255,0.2)',
+  background: 'rgba(255,255,255,0.1)',
+  color: 'rgba(255, 255, 255, 0.95)',
   borderRadius: '9999px',
   padding: '0.5rem 0.8rem',
   cursor: 'pointer',
-  backdropFilter: 'blur(10px)'
+  backdropFilter: 'blur(10px)',
+  fontSize: '0.9rem',
+  fontWeight: 500,
+  transition: 'all 0.2s ease'
 }
 
 // Add CSS animation keyframes
@@ -140,16 +145,16 @@ export const ContactSection = () => {
   return (
     <div style={container}  className='no-scrollbar'>
       <div style={{ ...card, marginBottom: '0.75rem' }}>
-        <div style={{ color: '#A8B3C8', fontSize: '0.95rem', marginBottom: '0.5rem' }}>
+        <div style={{ color: 'rgba(220, 230, 255, 0.85)', fontSize: '0.95rem', marginBottom: '0.5rem', lineHeight: 1.5 }}>
           {t("contact.description")}
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#C9D4E5' }}>
-          <span style={{ opacity: 0.85 }}>{t("labels.email")}</span>
-          <a href="https://mail.google.com/mail/?view=cm&to=ghoshr698@gmail.com" target="_blank" rel="noopener noreferrer" style={{ color: '#E6EAF2', textDecoration: 'none', opacity: 0.9 }}>{t("core.email")}</a>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'rgba(200, 210, 230, 0.8)' }}>
+          <span style={{ opacity: 0.9, fontWeight: 500 }}>{t("labels.email")}</span>
+          <a href="https://mail.google.com/mail/?view=cm&to=ghoshr698@gmail.com" target="_blank" rel="noopener noreferrer" style={{ color: 'rgba(240, 245, 255, 0.95)', textDecoration: 'none', opacity: 0.9 }}>{t("core.email")}</a>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#C9D4E5' }}>
-          <span style={{ opacity: 0.85 }}>{t("labels.phone")}</span>
-          <span style={{ color: '#E6EAF2', opacity: 0.9 }}>{t("core.phone")}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'rgba(200, 210, 230, 0.8)' }}>
+          <span style={{ opacity: 0.9, fontWeight: 500 }}>{t("labels.phone")}</span>
+          <span style={{ color: 'rgba(240, 245, 255, 0.95)', opacity: 0.9 }}>{t("core.phone")}</span>
         </div>
       </div>
       <div style={card}>

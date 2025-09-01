@@ -34,9 +34,10 @@ const button: CSSProperties = {
 
 const buttonHover: CSSProperties = {
   ...button,
-  background: 'rgba(255, 255, 255, 0.12)',
-  borderColor: 'rgba(255, 255, 255, 0.25)',
-  transform: 'scale(1.05)'
+  background: 'linear-gradient(135deg, rgba(30,136,229,0.3) 0%, rgba(30,136,229,0.15) 100%)',
+  borderColor: 'rgba(30,136,229,0.4)',
+  transform: 'scale(1.05) translateY(-2px)',
+  boxShadow: '0 0.5rem 1rem rgba(30,136,229,0.25)'
 }
 
 export const SettingsButton = () => {

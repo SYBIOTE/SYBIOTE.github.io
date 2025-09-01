@@ -83,10 +83,10 @@ export const ToggleButton = ({
         boxShadow: '0 0.125rem 0.25rem rgba(0,0,0,0.04)'
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.background = 'rgba(74,144,226,0.15)'
-        e.currentTarget.style.borderColor = 'rgba(74,144,226,0.3)'
+        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(30,136,229,0.3) 0%, rgba(30,136,229,0.15) 100%)'
+        e.currentTarget.style.borderColor = 'rgba(30,136,229,0.4)'
         e.currentTarget.style.transform = position === 'bottom-left' ? 'scale(1.05) translateY(-2px)' : 'translateY(-50%) scale(1.05) translateY(-2px)'
-        e.currentTarget.style.boxShadow = '0 0.5rem 1rem rgba(0,0,0,0.3)'
+        e.currentTarget.style.boxShadow = '0 0.5rem 1rem rgba(30,136,229,0.25)'
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.background = 'rgba(255,255,255,0.06)'

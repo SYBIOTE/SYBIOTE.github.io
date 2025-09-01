@@ -7,7 +7,7 @@ const container: CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   padding: '0.75rem 0rem',
-  color: 'rgb(107, 107, 107)',
+  color: 'rgba(240, 245, 255, 0.9)',
   overflowY: 'auto',
   overflowX: 'hidden',
 }
@@ -23,7 +23,7 @@ const sectionCard: CSSProperties = {
 }
 
 const subTitle: CSSProperties = {
-  color: 'rgba(201, 212, 229, 1)',
+  color: 'rgba(255, 255, 255, 0.95)',
   fontSize: '0.9rem',
   fontWeight: 600,
   marginBottom: '0.5rem'
@@ -66,8 +66,16 @@ interface ItemHeaderProps {
 
 const ItemHeader = ({ title, period }: ItemHeaderProps) => (
   <div style={itemHeader}>
-    <div style={{ fontWeight: 600 }}>{title}</div>
-    {period && <div style={{ color: '#9FB2D4', whiteSpace: 'nowrap' }}>{period}</div>}
+    <div style={{ 
+      fontWeight: 600, 
+      color: 'rgba(255, 255, 255, 0.9)',
+      fontSize: '1rem'
+    }}>{title}</div>
+    {period && <div style={{ 
+      color: 'rgba(220, 230, 255, 0.8)', 
+      whiteSpace: 'nowrap',
+      fontSize: '0.9rem'
+    }}>{period}</div>}
   </div>
 )
 
@@ -81,7 +89,7 @@ const ExperienceItem = ({ title, period, achievements }: ExperienceItemProps) =>
   <div style={item}>
     <ItemHeader title={title} period={period} />
     <div style={itemContent}>
-      <ul style={{ marginTop: '0.25rem', paddingLeft: '1.25rem', color: 'rgba(191, 208, 233, 1)' }}>
+      <ul style={{ marginTop: '0.25rem', paddingLeft: '1.25rem', color: 'rgba(240, 245, 255, 0.85)' }}>
         {achievements.map((achievement: string, index: number) => (
           <li key={index}>{achievement}</li>
         ))}
@@ -101,7 +109,7 @@ const EducationItem = ({ degree, institution, period }: EducationItemProps) => (
     <div style={{ ...item, borderTop: 'none' }}>
       <ItemHeader title={degree} period={period} />
       <div style={itemContent}>
-        <div style={{ color: 'rgba(170, 178, 212, 1)', fontSize: '0.9rem' }}>{institution}</div>
+        <div style={{ color: 'rgba(220, 230, 255, 0.8)', fontSize: '0.9rem' }}>{institution}</div>
       </div>
     </div>
   </div>
@@ -112,11 +120,11 @@ interface ContactListProps {
 }
 
 const ContactList = ({ items }: ContactListProps) => (
-  <ul style={{ marginTop: '0.5rem', paddingLeft: '1.25rem', color: 'rgba(191, 208, 233, 1)' }}>
+  <ul style={{ marginTop: '0.5rem', paddingLeft: '1.25rem', color: 'rgba(240, 245, 255, 0.85)' }}>
     {items.map((item, index) => (
       <li key={index}>
         {item.isEmail ? (
-          <a href={`mailto:${item.value}`} style={{ color: '#E6EAF2', textDecoration: 'none', opacity: 0.9 }}>{item.value}</a>
+          <a href={`mailto:${item.value}`} style={{ color: 'rgba(255, 255, 255, 0.9)', textDecoration: 'none', opacity: 0.9 }}>{item.value}</a>
         ) : (
           item.value
         )}
@@ -130,14 +138,14 @@ interface LeadershipListProps {
 }
 
 const LeadershipList = ({ items }: LeadershipListProps) => (
-  <ul style={{ marginTop: '0.25rem', paddingLeft: '1.25rem', color: 'rgba(191, 208, 233, 1)' }}>
+  <ul style={{ marginTop: '0.25rem', paddingLeft: '1.25rem', color: 'rgba(240, 245, 255, 0.85)' }}>
     {items.map((item, index) => (
       <li key={index}>
         {item.text}
         {item.link && (
           <>
             {" "}
-            <a href={item.link.url} target="_blank" rel="noreferrer" style={{ color: '#E6EAF2', textDecoration: 'none', opacity: 0.9 }}>
+            <a href={item.link.url} target="_blank" rel="noreferrer" style={{ color: 'rgba(255, 255, 255, 0.9)', textDecoration: 'none', opacity: 0.9 }}>
               ({item.link.label})
             </a>
           </>
@@ -212,7 +220,7 @@ export const ResumeSection = () => {
       
       
       <SectionCard title={t("resume.summary.title")}>
-          <div style={{ color: 'rgba(170, 178, 212, 1)', fontSize: '0.95rem' }}>
+          <div style={{ color: 'rgba(240, 245, 255, 0.9)', fontSize: '0.95rem', lineHeight: 1.5 }}>
           {t("resume.summary.content")}
         </div>
         <ContactList items={contactItems} />

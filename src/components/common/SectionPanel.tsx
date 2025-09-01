@@ -115,17 +115,39 @@ export const SectionPanel = ({
           borderTopLeftRadius: '24px',
           borderBottomLeftRadius: '24px',
           boxShadow: '0 20px 80px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.1), inset 0 -1px 0 rgba(255,255,255,0.05)',
-          backdropFilter: 'blur(5px) ',
+          backdropFilter: 'blur(5px)',
           WebkitBackdropFilter: 'blur(5px)',
-          transform: visible ? 'translateX(0) scale(1)' : 'translateX(110%) scale(0.95)',
+          transform: visible ? 'translateX(0) scale(1)' : 'translateX(110%) scale(0.9)',
           opacity: visible ? 1 : 0,
-          transition: 'all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
           boxSizing: 'border-box',
           // Drawer receives interactions
           pointerEvents: 'auto',
+          // Remove background from main container
+          background: 'transparent',
         }}
         className="no-scrollbar"
       >
+        {/* Blue gradient background layer */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            borderTopLeftRadius: '24px',
+            borderBottomLeftRadius: '24px',
+            // Blue gradient effect from right to left, capped at 20% - shows when panel is open
+            background: visible 
+              ? 'linear-gradient(270deg, rgba(30,136,229,0.08) 0%, rgba(30,136,229,0.01) 10%, transparent 20%)'
+              : 'transparent',
+            transition: 'background 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            transitionDelay: visible ? '0.2s' : '0s',
+            pointerEvents: 'none', // Allow clicks to pass through
+            zIndex: -1, // Place behind content
+          }}
+        />
         <div
           style={{
             position: 'absolute',
@@ -143,9 +165,9 @@ export const SectionPanel = ({
             WebkitBackdropFilter: 'blur(20px)',
             borderTopLeftRadius: '24px',
             opacity: visible ? 1 : 0,
-            transform: visible ? 'translateY(0) scale(1)' : 'translateY(-20px) scale(0.98)',
+            transform: visible ? 'translateY(0) scale(1)' : 'translateY(-30px) scale(0.95)',
             transition: 'all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-            transitionDelay: visible ? '0.15s' : '0s'
+            transitionDelay: visible ? '0.3s' : '0s'
           }}
           className="no-scrollbar"
         >
@@ -197,9 +219,9 @@ export const SectionPanel = ({
             backdropFilter: 'blur(16px) saturate(140%)',
             WebkitBackdropFilter: 'blur(16px) saturate(140%)',
             opacity: visible ? 1 : 0,
-            transform: visible ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.98)',
+            transform: visible ? 'translateY(0) scale(1)' : 'translateY(30px) scale(0.95)',
             transition: 'all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-            transitionDelay: visible ? '0.25s' : '0s'
+            transitionDelay: visible ? '0.4s' : '0s'
           }}
         >
           <div ref={contentMeasureRef} style={{ width: '100%', height: '100%', overflowY: 'auto', overflowX: 'hidden' }} className="no-scrollbar">
