@@ -180,7 +180,6 @@ export const createPerformanceFromMessage = (
   messageIndex: number = 0
 ): PerformanceData => {
   const emotion = detectEmotionFromText(message.text)
-  const action = analyzeMessageForActions(message)
 
   return {
     emotion,

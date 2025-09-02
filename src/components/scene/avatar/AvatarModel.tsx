@@ -27,9 +27,9 @@ export const AvatarState = createSimpleStore({
 })
 
 interface AvatarModelProps {
-  visemeService: ReturnType<typeof useVisemeService>
-  emoteService: ReturnType<typeof useEmoteService>
-  animationService: ReturnType<typeof useAnimationService>
+  visemeService?: ReturnType<typeof useVisemeService>
+  emoteService?: ReturnType<typeof useEmoteService>
+  animationService?: ReturnType<typeof useAnimationService>
   onHeadLocated?: (target: [number, number, number], position: [number, number, number]) => void
 }
 
@@ -105,7 +105,7 @@ export const useExternalAnimations = (avatarRef: React.RefObject<THREE.Object3D>
 }
 
 const AvatarModelComponent = ({ visemeService, emoteService, animationService, onHeadLocated }: AvatarModelProps) => {
-  const { scene: viewerScene, camera: viewerCamera } = useThree()
+  const { camera: viewerCamera } = useThree()
 
   const [state] = useSimpleStore(AvatarState)
   const morphTargetsRef = useRef<THREE.Mesh[]>([])
@@ -317,6 +317,7 @@ const AvatarModelComponent = ({ visemeService, emoteService, animationService, o
   useEffect(() => { 
     if (!animationsEnabled || !emotesEnabled) return
     if (!avatarScene || !actions || !mixer  ) return
+    if (!emoteService || !animationService) return
     if (startupPlayedRef.current) return
     if (!isAvatarVisible) return // Wait until avatar is visible
     // Mark startup as played to prevent re-execution
