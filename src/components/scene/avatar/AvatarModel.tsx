@@ -3,7 +3,7 @@ import { VRM, VRMCore, VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm'
 import { createVRMAnimationClip, VRMAnimation, VRMAnimationLoaderPlugin } from '@pixiv/three-vrm-animation'
 import { useAnimations, useGLTF } from '@react-three/drei'
 import { useFrame, useLoader, useThree } from '@react-three/fiber'
-import { memo, useEffect, useMemo, useRef } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/Addons.js'
 import type { GLTFParser } from 'three/examples/jsm/Addons.js'
@@ -11,10 +11,11 @@ import type { GLTFParser } from 'three/examples/jsm/Addons.js'
 
 import { AvatarOptions } from './AvatarOptions'
 import { Vector3 } from 'three'
-import  {ANIMATION_CLIPS } from '../../../services/animation/config/animationClips'
+import  {ANIMATION_CLIPS, getRandomClip, updateAnimationDurations } from '../../../services/animation/config/animationClips'
 import type { useAnimationService } from '../../../services/animation/useAnimationService'
 import type { useEmoteService } from '../../../services/emote/useEmoteService'
 import type { useVisemeService } from '../../../services/visemes/useVisemeService'
+import type { AnimationClip } from '../../../services/animation/animationTypes'
 
 const AVATAR_MODEL = AvatarOptions.Rahul
 
@@ -26,18 +27,18 @@ export const AvatarState = createSimpleStore({
 })
 
 interface AvatarModelProps {
-  visemeService?: ReturnType<typeof useVisemeService>
-  emoteService?: ReturnType<typeof useEmoteService>
-  animationService?: ReturnType<typeof useAnimationService>
+  visemeService: ReturnType<typeof useVisemeService>
+  emoteService: ReturnType<typeof useEmoteService>
+  animationService: ReturnType<typeof useAnimationService>
   onHeadLocated?: (target: [number, number, number], position: [number, number, number]) => void
 }
 
 // Custom hook to load external animation files, including VRMA animations
 export const useExternalAnimations = (avatarRef: React.RefObject<THREE.Object3D>, vrm?: VRMCore) => {
   // Split clips by type so hooks are deterministic
-  const vrmaClips = ANIMATION_CLIPS.filter((c) => c.path.toLowerCase().endsWith('.vrma'))
+  const vrmaClips = Object.values(ANIMATION_CLIPS).filter((c) => c.path.toLowerCase().endsWith('.vrma'))
 
-  const gltfClips = ANIMATION_CLIPS.filter((c) => !c.path.toLowerCase().endsWith('.vrma'))
+  const gltfClips = Object.values(ANIMATION_CLIPS).filter((c) => !c.path.toLowerCase().endsWith('.vrma'))
 
   // Load VRMA animations
   const vrmaGLTFs = vrmaClips.map((clip) =>
@@ -61,12 +62,12 @@ export const useExternalAnimations = (avatarRef: React.RefObject<THREE.Object3D>
         if (vrmAnimation && vrm) {
           const clip = createVRMAnimationClip(vrmAnimation, vrm)
           clip.name = vrmaClips[index].name
-
           // Remove "Normalized_" prefix from track names
           clip.tracks = clip.tracks.filter((track) => {
             // Remove "Normalized_" prefix from track names
             if (track.name.startsWith('Normalized_')) {
               track.name = track.name.replace(/^Normalized_/, '')
+
             }
             const lower = track.name.toLowerCase()
             if (lower.includes('neck') || lower.includes('head')) {
@@ -75,7 +76,6 @@ export const useExternalAnimations = (avatarRef: React.RefObject<THREE.Object3D>
             return true
           })
 
-          vrmaClips[index].duration = clip.duration
           animations.push(clip)
         }
       })
@@ -85,12 +85,15 @@ export const useExternalAnimations = (avatarRef: React.RefObject<THREE.Object3D>
         if (gltf.animations && gltf.animations.length > 0) {
           gltf.animations.forEach((animation) => {
             animation.name = gltfClips[index].name
-            gltfClips[index].duration = animation.duration
+
             animations.push(animation)
           })
         }
       })
     }
+
+    // Update animation clip durations from the actual loaded animations
+    updateAnimationDurations(animations)
 
     return animations
   }, [vrmaGLTFs, gltfGLTFs, vrm])
@@ -107,12 +110,14 @@ const AvatarModelComponent = ({ visemeService, emoteService, animationService, o
   const [state] = useSimpleStore(AvatarState)
   const morphTargetsRef = useRef<THREE.Mesh[]>([])
   const bonesRef = useRef<Record<string, THREE.Bone>>({})
+  const startupPlayedRef = useRef<boolean>(false)
+  const [isAvatarVisible, setIsAvatarVisible] = useState<boolean>(false)
 
   const { selectedModel, visemesEnabled, emotesEnabled, animationsEnabled } = state
 
-  const helperRoot = new THREE.Group()
+  /*const helperRoot = new THREE.Group()
   helperRoot.renderOrder = 10000
-  viewerScene.add(helperRoot)
+  viewerScene.add(helperRoot)*/
 
   const gltf = useLoader(GLTFLoader, AVATAR_MODEL, (loader) => {
     loader.register((parser: GLTFParser) => new VRMLoaderPlugin(parser))
@@ -193,9 +198,16 @@ const AvatarModelComponent = ({ visemeService, emoteService, animationService, o
       }
     })
 
-    animationService.actions.setup(validActions, mixer, avatarRef.current || undefined)
+    animationService.actions.setup(validActions, mixer, avatarRef.current || undefined , ANIMATION_CLIPS.idle_loop)
 
     console.log(`Animation service setup with ${Object.keys(actions).length} animations`)
+    // Make avatar visible after idle animation is applied
+    setTimeout(() => {
+      setIsAvatarVisible(true)
+    }, 100) // Small delay to ensure animation is applied
+
+    // Start the sequence after a short delay to ensure everything is initialized
+    
   }, [animationsEnabled, animationService, actions, mixer])
 
   useEffect(() => {
@@ -301,6 +313,40 @@ const AvatarModelComponent = ({ visemeService, emoteService, animationService, o
     })
   }, [avatarScene, emotesEnabled, emoteService])
 
+
+  useEffect(() => { 
+    if (!animationsEnabled || !emotesEnabled) return
+    if (!avatarScene || !actions || !mixer  ) return
+    if (startupPlayedRef.current) return
+    if (!isAvatarVisible) return // Wait until avatar is visible
+    // Mark startup as played to prevent re-execution
+    const startupTimer = setTimeout(() => { 
+      emoteService.actions.performAction({emotion: 'happy', relaxTime: ANIMATION_CLIPS.surprise_greet.duration})
+
+      animationService.actions.performAction({
+        clip: ANIMATION_CLIPS.surprise_greet,
+        immediate: true,
+        loopCount: 1,
+        blendTime: 300
+      })
+
+      // After surprise_greet duration, blend to idle_loop
+      animationService.actions.performAction({
+        clip: ANIMATION_CLIPS.idle_loop,
+        loopCount: Infinity,
+        blendTime: 2000 // 1 second blend
+      })
+      startupPlayedRef.current = true
+
+    }, 500)
+    return () => clearTimeout(startupTimer)
+
+    // Startup animation sequence
+      // First play the surprise_greet animation
+     
+
+
+  }, [animationsEnabled, animationService, actions, mixer, emoteService, isAvatarVisible])
   // Animation service will handle its own initialization
 
   useFrame((_, delta) => {
@@ -341,7 +387,39 @@ const AvatarModelComponent = ({ visemeService, emoteService, animationService, o
     }
   })
 
-  return <primitive ref={avatarRef} object={avatarScene as any} />
+  // Handle avatar click to play finger_gun animation
+  const handleAvatarClick = useCallback((event: any) => {
+    event.stopPropagation()
+    if (animationService && emoteService) {
+      const randomAction = getRandomClip('action') as AnimationClip
+      emoteService.actions.performAction({
+        emotion: randomAction.name == ANIMATION_CLIPS.finger_gun.name ? 'angry' : 'happy' , 
+        relaxTime: randomAction.duration - 1000
+      })
+
+      animationService.actions.performAction({
+        clip: randomAction,
+        immediate: true,
+        loopCount: 1,
+        blendTime : 1000
+      })
+
+      animationService.actions.performAction({
+        clip: ANIMATION_CLIPS.idle_loop,
+        loopCount: Infinity,
+        blendTime : 1000
+      })
+    }
+  }, [animationService])
+
+  return (
+    <primitive 
+      ref={avatarRef} 
+      object={avatarScene as any}
+      onClick={handleAvatarClick}
+      visible={isAvatarVisible}
+    />
+  )
 }
 
 // Memoize the component to prevent re-renders when services don't change

@@ -4,6 +4,7 @@ import { Euler, Quaternion, Vector3, MathUtils } from 'three'
 import type { EmoteState, PlayerVisionType } from '../emoteTypes'
 import { safeExecute } from '../utils/errorHandling'
 import type { EmoteConfig } from '../configs/emoteConfig'
+import { applyEmotion, startPerformance } from '../emoteService'
 
 export const updateGaze = (state: EmoteState, delta: number , config : EmoteConfig): void => {
   const result = safeExecute(() => updateGazeInternal(state, delta , config), 'Gaze update failed')

@@ -7,7 +7,7 @@ export type BlendCurve = 'linear' | 'easeIn' | 'easeOut' | 'easeInOut' | 'bounce
 export interface AnimationClip {
   name: string
   path: string
-  duration: number
+  duration: number // populated by the actual animation file
   weight: number
   blendTime: number
   category: AnimationCategory
@@ -21,6 +21,7 @@ export interface AnimationClip {
 }
 
 export interface AnimationState {
+  enabled: boolean
   // Active animation clips
   currentClip: AnimationClip | null
   nextClip: AnimationClip | null
@@ -32,18 +33,20 @@ export interface AnimationState {
 
   // Timing
   lastChangeTime: number
+  currentPersonality: string
 
   // Cycling control
-  cycleInterval: number
-  randomizeInterval: boolean
-  enabled: boolean
+
 
   // Personality & sequence control
   cyclingState: {
     nextCycleTime: number
     isActive: boolean
-    currentPersonality: string
+    cycleInterval: number
+    randomizeInterval: boolean
+    cyclingEnabled: boolean
     lastCategory?: AnimationCategory
+
   }
 
   // Cache for personality-specific clips
@@ -75,9 +78,7 @@ export interface PersonalityConfiguration {
 
 export interface AnimationPerformanceData {
   personality?: string
-  name: string
-  category?: AnimationCategory
-  duration?: number
+  clip: AnimationClip
   immediate?: boolean
   loopCount?: number
   blendTime?: number

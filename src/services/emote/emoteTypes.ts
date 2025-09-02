@@ -9,7 +9,7 @@ export type EmoteResult<T = void> = {
   error?: string
 }
 
-export type EmotionType = 'neutral' | 'happy' | 'angry' | 'sad' | 'fear' | 'disgust' | 'love' | 'sleep'
+export type EmotionType = 'neutral' | 'happy' | 'angry' | 'sad' | 'fear' | 'disgust' | 'love' | 'sleep' | 'alert'
 export type PlayerVisionType = 'focused' | 'peripheral' | null
 
 export const VRM_EXPRESSIONS = {
@@ -24,11 +24,6 @@ export const VRM_EXPRESSIONS = {
   blink: 'blink',
   blinkLeft: 'blinkLeft',
   blinkRight: 'blinkRight',
-  lookUp: 'lookUp',
-  lookDown: 'lookDown',
-  lookLeft: 'lookLeft',
-  lookRight: 'lookRight',
-
   // Additional expressions
   neutral: 'neutral'
 } as const
@@ -157,7 +152,6 @@ export interface EmoteState {
 
 export interface PerformanceData {
   emotion?: EmotionType
-  action?: string
   whisper?: { words?: string[]; wtimes?: number[]; wdurations?: number[] } // Whisper data for lip sync coordination
   bcounter?: number // Utterance counter for gaze behavior
   bargein?: boolean // Interruption signal

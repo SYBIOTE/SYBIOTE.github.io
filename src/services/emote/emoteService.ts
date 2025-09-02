@@ -14,7 +14,7 @@ import { updateFacialTicks } from './modules/facialTicksService'
 import { initiateGaze, updateGaze } from './modules/gazeService'
 import { moodConfigurations } from './configs/moodConfigurations'
 import { safeExecute } from './utils/errorHandling'
-import { applyExpression, resetAllExpressions } from './utils/expressionUtils'
+import { applyExpression, resetAllExpressions, applyExpressionSafely } from './utils/expressionUtils'
 import type { EmoteConfig } from './configs/emoteConfig'
 
 /**
@@ -142,7 +142,8 @@ const mapEmotionToVRM = (emotion: EmotionType): keyof typeof VRM_EXPRESSIONS | n
     happy: 'happy',
     angry: 'angry',
     sad: 'sad',
-    neutral: 'neutral'
+    neutral: 'neutral',
+    alert: 'surprised'
   }
 
   return emotionMap[emotion] || 'neutral'
@@ -168,6 +169,9 @@ export const emoteUpdate = (state: EmoteState, delta: number, config: EmoteConfi
   // Update VRM systems first
   updateVRMSystems(state, delta)
 
+  // Update emotion relaxation during performance
+  updateEmotionRelaxation(state, delta)
+
   // Update core modules
   updateBlinking(state, delta , config)
   updateGaze(state, delta ,config)
@@ -176,6 +180,7 @@ export const emoteUpdate = (state: EmoteState, delta: number, config: EmoteConfi
     updateFacialTicks(state, delta , config)
     state.isPerforming = false
   }
+  
 }
 
 const updateVRMSystems = (state: EmoteState, delta: number): void => {
@@ -192,6 +197,45 @@ const updateVRMSystems = (state: EmoteState, delta: number): void => {
   }, 'VRM system update failed')
 }
 
+/**
+ * Gradually transition emotion towards neutral during relaxation period
+ */
+const updateEmotionRelaxation = (state: EmoteState, _delta: number): void => {
+  if (!state.isPerforming || !state.relaxationTime) return
+
+  const currentTime = performance.now()
+  const timeRemaining = state.relaxationTime - currentTime
+  
+  if (timeRemaining <= 0) {
+    // Relaxation period is over, set to neutral
+    applyEmotionInternal(state, 'neutral')
+    return
+  }
+
+  // Calculate relaxation progress (0 = start, 1 = end)
+  const totalRelaxationTime = state.relaxationTime - state.performanceStartTime
+  const relaxationProgress = 1 - (timeRemaining / totalRelaxationTime)
+  
+  // Get current emotion configuration and neutral configuration
+  const currentMoodConfig = moodConfigurations[state.currentEmotion.toLowerCase()]
+  const neutralMoodConfig = moodConfigurations['neutral']
+  
+  if (!currentMoodConfig?.baseline || !neutralMoodConfig?.baseline) return
+
+  // Interpolate between current emotion and neutral
+  Object.keys(currentMoodConfig.baseline).forEach((key) => {
+    const currentValue = currentMoodConfig.baseline[key as keyof FacialTarget] || 0
+    const neutralValue = neutralMoodConfig.baseline[key as keyof FacialTarget] || 0
+    
+    // Smooth interpolation using ease-out curve
+    const easedProgress = 1 - Math.pow(1 - relaxationProgress, 3)
+    const interpolatedValue = currentValue + (neutralValue - currentValue) * easedProgress
+    
+    // Use the safe expression utility function
+    applyExpressionSafely(state, key, interpolatedValue)
+  })
+}
+
 export const startPerformance = (state: EmoteState, performanceData: PerformanceData, _delta: number ): EmoteResult => {
   return safeExecute(() => {
     if (!performanceData) return
@@ -206,24 +250,14 @@ export const startPerformance = (state: EmoteState, performanceData: Performance
       }
     }
 
-    // Handle body actions (placeholder for future implementation)
-    if (performanceData.action) {
-      // TODO: Implement body action animations
-    }
-
-    // Note: Mouth/viseme handling is done by separate viseme service
-    // We don't handle whisper data here
-
-    // Set up gaze behavior based on utterance counter
-    const segment = performanceData.bcounter ?? 0
-    const gazeRandomness = segment < 2 ? 0 : 0.5
-    initiateGaze(state, { randomness: gazeRandomness })
-
     state.isPerforming = true
     state.performanceStartTime = startTime
 
     // Set relaxation time (when performance should end)
-    state.relaxationTime = startTime + (performanceData.relaxTime ?? 500)
+    // Use longer relaxation time for animations to allow gradual emotion transition
+    const defaultRelaxTime = performanceData.relaxTime ?? 500
+    const animationRelaxTime = 2000 // 2 seconds for smooth emotion transition
+    state.relaxationTime = startTime + Math.max(defaultRelaxTime, animationRelaxTime)
   }, 'Failed to start performance')
 }
 

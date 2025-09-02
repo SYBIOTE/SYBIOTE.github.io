@@ -184,7 +184,7 @@ export const createPerformanceFromMessage = (
 
   return {
     emotion,
-    action,
+    //action,
     bcounter: messageIndex, // Used for gaze behavior
     whisper: message.visemeData as { words?: string[]; wtimes?: number[]; wdurations?: number[] } | undefined // If available from TTS
   }

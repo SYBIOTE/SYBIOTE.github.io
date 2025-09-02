@@ -40,12 +40,12 @@ export const useAnimationService = () => {
   }, [])
 
   const setup = useCallback(
-    (actions: Record<string, THREE.AnimationAction>, mixer: THREE.AnimationMixer, avatar?: THREE.Object3D) => {
+    (actions: Record<string, THREE.AnimationAction>, mixer: THREE.AnimationMixer, avatar?: THREE.Object3D , animation?: AnimationClip) => {
       setupAnimationState(animationStateRef.current, actions, mixer, avatar)
 
       // Initialize with a default animation
-      const personality = animationStateRef.current.cyclingState.currentPersonality
-      initializeDefaultAnimation(animationStateRef.current, personality)
+      const personality = animationStateRef.current.currentPersonality
+      initializeDefaultAnimation(animationStateRef.current, personality, animation)
     },
     []
   )
@@ -59,7 +59,7 @@ export const useAnimationService = () => {
   }, [])
 
   const getAvailableClips = useCallback((): AnimationClip[] => {
-    const personality = animationStateRef.current.cyclingState.currentPersonality
+    const personality = animationStateRef.current.currentPersonality
     return getPersonalityAnimationClips(personality)
   }, [])
 
@@ -96,6 +96,6 @@ export const useAnimationService = () => {
 }
 
 // Preload animation assets
-ANIMATION_CLIPS.forEach((clip) => {
+Object.values(ANIMATION_CLIPS).forEach((clip) => {
   useGLTF.preload(clip.path)
 })

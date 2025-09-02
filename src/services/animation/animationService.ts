@@ -13,15 +13,16 @@ export function initializeAnimationState(): AnimationState {
     transitionDuration: 0,
     isTransitioning: false,
     lastChangeTime: 0,
-    cycleInterval: 10000,
-    randomizeInterval: false,
-    enabled: true,
 
+    enabled: true,
+    currentPersonality: 'professional',
     cyclingState: {
       nextCycleTime: 0,
       isActive: true,
-      currentPersonality: 'professional',
-      lastCategory: 'idle'
+      lastCategory: 'idle',
+      cycleInterval: 10000,
+      randomizeInterval: false,
+      cyclingEnabled: false
     },
 
     cachedClips: [],
@@ -45,15 +46,15 @@ export function resetAnimationState(state: AnimationState) {
 
 // --------------------- Personality ---------------------
 export function applyPersonality(state: AnimationState, personality: string) {
-  state.cyclingState.currentPersonality = personality
+  state.currentPersonality = personality
   const config = getPersonalityConfiguration(personality)
-  state.cycleInterval = config.defaultCycleInterval
+  state.cyclingState.cycleInterval = config.defaultCycleInterval
   state.cachedClips = getPersonalityAnimationClips(personality)
 }
 
 export function getPersonalityAnimationClips(personality: string): AnimationClip[] {
   const config = getPersonalityConfiguration(personality)
-  return ANIMATION_CLIPS.filter((clip) => config.categories.includes(clip.category))
+  return Object.values(ANIMATION_CLIPS).filter((clip) => config.categories.includes(clip.category))
 }
 
 // --------------------- Setup ---------------------
@@ -68,17 +69,17 @@ export function setupAnimationState(
   state.avatar = avatar
 }
 
-export function initializeDefaultAnimation(state: AnimationState, personality: string) {
+export function initializeDefaultAnimation(state: AnimationState, personality: string, animation?: AnimationClip) {
   if (!state.actions) return
   if (!state.cachedClips.length) {
     state.cachedClips = getPersonalityAnimationClips(personality)
   }
-  const firstClip = pickNextClip(state)
+  const firstClip = animation ?? pickNextClip(state)
   //const firstClip = ANIMATION_CLIPS[0]
   if (firstClip) {
     playClip(state, firstClip, 0) // no blend for first clip
     state.lastChangeTime = performance.now()
-    state.cyclingState.nextCycleTime = state.lastChangeTime + state.cycleInterval
+    state.cyclingState.nextCycleTime = state.lastChangeTime + state.cyclingState.cycleInterval
   }
 }
 
@@ -91,11 +92,10 @@ export function startPerformance(state: AnimationState, performanceData: Animati
   if (!state.actions) return
 
   // Find the corresponding configured clip
-  const configuredClip = ANIMATION_CLIPS.find((c) => c.name === performanceData.name)
-  console.log('DEBUG : startPerformance', configuredClip)
+  const configuredClip = performanceData.clip
   if (!configuredClip) {
     // Fallback: if clip is unknown, attempt to play the raw action directly
-    const action = state.actions[performanceData.name]
+    const action = state.actions[performanceData.clip.name]
     if (!action) return
 
     action.reset()
@@ -127,8 +127,9 @@ export function startPerformance(state: AnimationState, performanceData: Animati
   }
 
   // Determine blend time (ms). Prefer explicit performance override, then clip default, then personality default
-  const personalityBlend = getPersonalityConfiguration(state.cyclingState.currentPersonality).blendTime
+  const personalityBlend = getPersonalityConfiguration(state.currentPersonality).blendTime
   const blendMs = performanceData.blendTime ?? configuredClip.blendTime ?? personalityBlend ?? 500
+
 
   // If immediate is requested and we are not transitioning, play now; otherwise queue it
   if (performanceData.immediate && !state.isTransitioning) {
@@ -210,34 +211,35 @@ export function updateAnimation(state: AnimationState, delta: number) {
 
   if (state.isTransitioning || !state.currentClip) return
 
-  const elapsed = (now - state.lastChangeTime) * 0.001
-
+  const elapsed = (now - state.lastChangeTime)
   if (Number.isFinite(state.currentClip.loopCount ?? Infinity)) {
     const loops = state.currentClip.loopCount ?? 1
     const effectiveDuration = state.currentClip.duration * loops
-    if (elapsed < effectiveDuration * 0.9) {
-      console.groupEnd()
+    if (elapsed < effectiveDuration * 0.9 ) {
       return
     }
   } else {
-    if (elapsed < state.cycleInterval * 0.001) {
-      console.groupEnd()
+    if (elapsed < state.cyclingState.cycleInterval ) {
       return
     }
   }
-
   // If there are queued items, consume the next queued clip; otherwise pick via cycling
   let nextItem: { clip: AnimationClip; blendTime: number } | null = null
   if (state.queue && state.queue.length > 0) {
     nextItem = state.queue.shift() || null
   }
-  const nextClip = nextItem?.clip ?? pickNextClip(state)
-  const nextBlend =
-    (nextItem?.blendTime ?? nextClip.blendTime) ||
-    getPersonalityConfiguration(state.cyclingState.currentPersonality).blendTime
-  playClip(state, nextClip, nextBlend)
-  state.lastChangeTime = now
-  return
+  const shouldCycle = state.cyclingState.cyclingEnabled;
+  const item = nextItem || (shouldCycle ? { clip: pickNextClip(state) , blendTime: undefined } : null);
+
+  if (item) {
+    const clip = item.clip;
+    const blend =
+      (item.blendTime ?? clip.blendTime) ||
+      getPersonalityConfiguration(state.currentPersonality).blendTime;
+    playClip(state, clip, blend);
+    state.lastChangeTime = now;
+    return;
+  }
 }
 
 // --------------------- Helpers ---------------------
@@ -253,8 +255,8 @@ function weightedCategoryPick(weights: Record<AnimationCategory, number>): Anima
 }
 
 function pickNextClip(state: AnimationState): AnimationClip {
-  const personalityConfig = getPersonalityConfiguration(state.cyclingState.currentPersonality)
-  const allClips = getPersonalityAnimationClips(state.cyclingState.currentPersonality)
+  const personalityConfig = getPersonalityConfiguration(state.currentPersonality)
+  const allClips = getPersonalityAnimationClips(state.currentPersonality)
 
   // Find the next category in the sequence
   const categories = personalityConfig.categories
@@ -377,14 +379,14 @@ export function getCurrentAnimationInfo(state: AnimationState) {
 
 // --------------------- Queue API ---------------------
 export function enqueueAnimation(state: AnimationState, performanceData: AnimationPerformanceData) {
-  const configuredClip = ANIMATION_CLIPS.find((c) => c.name === performanceData.name)
+  const configuredClip = performanceData.clip
   if (!configuredClip) return
   const runtimeClip = {
     ...configuredClip,
     loopCount: performanceData.loopCount ?? configuredClip.loopCount ?? 1,
     speed: performanceData.speed ?? configuredClip.speed ?? 1
   }
-  const personalityBlend = getPersonalityConfiguration(state.cyclingState.currentPersonality).blendTime
+  const personalityBlend = getPersonalityConfiguration(state.currentPersonality).blendTime
   const blendMs = performanceData.blendTime ?? configuredClip.blendTime ?? personalityBlend ?? 500
   if (!state.queue) state.queue = []
   state.queue.push({ clip: runtimeClip, blendTime: blendMs })

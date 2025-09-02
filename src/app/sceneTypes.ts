@@ -39,6 +39,6 @@ export const defaultAvatarConfig: AvatarConfig = {
   uuid: 'alexandria',
   modelUrl: AvatarOptions.Rahul,
   position: [0, 0, 0],
-  animationUrl: ANIMATION_CLIPS[0].path,
+  animationUrl: ANIMATION_CLIPS.idle_loop.path,
   visible: true
 }

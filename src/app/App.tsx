@@ -73,6 +73,11 @@ export const App = () => {
     agentConfig.vad.microphoneEnabled = newAppState.microphone
   }, [agentConfig, setAppState])
 
+  useEffect(() => {
+    agent.services.emotes.actions.triggerGaze()
+    agent.services.emotes.actions.performAction({emotion: 'alert' , relaxTime: 500 })    
+  },[agent.state.vadIsDetecting])
+
   return (
     <div
       style={{
