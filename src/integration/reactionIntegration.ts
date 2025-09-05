@@ -1,8 +1,7 @@
 import type { AnimationPerformanceData } from '../services/animation/animationTypes'
 import type { ConversationMessage } from '../services/conversation/conversationType'
 import type { PerformanceData } from '../services/emote/emoteTypes'
-import { analyzeMessageForActions, detectEmotionFromText, getEmotionIntensity } from './emotionIntegration'
-import { ANIMATION_CLIPS } from '../services/animation/config/animationClips'
+import { detectEmotionFromText, getEmotionIntensity } from './emotionIntegration'
 
 /**
  * Build PerformanceData (facial/emote) and an AnimationPerformanceData (body animation)
@@ -27,14 +26,14 @@ export const createReactionFromMessage = (
   return { performance, animation }
 }
 
-const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n))
+
 
 /**
  * Map emotion/action → animation clip. Intensity modulates speed/blend.
  */
 export const selectAnimationForPerformance = (
-  p: PerformanceData,
-  intensity: number = 0.6
+  _p: PerformanceData,
+  _intensity: number = 0.6
 ): AnimationPerformanceData | undefined => {
   // Base mapping to existing ANIMATION_CLIPS names
   let base: AnimationPerformanceData | undefined = undefined

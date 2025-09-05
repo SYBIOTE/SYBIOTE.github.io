@@ -313,7 +313,7 @@ const AvatarModelComponent = ({ visemeService, emoteService, animationService, o
   useEffect(() => { 
     if (!animationsEnabled || !emotesEnabled) return
     if (!avatarScene || !actions || !mixer  ) return
-    if (! emoteService || ! animationService) return
+    if (!emoteService || !animationService) return
     if (startupPlayedRef.current) return
     if (!isAvatarVisible) return // Wait until avatar is visible
     // Mark startup as played to prevent re-execution
