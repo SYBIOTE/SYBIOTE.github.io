@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import type { XRStore } from '@react-three/xr'
 import { AppConfigState, type AppConfig } from '../../app/appConfig'
 import type { AgentService } from '../../services/useAgent'
-import { ControlPanel } from '../ControlPanel'
+import { ControlPanel } from './ControlPanel'
 
 interface ControlOverlayProps {
   config: AppConfig

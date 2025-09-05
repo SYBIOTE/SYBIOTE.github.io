@@ -41,12 +41,10 @@ export interface AnimationState {
   // Personality & sequence control
   cyclingState: {
     nextCycleTime: number
-    isActive: boolean
     cycleInterval: number
     randomizeInterval: boolean
     cyclingEnabled: boolean
     lastCategory?: AnimationCategory
-
   }
 
   // Cache for personality-specific clips

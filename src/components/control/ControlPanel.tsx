@@ -1,7 +1,7 @@
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ControlButton } from './common/ControlButton'
-import type { ButtonStyleConfig } from './sections/SectionNavRail'
+import { ControlButton } from '../common/ControlButton'
+import type { ButtonStyleConfig } from '../sections/SectionNavRail'
 import { 
   MicrophoneIcon, 
   LightningIcon, 
@@ -9,8 +9,8 @@ import {
   ARIcon,
   VoiceDetectedIcon,
   RecordingIcon
-} from './common/icons'
-import type { AppConfig } from '../app/appConfig'
+} from '../common/icons'
+import type { AppConfig } from '../../app/appConfig'
 
 
 interface ControlPanelProps {

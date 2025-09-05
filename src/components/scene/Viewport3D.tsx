@@ -9,7 +9,7 @@ import type { useEmoteService } from '../../services/emote/useEmoteService'
 import type { useVisemeService } from '../../services/visemes/useVisemeService'
 import type { useConversationService } from '../../services/conversation/useConversationService'
 
-interface AvatarViewportProps {
+interface Viewport3DProps {
   sceneConfig: SceneConfig
   visemeService?: ReturnType<typeof useVisemeService>
   emoteService?: ReturnType<typeof useEmoteService>
@@ -25,7 +25,7 @@ const viewport3DComponent = ({
   animationService,
   conversationService,
   setXRStore
-}: AvatarViewportProps) => {
+}: Viewport3DProps) => {
   return (
     <div
       style={{
@@ -65,3 +65,4 @@ const viewport3DComponent = ({
 
 // Memoize the component to prevent re-renders when services don't change
 export const Viewport3D = memo(viewport3DComponent)
+  

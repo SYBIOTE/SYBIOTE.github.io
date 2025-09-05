@@ -18,7 +18,6 @@ export function initializeAnimationState(): AnimationState {
     currentPersonality: 'professional',
     cyclingState: {
       nextCycleTime: 0,
-      isActive: true,
       lastCategory: 'idle',
       cycleInterval: 10000,
       randomizeInterval: false,
