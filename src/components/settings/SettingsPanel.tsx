@@ -1,4 +1,5 @@
-import { useState, useEffect, type CSSProperties } from 'react'
+import { useState, useEffect, useRef, type CSSProperties } from 'react'
+import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import { SettingsIcon } from '../common/icons/SettingsIcon'
 import type { SupportedLocale } from '../../i18n/types'
@@ -128,6 +129,39 @@ const select: CSSProperties = {
   minWidth: '140px'
 }
 
+// Custom dropdown styles to replace native <select> option styling
+const dropdownButton: CSSProperties = {
+  ...select,
+  appearance: 'none' as any,
+  WebkitAppearance: 'none' as any,
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: '0.5rem',
+  width: '180px'
+}
+
+const dropdownMenu: CSSProperties = {
+  position: 'absolute',
+  top: 'calc(100% + 6px)',
+  right: 0,
+  width: '220px',
+  background: 'linear-gradient(145deg, rgba(58, 60, 63, 0.9), rgba(36, 36, 36, 0.6))',
+  border: '1px solid rgba(255,255,255,0.12)',
+  borderRadius: '10px',
+  boxShadow: '0 12px 40px rgba(0,0,0,0.45)',
+  backdropFilter: 'blur(10px)',
+  zIndex: 10001,
+  overflow: 'hidden'
+}
+
+const dropdownItem: CSSProperties = {
+  padding: '0.55rem 0.75rem',
+  color: '#fff',
+  fontSize: '0.9rem',
+  borderBottom: '1px solid rgba(255,255,255,0.06)'
+}
+
 const toggle: CSSProperties = {
   position: 'relative',
   width: '48px',
@@ -166,6 +200,10 @@ export const SettingsPanel = ({ isOpen, onClose }: SettingsPanelProps) => {
   const { t, i18n } = useTranslation()
   const locale = i18n.language as SupportedLocale
   const setLocale = (newLocale: SupportedLocale) => i18n.changeLanguage(newLocale)
+  const langMenuRef = useRef<HTMLDivElement | null>(null)
+  const langButtonRef = useRef<HTMLButtonElement | null>(null)
+  const [isLangOpen, setIsLangOpen] = useState(false)
+  const [langMenuPos, setLangMenuPos] = useState<{ top: number; left: number; width: number }>({ top: 0, left: 0, width: 180 })
   
   const [settings, setSettings] = useState<AppSettings>({
     volume: 80,
@@ -254,6 +292,36 @@ export const SettingsPanel = ({ isOpen, onClose }: SettingsPanelProps) => {
     { code: 'ja' as SupportedLocale, name: '🇯🇵 日本語', nativeName: '日本語' },
     { code: 'hi' as SupportedLocale, name: '🇮🇳 हिंदी', nativeName: 'हिंदी' }
   ]
+
+  // Close language menu on outside click or Escape
+  useEffect(() => {
+    if (!isLangOpen) return
+    const handleClick = (e: MouseEvent) => {
+      if (langMenuRef.current && !langMenuRef.current.contains(e.target as Node)) {
+        setIsLangOpen(false)
+      }
+    }
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsLangOpen(false)
+    }
+    const handleReposition = () => {
+      if (!langButtonRef.current) return
+      const r = langButtonRef.current.getBoundingClientRect()
+      setLangMenuPos({ top: r.bottom + 6, left: r.left, width: r.width })
+    }
+    // initial position
+    handleReposition()
+    document.addEventListener('mousedown', handleClick)
+    document.addEventListener('keydown', handleKey)
+    window.addEventListener('scroll', handleReposition, true)
+    window.addEventListener('resize', handleReposition)
+    return () => {
+      document.removeEventListener('mousedown', handleClick)
+      document.removeEventListener('keydown', handleKey)
+      window.removeEventListener('scroll', handleReposition, true)
+      window.removeEventListener('resize', handleReposition)
+    }
+  }, [isLangOpen])
 
   if (!isOpen) return null
 
@@ -360,34 +428,90 @@ export const SettingsPanel = ({ isOpen, onClose }: SettingsPanelProps) => {
           <div style={sectionTitle}>{t("sections.language")}</div>
           <div style={settingRow}>
             <span style={settingLabel}>{t("settings.language.interfaceLanguage")}</span>
-            <select
-              style={select}
-              value={settings.language}
-              onChange={(e) => updateSetting('language', e.target.value as SupportedLocale)}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'linear-gradient(135deg, rgba(30,136,229,0.3) 0%, rgba(30,136,229,0.15) 100%)'
-                e.currentTarget.style.borderColor = 'rgba(30,136,229,0.5)'
-                e.currentTarget.style.transform = 'translateY(-2px)'
-                e.currentTarget.style.boxShadow = '0 0.5rem 1rem rgba(30,136,229,0.25)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'linear-gradient(135deg, rgba(30,136,229,0.15) 0%, rgba(30,136,229,0.05) 100%)'
-                e.currentTarget.style.borderColor = 'rgba(30,136,229,0.3)'
-                e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.boxShadow = '0 0.125rem 0.25rem rgba(30,136,229,0.1)'
-              }}
-            >
-              {languages.map((lang) => (
-                <option key={lang.code} value={lang.code} style={{ 
-                  background: 'linear-gradient(135deg, rgba(30,136,229,0.2) 0%, rgba(30,136,229,0.1) 100%)',
-                  color: '#fff',
-                  border: '1px solid rgba(30,136,229,0.3)',
-                  padding: '0.5rem'
-                }}>
-                  {lang.name}
-                </option>
-              ))}
-            </select>
+            <div style={{ position: 'relative' }}>
+              <button
+                type="button"
+                style={dropdownButton}
+                onClick={() => {
+                  // compute position on open
+                  if (!isLangOpen && langButtonRef.current) {
+                    const r = langButtonRef.current.getBoundingClientRect()
+                    setLangMenuPos({ top: r.bottom + 6, left: r.left, width: r.width })
+                  }
+                  setIsLangOpen((v) => !v)
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'linear-gradient(135deg, rgba(30,136,229,0.3) 0%, rgba(30,136,229,0.15) 100%)'
+                  e.currentTarget.style.borderColor = 'rgba(30,136,229,0.5)'
+                  e.currentTarget.style.transform = 'translateY(-2px)'
+                  e.currentTarget.style.boxShadow = '0 0.5rem 1rem rgba(30,136,229,0.25)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'linear-gradient(135deg, rgba(30,136,229,0.15) 0%, rgba(30,136,229,0.05) 100%)'
+                  e.currentTarget.style.borderColor = 'rgba(30,136,229,0.3)'
+                  e.currentTarget.style.transform = 'translateY(0)'
+                  e.currentTarget.style.boxShadow = '0 0.125rem 0.25rem rgba(30,136,229,0.1)'
+                }}
+                aria-haspopup="listbox"
+                aria-expanded={isLangOpen}
+                ref={langButtonRef}
+              >
+                <span>
+                  {languages.find(l => l.code === settings.language)?.name || settings.language}
+                </span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
+              {isLangOpen && createPortal(
+                <div
+                  role="listbox"
+                  ref={langMenuRef}
+                  style={{
+                    ...dropdownMenu,
+                    position: 'fixed',
+                    top: `${langMenuPos.top}px`,
+                    left: `${langMenuPos.left}px`,
+                    width: `${Math.max(220, langMenuPos.width)}px`,
+                    zIndex: 100000
+                  }}
+                >
+                  {languages.map((lang) => (
+                    <div
+                      key={lang.code}
+                      role="option"
+                      aria-selected={settings.language === lang.code}
+                      style={{
+                        ...dropdownItem,
+                        background: settings.language === lang.code ? 'rgba(30,136,229,0.15)' : 'transparent'
+                      }}
+                      onClick={() => {
+                        updateSetting('language', lang.code)
+                        setIsLangOpen(false)
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'rgba(30,136,229,0.12)'
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = settings.language === lang.code ? 'rgba(30,136,229,0.15)' : 'transparent'
+                      }}
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault()
+                          updateSetting('language', lang.code)
+                          setIsLangOpen(false)
+                        }
+                        if (e.key === 'Escape') setIsLangOpen(false)
+                      }}
+                    >
+                      {lang.name} <span style={{ opacity: 0.7 }}>({lang.nativeName})</span>
+                    </div>
+                  ))}
+                </div>,
+                document.body
+              )}
+            </div>
           </div>
         </div>
 
