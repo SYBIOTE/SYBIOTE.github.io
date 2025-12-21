@@ -12,9 +12,58 @@ import type { LLMParams, LLMResult } from '../llmTypes'
 const MIN_BREATH_LENGTH = 20
 
 /**
+ * Get available models from Ollama using ollama/browser
+ */
+async function getAvailableModels(llmUrl: string): Promise<string[]> {
+  try {
+    const ollama = new Ollama({
+      host: llmUrl
+    })
+
+    const response = await ollama.list()
+    return (response.models || []).map((m: any) => m.name)
+  } catch (err) {
+    console.error('Failed to get available models:', err)
+    return []
+  }
+}
+
+/**
+ * Find a fallback model if requested model is not available
+ */
+async function findFallbackModel(llmUrl: string, requestedModel: string, preferredFallbacks: string[] = []): Promise<string | null> {
+  const availableModels = await getAvailableModels(llmUrl)
+  
+  if (availableModels.length === 0) {
+    return null
+  }
+
+  // Check if requested model is available
+  if (availableModels.includes(requestedModel)) {
+    return requestedModel
+  }
+
+  console.warn(`⚠️ [Model Fallback] Requested model "${requestedModel}" not available`)
+  console.log(`📦 [Model Fallback] Available models:`, availableModels.join(', '))
+
+  // Try preferred fallbacks in order
+  for (const fallback of preferredFallbacks) {
+    if (availableModels.includes(fallback)) {
+      console.log(`✅ [Model Fallback] Using fallback model: ${fallback}`)
+      return fallback
+    }
+  }
+
+  // Use first available model as last resort
+  const firstAvailable = availableModels[0]
+  console.log(`⚠️ [Model Fallback] Using first available model: ${firstAvailable}`)
+  return firstAvailable
+}
+
+/**
  * Health check function to verify backend and Ollama connectivity
  */
-export async function checkOllamaHealth(llmUrl: string): Promise<{ backend: boolean; ollama: boolean; error?: string }> {
+export async function checkOllamaHealth(llmUrl: string): Promise<{ backend: boolean; ollama: boolean; availableModels?: string[]; error?: string }> {
   try {
     // Check 1: Backend health endpoint
     console.log('🔍 [Health Check] Checking backend connectivity...', llmUrl)
@@ -33,26 +82,23 @@ export async function checkOllamaHealth(llmUrl: string): Promise<{ backend: bool
     const healthData = await healthResponse.json().catch(() => null)
     console.log('✅ [Health Check] Backend is reachable:', healthData)
 
-    // Check 2: Ollama API through backend
+    // Check 2: Ollama API through backend using ollama/browser
     console.log('🔍 [Health Check] Checking Ollama connectivity through backend...')
-    const ollamaResponse = await fetch(`${llmUrl}/api/tags`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
+    try {
+      const ollama = new Ollama({
+        host: llmUrl
+      })
 
-    if (!ollamaResponse.ok) {
-      console.error('❌ [Health Check] Ollama API check failed:', ollamaResponse.status, ollamaResponse.statusText)
-      return { backend: true, ollama: false, error: `Ollama API returned ${ollamaResponse.status}` }
+      const listResponse = await ollama.list()
+      const modelNames = (listResponse.models || []).map((m: any) => m.name)
+      console.log('✅ [Health Check] Ollama is connected through backend')
+      console.log('📦 [Health Check] Available models:', modelNames.join(', ') || 'None')
+
+      return { backend: true, ollama: true, availableModels: modelNames }
+    } catch (ollamaErr) {
+      console.error('❌ [Health Check] Ollama API check failed:', ollamaErr)
+      return { backend: true, ollama: false, error: `Ollama API error: ${ollamaErr instanceof Error ? ollamaErr.message : 'Unknown error'}` }
     }
-
-    const ollamaData = await ollamaResponse.json().catch(() => null)
-    const models = ollamaData?.models || []
-    console.log('✅ [Health Check] Ollama is connected through backend')
-    console.log('📦 [Health Check] Available models:', models.map((m: any) => m.name).join(', ') || 'None')
-
-    return { backend: true, ollama: true }
   } catch (err) {
     const error = err instanceof Error ? err.message : 'Unknown error'
     console.error('❌ [Health Check] Health check failed:', error)
@@ -128,6 +174,22 @@ export async function llmOllama(params: LLMParams): Promise<LLMResult> {
   }
 
   try {
+    // Check if requested model is available, fallback if not
+    const preferredFallbacks = ['gemma3:1b', 'llama3.2:1b', 'llama3.2']
+    const actualModel = await findFallbackModel(llmUrl, llmModel, preferredFallbacks)
+    
+    if (!actualModel) {
+      const error = new Error(`No models available on Ollama server. Requested: ${llmModel}`)
+      console.error('LLM: No models available:', error)
+      setThinking?.(false)
+      return { success: false, error }
+    }
+
+    // Log if fallback was used
+    if (actualModel !== llmModel) {
+      console.warn(`⚠️ [LLM] Model fallback: "${llmModel}" → "${actualModel}"`)
+    }
+
     const ollama = new Ollama({
       host: llmUrl
     })
@@ -139,10 +201,10 @@ export async function llmOllama(params: LLMParams): Promise<LLMResult> {
       content: msg.content
     }))
 
-    console.log('LLM - sending Ollama request to', llmUrl, 'with model', llmModel)
+    console.log('LLM - sending Ollama request to', llmUrl, 'with model', actualModel)
 
     const response = await ollama.chat({
-      model: llmModel,
+      model: actualModel,
       messages: requestMessages,
       stream: true
     })
