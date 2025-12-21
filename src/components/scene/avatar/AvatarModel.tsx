@@ -322,7 +322,7 @@ const AvatarModelComponent = ({ visemeService, emoteService, animationService, o
       emoteService.actions.performAction({emotion: 'happy', relaxTime: ANIMATION_CLIPS.surprise_greet.duration})
 
       animationService.actions.performAction({
-        clip: ANIMATION_CLIPS.surprise_greet,
+        clip: ANIMATION_CLIPS.wave,
         immediate: true,
         loopCount: 1,
         blendTime: 300

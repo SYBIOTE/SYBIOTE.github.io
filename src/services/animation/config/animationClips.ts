@@ -79,6 +79,30 @@ export const ANIMATION_CLIPS = {
     blendCurve: 'easeInOut',
     speed: 0.9
   },
+  'wave': {
+    name: 'wave',
+    path: '/assets/animations/vrm/wave.vrma',
+    duration: 2000, // Will be updated from actual animation file
+    weight: 0.3,
+    blendTime: 500,
+    category: 'action',
+    priority: 2,
+    loopCount: 1,
+    blendCurve: 'easeInOut',
+    speed: 1
+  },
+  'bow': {
+    name: 'bow',
+    path: '/assets/animations/vrm/bow.vrma',
+    duration: 2000, // Will be updated from actual animation file
+    weight: 0.3,
+    blendTime: 500,
+    category: 'action',
+    priority: 2,
+    loopCount: 1,
+    blendCurve: 'easeInOut',
+    speed: 1
+  },
 } as Record<string, AnimationClip>
 
 /**
