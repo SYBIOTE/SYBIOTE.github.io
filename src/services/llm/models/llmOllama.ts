@@ -11,6 +11,55 @@ import type { LLMParams, LLMResult } from '../llmTypes'
 
 const MIN_BREATH_LENGTH = 20
 
+/**
+ * Health check function to verify backend and Ollama connectivity
+ */
+export async function checkOllamaHealth(llmUrl: string): Promise<{ backend: boolean; ollama: boolean; error?: string }> {
+  try {
+    // Check 1: Backend health endpoint
+    console.log('🔍 [Health Check] Checking backend connectivity...', llmUrl)
+    const healthResponse = await fetch(`${llmUrl}/health`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+
+    if (!healthResponse.ok) {
+      console.error('❌ [Health Check] Backend health check failed:', healthResponse.status, healthResponse.statusText)
+      return { backend: false, ollama: false, error: `Backend returned ${healthResponse.status}` }
+    }
+
+    const healthData = await healthResponse.json().catch(() => null)
+    console.log('✅ [Health Check] Backend is reachable:', healthData)
+
+    // Check 2: Ollama API through backend
+    console.log('🔍 [Health Check] Checking Ollama connectivity through backend...')
+    const ollamaResponse = await fetch(`${llmUrl}/api/tags`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+
+    if (!ollamaResponse.ok) {
+      console.error('❌ [Health Check] Ollama API check failed:', ollamaResponse.status, ollamaResponse.statusText)
+      return { backend: true, ollama: false, error: `Ollama API returned ${ollamaResponse.status}` }
+    }
+
+    const ollamaData = await ollamaResponse.json().catch(() => null)
+    const models = ollamaData?.models || []
+    console.log('✅ [Health Check] Ollama is connected through backend')
+    console.log('📦 [Health Check] Available models:', models.map((m: any) => m.name).join(', ') || 'None')
+
+    return { backend: true, ollama: true }
+  } catch (err) {
+    const error = err instanceof Error ? err.message : 'Unknown error'
+    console.error('❌ [Health Check] Health check failed:', error)
+    return { backend: false, ollama: false, error }
+  }
+}
+
 export async function llmOllama(params: LLMParams): Promise<LLMResult> {
   const {
     userMessage,

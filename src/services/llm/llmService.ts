@@ -38,7 +38,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { llmCloud } from './models/llmCloud'
 import { llmDirected } from './models/llmDirected'
 import { llmLocal } from './models/llmLocal'
-import { llmOllama } from './models/llmOllama'
+import { llmOllama, checkOllamaHealth } from './models/llmOllama'
 import { defaultLLMConfig, SYSTEM_PROMPT, type LLMConfig, AVAILABLE_LOCAL_MODELS } from './config/llmConfig'
 import type { LLMStatusUpdate, LLMResponse, LLMState, LLMPerformRequest } from './llmTypes'
 
@@ -177,7 +177,19 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
     if (config.llm_provider === 'script') {
       setState((prev) => ({ ...prev, ready: true }))
     } else if (config.llm_provider === 'ollama' && config.ollama_url) {
-      setState((prev) => ({ ...prev, ready: true }))
+      // Run health check for Ollama
+      console.log('🚀 [LLM Service] Initializing Ollama provider...')
+      const health = await checkOllamaHealth(config.ollama_url)
+      
+      if (health.backend && health.ollama) {
+        console.log('✅ [LLM Service] Ollama backend and service are healthy')
+        setState((prev) => ({ ...prev, ready: true }))
+      } else {
+        console.warn('⚠️ [LLM Service] Ollama health check failed:', health.error)
+        console.warn('⚠️ [LLM Service] Service may not work correctly. Backend:', health.backend, 'Ollama:', health.ollama)
+        // Still mark as ready to allow retry
+        setState((prev) => ({ ...prev, ready: true }))
+      }
     } else if (config.llm_provider === 'mlc' && config.mlc_model) {
       await load()
     } else if (
@@ -207,6 +219,23 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
 
     return () => clearTimeout(timer)
   }, [initialize])
+
+  // Periodic health check for Ollama
+  useEffect(() => {
+    if (config.llm_provider !== 'ollama' || !config.ollama_url) return
+
+    // Run health check every 30 seconds
+    const healthCheckInterval = setInterval(async () => {
+      const health = await checkOllamaHealth(config.ollama_url!)
+      if (!health.backend || !health.ollama) {
+        console.warn('⚠️ [Health Check] Periodic check failed:', health.error)
+      } else {
+        console.log('✅ [Health Check] Periodic check passed')
+      }
+    }, 30000) // 30 seconds
+
+    return () => clearInterval(healthCheckInterval)
+  }, [config.llm_provider, config.ollama_url])
 
   const processUserInput = useCallback(
     async (request: LLMPerformRequest) => {
