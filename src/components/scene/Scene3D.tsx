@@ -1,7 +1,7 @@
 import { Environment, OrbitControls } from '@react-three/drei'
 import { Canvas, useThree } from '@react-three/fiber'
 import { createXRStore, XR, type XRStore } from '@react-three/xr'
-import { memo, useEffect, useRef, useState } from 'react'
+import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 
 import type { SceneConfig } from '../../app/sceneTypes'
@@ -33,9 +33,13 @@ const SceneContent = ({
   const { camera } = useThree()
   const [camTarget, setCamTarget] = useState<[number, number, number]>(sceneConfig.cameraTarget)
   const [camPos, setCamPos] = useState<[number, number, number]>(sceneConfig.cameraPosition)
-  console.log('DEBUG currentSubtitle', agentState.currentSubtitle)
-  const subtitleMessage = agentState.llmThinking ? '...' : (agentState.currentSubtitle || '')
+  const subtitleMessage = agentState.llmThinking ? 'Thinking...' : (agentState.currentSubtitle || '')
 
+  const avatarAgentState = useMemo(() => ({
+    llmThinking: agentState.llmThinking,
+    ttsIsSpeaking: agentState.ttsIsSpeaking
+  }), [agentState.llmThinking, agentState.ttsIsSpeaking])
+  
   useEffect(() => {
     camera.position.set(camPos[0], camPos[1], camPos[2])
     camera.lookAt(new THREE.Vector3(camTarget[0], camTarget[1], camTarget[2]))
@@ -76,7 +80,7 @@ const SceneContent = ({
 
       {/* Avatar with external animations */}
       <AvatarModel
-        agentState={agentState}
+        agentState={avatarAgentState}
         visemeService={visemeService}
         emoteService={emoteService}
         animationService={animationService}

@@ -18,7 +18,6 @@ import type { useAnimationService } from '../../../services/animation/useAnimati
 import type { useEmoteService } from '../../../services/emote/useEmoteService'
 import type { useVisemeService } from '../../../services/visemes/useVisemeService'
 import type { AnimationClip } from '../../../services/animation/animationTypes'
-import type { AgentService } from '../../../services/useAgent'
 
 const AVATAR_MODEL = AvatarOptions.Rahul
 
@@ -30,7 +29,10 @@ export const AvatarState = createSimpleStore({
 })
 
 interface AvatarModelProps {
-  agentState: AgentService['state']
+  agentState: {
+    llmThinking: boolean
+    ttsIsSpeaking: boolean
+  }  
   visemeService?: ReturnType<typeof useVisemeService>
   emoteService?: ReturnType<typeof useEmoteService>
   animationService?: ReturnType<typeof useAnimationService>
