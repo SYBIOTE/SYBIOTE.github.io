@@ -33,7 +33,7 @@ const SceneContent = ({
   const { camera } = useThree()
   const [camTarget, setCamTarget] = useState<[number, number, number]>(sceneConfig.cameraTarget)
   const [camPos, setCamPos] = useState<[number, number, number]>(sceneConfig.cameraPosition)
-  const subtitleMessage = agentState.llmThinking ? 'Thinking...' : (agentState.currentSubtitle || '')
+  const subtitleMessage = agentState.llmThinking ? 'Thinking......' : (agentState.currentSubtitle || '')
 
   const avatarAgentState = useMemo(() => ({
     llmThinking: agentState.llmThinking,
