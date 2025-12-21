@@ -12,14 +12,36 @@ import type { LLMParams, LLMResult } from '../llmTypes'
 const MIN_BREATH_LENGTH = 20
 
 /**
+ * Custom fetch wrapper that adds ngrok header for tunneled connections
+ */
+const createNgrokFetch = () => {
+  return (url: RequestInfo | URL, options?: RequestInit) => {
+    return fetch(url, {
+      ...options,
+      headers: {
+        ...options?.headers,
+        'ngrok-skip-browser-warning': 'true'
+      }
+    })
+  }
+}
+
+/**
+ * Create an Ollama client with ngrok-compatible headers
+ */
+function createOllamaClient(host: string): Ollama {
+  return new Ollama({
+    host,
+    fetch: createNgrokFetch()
+  })
+}
+
+/**
  * Get available models from Ollama using ollama/browser
  */
 async function getAvailableModels(llmUrl: string): Promise<string[]> {
   try {
-    const ollama = new Ollama({
-      host: llmUrl
-    })
-
+    const ollama = createOllamaClient(llmUrl)
     const response = await ollama.list()
     return (response.models || []).map((m: any) => m.name)
   } catch (err) {
@@ -70,8 +92,9 @@ export async function checkOllamaHealth(llmUrl: string): Promise<{ backend: bool
     const healthResponse = await fetch(`${llmUrl}/health`, {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'ngrok-skip-browser-warning': 'true'
+      },
+      mode: 'cors'
     })
 
     if (!healthResponse.ok) {
@@ -85,9 +108,7 @@ export async function checkOllamaHealth(llmUrl: string): Promise<{ backend: bool
     // Check 2: Ollama API through backend using ollama/browser
     console.log('🔍 [Health Check] Checking Ollama connectivity through backend...')
     try {
-      const ollama = new Ollama({
-        host: llmUrl
-      })
+      const ollama = createOllamaClient(llmUrl)
 
       const listResponse = await ollama.list()
       const modelNames = (listResponse.models || []).map((m: any) => m.name)
@@ -190,9 +211,7 @@ export async function llmOllama(params: LLMParams): Promise<LLMResult> {
       console.warn(`⚠️ [LLM] Model fallback: "${llmModel}" → "${actualModel}"`)
     }
 
-    const ollama = new Ollama({
-      host: llmUrl
-    })
+    const ollama = createOllamaClient(llmUrl)
 
     const allMessages = [...messages, { role: 'user' as const, content: userMessage }]
 
