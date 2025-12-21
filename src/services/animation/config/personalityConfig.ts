@@ -47,14 +47,14 @@ export const personalityConfigurations: Record<string, PersonalityConfiguration>
     defaultCycleInterval: 10000,
     blendTime: 1000,
     randomizeOrder: false,
-    categories: ['idle', 'gesture', 'communication'],
+    categories: ['idle', 'gesture'],
     weights: {
       idle: 0.5,
       gesture: 0.2,
       movement: 0.1,
       expression: 0.0,
       action: 0.0,
-      communication: 0.2
+      communication: 0
     }
   },
   playful: {

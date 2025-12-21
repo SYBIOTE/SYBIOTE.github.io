@@ -137,6 +137,7 @@ export const App = () => {
         }}
       >
         <Viewport3D
+          agentState={agent.state}
           sceneConfig={sceneConfig}
           visemeService={agent.services.visemes}
           emoteService={agent.services.emotes}

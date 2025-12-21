@@ -21,7 +21,7 @@ export function initializeAnimationState(): AnimationState {
       lastCategory: 'idle',
       cycleInterval: 10000,
       randomizeInterval: false,
-      cyclingEnabled: false
+      cyclingEnabled: true
     },
 
     cachedClips: [],
@@ -297,6 +297,7 @@ function pickNextClip(state: AnimationState): AnimationClip {
     chosenClip = categoryClips[Math.floor(Math.random() * categoryClips.length)]
   }
   state.cyclingState.lastCategory = categoryToPick
+
   return chosenClip
 }
 

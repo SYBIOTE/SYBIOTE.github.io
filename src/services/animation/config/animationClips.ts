@@ -13,60 +13,69 @@ export const ANIMATION_CLIPS = {
     priority: 1,
     loopCount: Infinity, // Infinite loops
     blendCurve: 'easeInOut',
+    speed: .5
+  },
+  'neutral_idle':{
+    name: 'neutral_idle',
+    path: '/assets/animations/fbx/neutral_idle.fbx',
+    duration: 5000, // Will be updated from actual animation file
+    weight: 1,
+    blendTime: 1000,
+    category: 'idle',
+    priority: 1,
+    loopCount: Infinity, // Infinite loops
+    blendCurve: 'easeInOut',
     speed: 1
   },
-
-  // Gesture animations
-  
-  'victory_sign': {
-    name: 'victory_sign',
-    path: '/assets/animations/vrm/victory_sign.vrma',
-    duration: 2500, // Will be updated from actual animation file
-    weight: 0.5,
-    blendTime: 600,
-    category: 'gesture',
-    priority: 3,
-    loopCount: 1,
-    blendCurve: 'easeOut',
-    speed: 0.8
-  },
-  'surprise_greet': {
-    name: 'surprise_greet',
-    path: '/assets/animations/vrm/surprise_greet.vrma',
-    duration: 3000, // Will be updated from actual animation file
-    weight: 0.6,
-    blendTime: 700,
-    category: 'gesture',
-    priority: 2,
-    loopCount: 1,
+  'talk':{
+    name: 'talk',
+    path: '/assets/animations/fbx/talk.fbx',
+    duration: 5000, // Will be updated from actual animation file
+    weight: 0,
+    blendTime: 1000,
+    category: 'communication',
+    priority: 0,
+    loopCount: Infinity,
     blendCurve: 'easeInOut',
-    speed: 0.9
+    speed: 1
   },
-  'pose': {
-    name: 'pose',
-    path: '/assets/animations/vrm/pose.vrma',
-    duration: 2000, // Will be updated from actual animation file
-    weight: 0.3,
-    blendTime: 500,
+  'swat_fly':{
+    name: 'swat_fly',
+    path: '/assets/animations/fbx/swat_fly.fbx',
+    duration: 5000, // Will be updated from actual animation file
+    weight: 1,
+    blendTime: 1000,
     category: 'gesture',
-    priority: 2,
+    priority: 1,
     loopCount: 1,
     blendCurve: 'easeInOut',
     speed: 1
   },
-  'finger_gun': {
-    name: 'finger_gun',
-    path: '/assets/animations/vrm/finger_gun.vrma',
-    duration: 2000, // Will be updated from actual animation file
-    weight: 0.4,
-    blendTime: 500,
+  'blush':{
+    name: 'blush',
+    path: '/assets/animations/vrm/blush.vrma',
+    duration: 5000, // Will be updated from actual animation file
+    weight: 1,
+    blendTime: 1000,
     category: 'action',
-    priority: 3,
+    priority: 1,
     loopCount: 1,
-    blendCurve: 'easeOut',
+    blendCurve: 'easeInOut',
     speed: 1
   },
   // Action animations
+  'look_around': {
+    name: 'look_around',
+    path: '/assets/animations/vrm/look_around.vrma',
+    duration: 5000, // Will be updated from actual animation file
+    weight: 1,
+    blendTime: 1000,
+    category: 'action',
+    priority: 1,
+    loopCount: 1,
+    blendCurve: 'easeInOut',
+    speed: 1
+  },
   'dance_move': {
     name: 'dance_move',
     path: '/assets/animations/vrm/dance_move.vrma',
@@ -79,21 +88,9 @@ export const ANIMATION_CLIPS = {
     blendCurve: 'easeInOut',
     speed: 0.9
   },
-  'wave': {
-    name: 'wave',
-    path: '/assets/animations/vrm/wave.vrma',
-    duration: 2000, // Will be updated from actual animation file
-    weight: 0.3,
-    blendTime: 500,
-    category: 'action',
-    priority: 2,
-    loopCount: 1,
-    blendCurve: 'easeInOut',
-    speed: 1
-  },
   'bow': {
     name: 'bow',
-    path: '/assets/animations/vrm/bow.vrma',
+    path: '/assets/animations/fbx/bow.fbx',
     duration: 2000, // Will be updated from actual animation file
     weight: 0.3,
     blendTime: 500,
@@ -103,6 +100,18 @@ export const ANIMATION_CLIPS = {
     blendCurve: 'easeInOut',
     speed: 1
   },
+  'wave':{
+    name: 'wave',
+    path: '/assets/animations/fbx/wave.fbx',
+    duration: 2000, // Will be updated from actual animation file
+    weight: 0.3,
+    blendTime: 500,
+    category: 'action',
+    priority: 2,
+    loopCount: 1,
+    blendCurve: 'easeInOut',
+    speed: 1
+  }
 } as Record<string, AnimationClip>
 
 /**

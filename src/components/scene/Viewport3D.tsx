@@ -8,8 +8,10 @@ import type { useAnimationService } from '../../services/animation/useAnimationS
 import type { useEmoteService } from '../../services/emote/useEmoteService'
 import type { useVisemeService } from '../../services/visemes/useVisemeService'
 import type { useConversationService } from '../../services/conversation/useConversationService'
+import type { AgentService } from '../../services/useAgent'
 
 interface Viewport3DProps {
+  agentState: AgentService['state']
   sceneConfig: SceneConfig
   visemeService?: ReturnType<typeof useVisemeService>
   emoteService?: ReturnType<typeof useEmoteService>
@@ -19,6 +21,7 @@ interface Viewport3DProps {
 }
 
 const viewport3DComponent = ({
+  agentState,
   sceneConfig,
   visemeService,
   emoteService,
@@ -51,6 +54,7 @@ const viewport3DComponent = ({
         id="avatar-viewport"
       >
         <Scene3D
+          agentState={agentState}
           sceneConfig={sceneConfig}
           visemeService={visemeService}
           emoteService={emoteService}

@@ -239,16 +239,16 @@ const updateEmotionRelaxation = (state: EmoteState, _delta: number): void => {
 export const startPerformance = (state: EmoteState, performanceData: PerformanceData, _delta: number ): EmoteResult => {
   return safeExecute(() => {
     if (!performanceData) return
+    if (!performanceData.emotion) return;
+    // Apply emotion if specified
 
     const startTime = performance.now()
 
-    // Apply emotion if specified
-    if (performanceData.emotion) {
-      const emotionResult = applyEmotion(state, performanceData.emotion)
-      if (!emotionResult.success) {
-        console.warn('Failed to apply emotion during performance:', emotionResult.error)
-      }
+    const emotionResult = applyEmotion(state, performanceData.emotion)
+    if (!emotionResult.success) {
+      console.warn('Failed to apply emotion during performance:', emotionResult.error)
     }
+    
 
     state.isPerforming = true
     state.performanceStartTime = startTime

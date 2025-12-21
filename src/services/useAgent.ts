@@ -94,6 +94,9 @@ export interface AgentService {
     sttDesired: boolean
     currentTranscript: string
 
+    // Subtitle state
+    currentSubtitle: string
+
     // LLM state
     llmReady: boolean
     llmLoading: boolean
@@ -214,6 +217,7 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
 
   // Internal state
   const [currentInterimTranscript, setCurrentInterimTranscript] = useState('')
+  const [currentSubtitleText, setCurrentSubtitleText] = useState('')
   const interruptCounterRef = useRef(performance.now())
 
   // Initialize conversation service
@@ -261,10 +265,15 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
     onSpeechStart: (text: string, whisperData: WhisperData) => {
       visemes.actions.generateSequence(whisperData)
       callbacks.onTTSSpeechStart?.(text, whisperData)
+      setCurrentSubtitleText(prev => {
+        // Accumulate chunks as they play
+        return prev ? prev + ' ' + text : text
+      })
     },
     onSpeechEnd: () => {
       emotes.actions.reset()
       callbacks.onTTSSpeechEnd?.()
+      setCurrentSubtitleText('')
     }
   })
 
@@ -490,6 +499,7 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
       sttAllowed: stt.state.allowed,
       sttDesired: stt.state.desired,
       currentTranscript: currentInterimTranscript,
+      currentSubtitle: currentSubtitleText,
       llmReady: llmService.state.ready,
       llmLoading: llmService.state.loading,
       llmThinking: llmService.state.thinking,
@@ -505,6 +515,7 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
       stt.state.allowed,
       stt.state.desired,
       currentInterimTranscript,
+      currentSubtitleText,
       llmService.state.ready,
       llmService.state.loading,
       llmService.state.thinking,

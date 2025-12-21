@@ -7,15 +7,18 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/Addons.js'
 import type { GLTFParser } from 'three/examples/jsm/Addons.js'
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
+import { loadMixamoAnimation } from '../../../utils/animationUtil'
 
 
 import { AvatarOptions } from './AvatarOptions'
 import { Vector3 } from 'three'
-import  {ANIMATION_CLIPS, getRandomClip, updateAnimationDurations } from '../../../services/animation/config/animationClips'
+import  {ANIMATION_CLIPS, getClipsByCategory, getRandomClip, updateAnimationDurations } from '../../../services/animation/config/animationClips'
 import type { useAnimationService } from '../../../services/animation/useAnimationService'
 import type { useEmoteService } from '../../../services/emote/useEmoteService'
 import type { useVisemeService } from '../../../services/visemes/useVisemeService'
 import type { AnimationClip } from '../../../services/animation/animationTypes'
+import type { AgentService } from '../../../services/useAgent'
 
 const AVATAR_MODEL = AvatarOptions.Rahul
 
@@ -27,18 +30,61 @@ export const AvatarState = createSimpleStore({
 })
 
 interface AvatarModelProps {
+  agentState: AgentService['state']
   visemeService?: ReturnType<typeof useVisemeService>
   emoteService?: ReturnType<typeof useEmoteService>
   animationService?: ReturnType<typeof useAnimationService>
   onHeadLocated?: (target: [number, number, number], position: [number, number, number]) => void
 }
 
+// Helper function to detect Mixamo rig (optimized with early exit)
+const detectMixamoRig = (fbxAsset: THREE.Group): boolean => {
+  // Quick check: traverse with early exit
+  let hasMixamoRig = false
+  fbxAsset.traverse((child) => {
+    if (hasMixamoRig) return // Early exit optimization
+    if (child.name?.startsWith('mixamorig')) {
+      hasMixamoRig = true
+    }
+  })
+  
+  // If not found in scene, check animations
+  if (!hasMixamoRig && fbxAsset.animations?.length) {
+    hasMixamoRig = fbxAsset.animations.some((anim) => 
+      anim.name.includes('mixamo.com') || 
+      anim.tracks.some((track) => track.name.startsWith('mixamorig'))
+    )
+  }
+  
+  return hasMixamoRig
+}
+
+// Helper function to process VRMA track names
+const processVRMATracks = (clip: THREE.AnimationClip): THREE.AnimationClip => {
+  clip.tracks = clip.tracks.filter((track) => {
+    if (track.name.startsWith('Normalized_')) {
+      track.name = track.name.replace(/^Normalized_/, '')
+    }
+    const lower = track.name.toLowerCase()
+    // Filter out neck and head tracks
+    return !lower.includes('neck') && !lower.includes('head')
+  })
+  return clip
+}
+
 // Custom hook to load external animation files, including VRMA animations
 export const useExternalAnimations = (avatarRef: React.RefObject<THREE.Object3D>, vrm?: VRMCore) => {
-  // Split clips by type so hooks are deterministic
-  const vrmaClips = Object.values(ANIMATION_CLIPS).filter((c) => c.path.toLowerCase().endsWith('.vrma'))
-
-  const gltfClips = Object.values(ANIMATION_CLIPS).filter((c) => !c.path.toLowerCase().endsWith('.vrma'))
+  // Memoize clip filtering to avoid recreating arrays on every render
+  const { vrmaClips, fbxClips, gltfClips } = useMemo(() => {
+    const allClips = Object.values(ANIMATION_CLIPS)
+    return {
+      vrmaClips: allClips.filter((c) => c.path.toLowerCase().endsWith('.vrma')),
+      fbxClips: allClips.filter((c) => c.path.toLowerCase().endsWith('.fbx')),
+      gltfClips: allClips.filter((c) => 
+        !c.path.toLowerCase().endsWith('.vrma') && !c.path.toLowerCase().endsWith('.fbx')
+      )
+    }
+  }, [])
 
   // Load VRMA animations
   const vrmaGLTFs = vrmaClips.map((clip) =>
@@ -47,64 +93,142 @@ export const useExternalAnimations = (avatarRef: React.RefObject<THREE.Object3D>
     })
   )
 
+  // Load FBX animations
+  const fbxAssets = fbxClips.map((clip) => useLoader(FBXLoader, clip.path))
+
   // Load GLTF/GLB animations
   const gltfGLTFs = gltfClips.map((clip) => useGLTF(clip.path))
 
-  // Collect all animations
+  // State for Mixamo-converted animations
+  const [mixamoAnimations, setMixamoAnimations] = useState<Map<string, THREE.AnimationClip>>(new Map())
+  const processedKeyRef = useRef<string | null>(null)
+  const isProcessingRef = useRef<boolean>(false)
+
+  // Memoize clip paths for stable dependency tracking
+  const fbxClipPathsKey = useMemo(() => 
+    fbxClips.map(c => c.path).sort().join('|'),
+    [fbxClips.length]
+  )
+
+  // Process FBX files and detect/convert Mixamo animations
+  useEffect(() => {
+    if (!vrm || fbxAssets.length === 0 || fbxClips.length === 0) return
+    if (isProcessingRef.current) return
+
+    const currentKey = `${vrm.scene.uuid}-${fbxClipPathsKey}`
+    
+    // Skip if already processed
+    if (processedKeyRef.current === currentKey) {
+      return
+    }
+
+    isProcessingRef.current = true
+    let isCancelled = false
+
+    const processFBXFiles = async () => {
+      const convertedAnimations = new Map<string, THREE.AnimationClip>()
+
+      // Process all FBX files in parallel for better performance
+      const processingPromises = fbxAssets.map(async (fbxAsset, i) => {
+        if (isCancelled) return null
+        
+        const clip = fbxClips[i]
+        
+        try {
+          const hasMixamoRig = detectMixamoRig(fbxAsset)
+          
+          if (hasMixamoRig) {
+            console.log(`Detected Mixamo animation: ${clip.name}, converting for VRM...`)
+            const convertedClip = await loadMixamoAnimation(clip.path, vrm as VRM)
+            convertedClip.name = clip.name
+            return { name: clip.name, clip: convertedClip }
+          } else if (fbxAsset.animations?.length) {
+            const animation = fbxAsset.animations[0]
+            animation.name = clip.name
+            return { name: clip.name, clip: animation }
+          }
+        } catch (error) {
+          console.error(`Error processing FBX animation ${clip.name}:`, error)
+        }
+        return null
+      })
+
+      const results = await Promise.all(processingPromises)
+      
+      if (!isCancelled) {
+        results.forEach((result) => {
+          if (result) {
+            convertedAnimations.set(result.name, result.clip)
+          }
+        })
+        processedKeyRef.current = currentKey
+        setMixamoAnimations(convertedAnimations)
+      }
+      isProcessingRef.current = false
+    }
+
+    processFBXFiles()
+
+    return () => {
+      isCancelled = true
+      isProcessingRef.current = false
+    }
+  }, [vrm?.scene.uuid, fbxClipPathsKey, fbxAssets.length, fbxClips.length])
+
+  // Collect all animations with optimized memoization
   const allAnimations = useMemo(() => {
     const animations: THREE.AnimationClip[] = []
 
     if (vrm) {
-      // Process VRMA
+      // Process VRMA animations
       vrmaGLTFs.forEach((gltf, index) => {
         const vrmAnimation: VRMAnimation | undefined = (gltf as any).userData?.vrmAnimations[0]
-
-        if (vrmAnimation && vrm) {
-          const clip = createVRMAnimationClip(vrmAnimation, vrm)
+        if (vrmAnimation) {
+          const clip = processVRMATracks(createVRMAnimationClip(vrmAnimation, vrm))
           clip.name = vrmaClips[index].name
-          // Remove "Normalized_" prefix from track names
-          clip.tracks = clip.tracks.filter((track) => {
-            // Remove "Normalized_" prefix from track names
-            if (track.name.startsWith('Normalized_')) {
-              track.name = track.name.replace(/^Normalized_/, '')
-
-            }
-            const lower = track.name.toLowerCase()
-            if (lower.includes('neck') || lower.includes('head')) {
-              return false
-            }
-            return true
-          })
-
           animations.push(clip)
         }
       })
+
+      // Process Mixamo-converted FBX animations
+      mixamoAnimations.forEach((clip) => {
+        // Filter out head and neck tracks (same as VRMA)
+        clip.tracks = clip.tracks.filter((track) => {
+          const lower = track.name.toLowerCase()
+          return !lower.includes('neck') && !lower.includes('head')
+        })
+        animations.push(clip)
+      })
     } else {
-      // Process GLTF/GLB
+      // Process GLTF/GLB animations
       gltfGLTFs.forEach((gltf, index) => {
-        if (gltf.animations && gltf.animations.length > 0) {
+        if (gltf.animations?.length) {
           gltf.animations.forEach((animation) => {
             animation.name = gltfClips[index].name
-
             animations.push(animation)
           })
         }
       })
+
+      // Process regular FBX animations (non-Mixamo, non-VRM)
+      fbxAssets.forEach((fbxAsset, index) => {
+        if (fbxAsset.animations?.length) {
+          const animation = fbxAsset.animations[0]
+          animation.name = fbxClips[index].name
+          animations.push(animation)
+        }
+      })
     }
 
-    // Update animation clip durations from the actual loaded animations
     updateAnimationDurations(animations)
-
     return animations
-  }, [vrmaGLTFs, gltfGLTFs, vrm])
-
-  // Hook into R3F's animation system
+  }, [vrmaGLTFs, gltfGLTFs, fbxAssets, mixamoAnimations, vrm, vrmaClips, gltfClips, fbxClips])
 
   const { actions, mixer } = useAnimations(allAnimations, avatarRef)
   return { actions, mixer, animations: allAnimations }
 }
 
-const AvatarModelComponent = ({ visemeService, emoteService, animationService, onHeadLocated }: AvatarModelProps) => {
+const AvatarModelComponent = ({ agentState, visemeService, emoteService, animationService, onHeadLocated }: AvatarModelProps) => {
   const { camera: viewerCamera } = useThree()
 
   const [state] = useSimpleStore(AvatarState)
@@ -193,6 +317,8 @@ const AvatarModelComponent = ({ visemeService, emoteService, animationService, o
         validActions[name] = action
       }
     })
+
+    animationService.actions.setPersonality('professional')
 
     animationService.actions.setup(validActions, mixer, avatarRef.current || undefined , ANIMATION_CLIPS.idle_loop)
 
@@ -309,6 +435,32 @@ const AvatarModelComponent = ({ visemeService, emoteService, animationService, o
     })
   }, [avatarScene, emotesEnabled, emoteService])
 
+  useEffect(() => {
+    if (agentState.llmThinking) return
+    if (!avatarScene || !actions || !mixer  ) return
+    if (!animationService) return
+    if (startupPlayedRef.current) return
+    if (!isAvatarVisible) return // Wait until avatar is visible
+    if (!agentState.ttsIsSpeaking) {
+      console.log('TTS: Not Speaking', agentState.ttsIsSpeaking)
+      animationService.actions.performAction({
+        clip: getRandomClip('idle'),
+        loopCount: Infinity,
+        blendTime: 1000,
+      })
+      return;
+    }
+    console.log('TTS: Speaking', agentState.ttsIsSpeaking)
+
+    animationService.actions.performAction({
+      clip: ANIMATION_CLIPS.talk,
+      immediate: true,
+      loopCount: Infinity,
+      blendTime: 0,
+      speed: .2
+    })
+  }, [agentState.llmThinking , agentState.ttsIsSpeaking])
+
 
   useEffect(() => { 
     if (!animationsEnabled || !emotesEnabled) return
@@ -319,18 +471,20 @@ const AvatarModelComponent = ({ visemeService, emoteService, animationService, o
     // Mark startup as played to prevent re-execution
     const startupTimer = setTimeout(() => { 
 
-      emoteService.actions.performAction({emotion: 'happy', relaxTime: ANIMATION_CLIPS.surprise_greet.duration})
+      emoteService.actions.performAction({emotion: 'happy', relaxTime: ANIMATION_CLIPS.wave.duration})
 
+      
       animationService.actions.performAction({
         clip: ANIMATION_CLIPS.wave,
         immediate: true,
         loopCount: 1,
-        blendTime: 300
+        blendTime: 300,
+        speed: .5
       })
 
       // After surprise_greet duration, blend to idle_loop
       animationService.actions.performAction({
-        clip: ANIMATION_CLIPS.idle_loop,
+        clip: getRandomClip('idle'),
         loopCount: Infinity,
         blendTime: 2000 // 1 second blend
       })
@@ -391,8 +545,8 @@ const AvatarModelComponent = ({ visemeService, emoteService, animationService, o
     if (animationService && emoteService) {
       const randomAction = getRandomClip('action') as AnimationClip
       emoteService.actions.performAction({
-        emotion: randomAction.name == ANIMATION_CLIPS.finger_gun.name ? 'angry' : 'happy' , 
-        relaxTime: randomAction.duration - 1000
+        emotion: randomAction.name === ANIMATION_CLIPS.look_around.name ? 'alert' : 'happy' , 
+        relaxTime: randomAction.duration - 2000
       })
 
       animationService.actions.performAction({
@@ -403,7 +557,7 @@ const AvatarModelComponent = ({ visemeService, emoteService, animationService, o
       })
 
       animationService.actions.performAction({
-        clip: ANIMATION_CLIPS.idle_loop,
+        clip: getRandomClip('idle'),
         loopCount: Infinity,
         blendTime : 1000
       })

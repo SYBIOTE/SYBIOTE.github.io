@@ -10,31 +10,33 @@ import type { useEmoteService } from '../../services/emote/useEmoteService'
 import type { useVisemeService } from '../../services/visemes/useVisemeService'
 import { AvatarModel } from './avatar/AvatarModel'
 import SubtitleBox from './SubtitleBox3d'
-import type { useConversationService } from '../../services/conversation/useConversationService'
+import type { AgentService } from '../../services/useAgent'
 
 interface Scene3DProps {
+  agentState: AgentService['state']
   sceneConfig: SceneConfig
   visemeService?: ReturnType<typeof useVisemeService>
   emoteService?: ReturnType<typeof useEmoteService>
   animationService?: ReturnType<typeof useAnimationService>
   setXRStore?: (store: XRStore) => void
-  conversationService?: ReturnType<typeof useConversationService>
 }
 
 const SceneContent = ({
+  agentState,
   sceneConfig,
   visemeService,
   emoteService,
   animationService,
-  conversationService,
   store
 }: Scene3DProps & { store: XRStore }) => {
   const controlsRef = useRef<any>(null)
   const { camera } = useThree()
   const [camTarget, setCamTarget] = useState<[number, number, number]>(sceneConfig.cameraTarget)
   const [camPos, setCamPos] = useState<[number, number, number]>(sceneConfig.cameraPosition)
-  const agentResponse = conversationService?.state.messageMap[conversationService?.state.lastAgentResponseId]
-  
+  const currentSubtitle = agentState.currentSubtitle;
+  console.log('DEBUG currentSubtitle', currentSubtitle)
+  const subtitleMessage = agentState.llmThinking ? '...' : (currentSubtitle || '')
+
   useEffect(() => {
     camera.position.set(camPos[0], camPos[1], camPos[2])
     camera.lookAt(new THREE.Vector3(camTarget[0], camTarget[1], camTarget[2]))
@@ -75,6 +77,7 @@ const SceneContent = ({
 
       {/* Avatar with external animations */}
       <AvatarModel
+        agentState={agentState}
         visemeService={visemeService}
         emoteService={emoteService}
         animationService={animationService}
@@ -85,7 +88,7 @@ const SceneContent = ({
      {<SubtitleBox
         position={camTarget}
         offset={[0, .3, 0]}
-        message={agentResponse?.text || ''}
+        message={subtitleMessage}
         visible={true}
       />}
 
@@ -98,7 +101,7 @@ const SceneContent = ({
   )
 }
 
-const Scene3DComponent = ({ sceneConfig, visemeService, emoteService, animationService, setXRStore, conversationService }: Scene3DProps) => {
+const Scene3DComponent = ({ agentState, sceneConfig, visemeService, emoteService, animationService, setXRStore }: Scene3DProps) => {
   const store = createXRStore()
   
 
@@ -118,12 +121,12 @@ const Scene3DComponent = ({ sceneConfig, visemeService, emoteService, animationS
       {/* Canvas */}
       <Canvas camera={{ position: [0, 1.6, 3], fov: 50 }} style={{ background: 'transparent' }} shadows>
         <SceneContent
+          agentState={agentState}
           sceneConfig={sceneConfig}
           visemeService={visemeService}
           emoteService={emoteService}
           animationService={animationService}
           store={store}
-          conversationService={conversationService}
         />
       </Canvas>
     </div>
