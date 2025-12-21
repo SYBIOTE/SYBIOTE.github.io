@@ -33,9 +33,8 @@ const SceneContent = ({
   const { camera } = useThree()
   const [camTarget, setCamTarget] = useState<[number, number, number]>(sceneConfig.cameraTarget)
   const [camPos, setCamPos] = useState<[number, number, number]>(sceneConfig.cameraPosition)
-  const currentSubtitle = agentState.currentSubtitle;
-  console.log('DEBUG currentSubtitle', currentSubtitle)
-  const subtitleMessage = agentState.llmThinking ? '...' : (currentSubtitle || '')
+  console.log('DEBUG currentSubtitle', agentState.currentSubtitle)
+  const subtitleMessage = agentState.llmThinking ? '...' : (agentState.currentSubtitle || '')
 
   useEffect(() => {
     camera.position.set(camPos[0], camPos[1], camPos[2])
