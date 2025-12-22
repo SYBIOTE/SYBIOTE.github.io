@@ -61,7 +61,7 @@ export interface LLMResponse {
 }
 
 export interface LLMStatusUpdate {
-  color: 'ready' | 'loading' | 'error'
+  color: 'ready' | 'loading' | 'error' | 'warning'
   text: string
 }
 

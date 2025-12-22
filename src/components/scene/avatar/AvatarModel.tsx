@@ -25,7 +25,8 @@ export const AvatarState = createSimpleStore({
   selectedModel: AVATAR_MODEL,
   visemesEnabled: true,
   emotesEnabled: true,
-  animationsEnabled: true
+  animationsEnabled: true,
+  isModelLoaded: false,
 })
 
 interface AvatarModelProps {
@@ -236,7 +237,7 @@ export const useExternalAnimations = (avatarRef: React.RefObject<THREE.Object3D>
 const AvatarModelComponent = ({ agentState, visemeService, emoteService, animationService, onHeadLocated }: AvatarModelProps) => {
   const { camera: viewerCamera } = useThree()
 
-  const [state] = useSimpleStore(AvatarState)
+  const [state , setState] = useSimpleStore(AvatarState)
   const morphTargetsRef = useRef<THREE.Mesh[]>([])
   const bonesRef = useRef<Record<string, THREE.Bone>>({})
   const startupPlayedRef = useRef<boolean>(false)
@@ -247,8 +248,17 @@ const AvatarModelComponent = ({ agentState, visemeService, emoteService, animati
   const gltf = useLoader(GLTFLoader, AVATAR_MODEL, (loader) => {
     loader.register((parser: GLTFParser) => new VRMLoaderPlugin(parser))
   })
-  const isVRM = selectedModel.toLowerCase().endsWith('.vrm')
+  
+  useEffect(() => {
+    if (gltf && !state.isModelLoaded) {
+      setState((prev) => ({ ...prev, isModelLoaded: true }))
+    }
+  }, [gltf, state.isModelLoaded, setState])
 
+
+  console.log('gltf loaded: ',  state.isModelLoaded)
+
+  const isVRM = selectedModel.toLowerCase().endsWith('.vrm')
   const vrm = isVRM ? (gltf.userData.vrm as VRM) : undefined
   const avatarScene = isVRM ? vrm?.scene : gltf.scene
   const avatarRef = useRef<THREE.Object3D>(null)
@@ -582,7 +592,6 @@ const AvatarModelComponent = ({ agentState, visemeService, emoteService, animati
 // Memoize the component to prevent re-renders when services don't change
 export const AvatarModel = memo(AvatarModelComponent)
 
-useGLTF.preload(AVATAR_MODEL)
 
 // Preload all animation files using a loop over ANIMATION_CLIPS
 

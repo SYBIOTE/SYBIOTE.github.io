@@ -354,6 +354,8 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
         const interrupt = Date.now()
         interruptCounterRef.current = interrupt
 
+        console.log('submitMessage: userMessage:', userMessage , tts.state.isSpeaking)
+        console.log('submitMessage: appConfig.bargeInEnabled:', appConfig.bargeInEnabled)
         llmService.actions.processUserInput({
           text: userMessage,
           human: true,

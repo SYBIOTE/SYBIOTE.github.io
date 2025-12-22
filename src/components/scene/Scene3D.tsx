@@ -1,7 +1,7 @@
 import { Environment, OrbitControls } from '@react-three/drei'
 import { Canvas, useThree } from '@react-three/fiber'
 import { createXRStore, XR, type XRStore } from '@react-three/xr'
-import { memo, useEffect, useMemo, useRef, useState } from 'react'
+import { memo, Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 
 import type { SceneConfig } from '../../app/sceneTypes'
@@ -11,6 +11,7 @@ import type { useVisemeService } from '../../services/visemes/useVisemeService'
 import { AvatarModel } from './avatar/AvatarModel'
 import SubtitleBox from './SubtitleBox3d'
 import type { AgentService } from '../../services/useAgent'
+import { LoadingIndicator3D } from './LoadingIndicator3D'
 
 interface Scene3DProps {
   agentState: AgentService['state']
@@ -78,6 +79,8 @@ const SceneContent = ({
       {/* Environment */}
       <Environment preset="studio" />
 
+      <Suspense fallback={<LoadingIndicator3D position={camTarget} visible={true} />}>
+
       {/* Avatar with external animations */}
       <AvatarModel
         agentState={avatarAgentState}
@@ -94,6 +97,7 @@ const SceneContent = ({
         message={subtitleMessage}
         visible={true}
       />}
+      </Suspense>
 
       {/* Ground plane */}
       {/* <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.01, 0]} receiveShadow>

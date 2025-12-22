@@ -166,7 +166,7 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
         })
       }
     }
-  }, [config.llm_provider, config.mlc_model, state.loading, state.ready, onStatus])
+  }, [config, state.loading, state.ready, onStatus])
 
   // Initialize function that starts loading the LLM
   const initialize = useCallback(async () => {
@@ -349,6 +349,26 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
           })
           if (!result.success && result.error) {
             console.error('LLM: Ollama reasoning failed:', result.error)
+            console.log('LLM: Falling back to scripted LLM due to Ollama failure')
+            
+            // Fallback to scripted LLM when Ollama fails
+            if (onStatus) {
+              onStatus({
+                color: 'warning',
+                text: 'Ollama unavailable, using scripted responses'
+              })
+            }
+            
+            const fallbackResult = await llmDirected(baseParams)
+            if (!fallbackResult.success && fallbackResult.error) {
+              console.error('LLM: Scripted fallback also failed:', fallbackResult.error)
+              if (onStatus) {
+                onStatus({
+                  color: 'error',
+                  text: 'Both Ollama and fallback failed'
+                })
+              }
+            }
           }
         } else if (config.llm_provider === 'mlc' && config.mlc_model && state.engine) {
           const result = await llmLocal({
@@ -357,6 +377,26 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
           })
           if (!result.success && result.error) {
             console.error('LLM: Local reasoning failed:', result.error)
+            // Fallback to scripted LLM when local model fails
+            console.log('LLM: Falling back to scripted LLM due to local model failure')
+            
+            if (onStatus) {
+              onStatus({
+                color: 'warning',
+                text: 'Local model unavailable, using scripted responses'
+              })
+            }
+            
+            const fallbackResult = await llmDirected(baseParams)
+            if (!fallbackResult.success && fallbackResult.error) {
+              console.error('LLM: Scripted fallback also failed:', fallbackResult.error)
+              if (onStatus) {
+                onStatus({
+                  color: 'error',
+                  text: 'Both local model and fallback failed'
+                })
+              }
+            }
           }
         } else if (
           config.llm_provider === 'openai' &&
@@ -373,22 +413,82 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
           })
           if (!result.success && result.error) {
             console.error('LLM: Remote reasoning failed:', result.error)
+            // Fallback to scripted LLM when cloud API fails
+            console.log('LLM: Falling back to scripted LLM due to cloud API failure')
+            
+            if (onStatus) {
+              onStatus({
+                color: 'warning',
+                text: 'Cloud API unavailable, using scripted responses'
+              })
+            }
+            
+            const fallbackResult = await llmDirected(baseParams)
+            if (!fallbackResult.success && fallbackResult.error) {
+              console.error('LLM: Scripted fallback also failed:', fallbackResult.error)
+              if (onStatus) {
+                onStatus({
+                  color: 'error',
+                  text: 'Both cloud API and fallback failed'
+                })
+              }
+            }
           }
         } else {
           console.error('LLM: Unsupported provider or missing configuration', config.llm_provider)
+          // Fallback to scripted LLM when provider is unsupported
+          console.log('LLM: Falling back to scripted LLM due to unsupported provider')
+          
           if (onStatus) {
             onStatus({
-              color: 'error',
-              text: 'Unsupported LLM provider or missing configuration'
+              color: 'warning',
+              text: 'Unsupported provider, using scripted responses'
             })
+          }
+          
+          const fallbackResult = await llmDirected(baseParams)
+          if (!fallbackResult.success && fallbackResult.error) {
+            console.error('LLM: Scripted fallback also failed:', fallbackResult.error)
+            if (onStatus) {
+              onStatus({
+                color: 'error',
+                text: 'Scripted fallback failed'
+              })
+            }
           }
         }
       } catch (error) {
         console.error('LLM - error processing input:', error)
-        onStatus?.({
-          color: 'error',
-          text: 'Error processing request'
-        })
+        // Last resort: try scripted LLM on any unexpected error
+        console.log('LLM: Unexpected error, attempting scripted LLM fallback')
+        
+        try {
+          if (onStatus) {
+            onStatus({
+              color: 'warning',
+              text: 'Error occurred, trying scripted responses'
+            })
+          }
+          
+          const fallbackResult = await llmDirected(baseParams)
+          if (!fallbackResult.success && fallbackResult.error) {
+            console.error('LLM: Scripted fallback also failed:', fallbackResult.error)
+            if (onStatus) {
+              onStatus({
+                color: 'error',
+                text: 'Error processing request and fallback failed'
+              })
+            }
+          }
+        } catch (fallbackError) {
+          console.error('LLM: Fallback error handler also failed:', fallbackError)
+          if (onStatus) {
+            onStatus({
+              color: 'error',
+              text: 'Error processing request'
+            })
+          }
+        }
       }
     },
     [
