@@ -336,7 +336,7 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
         // Mark as completed and remove from queue
         nextMessage.status = 'completed'
         messageQueue.current = messageQueue.current.filter((msg) => msg.id !== nextMessage.id)
-        nextExpectedId.current = nextMessage.id + 1
+        nextExpectedId.current = Math.max(nextExpectedId.current, nextMessage.id + 1) // if we have skipped ahead by stopping speech, we need to set the next expected id to the next message id
       }
 
       // Call onSpeechEnd only when queue is empty
@@ -408,9 +408,10 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
       workerRef.current = null
     }
 
+    const lastMessageId = messageQueue.current[messageQueue.current.length - 1].id + 1
     // Clear the queue
     messageQueue.current = []
-    nextExpectedId.current = globalId
+    nextExpectedId.current = lastMessageId
     isProcessing.current = false
 
     // Call speech end callback when speech is stopped
@@ -445,7 +446,8 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
   const state = useMemo(() => ({
     isSpeaking: isProcessing.current,
     audioQueue: messageQueue.current.length
-  }), [])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }), [isProcessing.current, messageQueue.current.length])
 
   const actions = useMemo(
     () => ({

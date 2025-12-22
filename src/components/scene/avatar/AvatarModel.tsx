@@ -254,9 +254,6 @@ const AvatarModelComponent = ({ agentState, visemeService, emoteService, animati
     }
   }, [gltf, state.isModelLoaded, setState])
 
-
-  logger.log('gltf loaded: ',  state.isModelLoaded)
-
   const isVRM = selectedModel.toLowerCase().endsWith('.vrm')
   const vrm = isVRM ? (gltf.userData.vrm as VRM) : undefined
   const avatarScene = isVRM ? vrm?.scene : gltf.scene

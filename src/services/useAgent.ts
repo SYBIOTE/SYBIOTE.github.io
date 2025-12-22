@@ -355,8 +355,11 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
         const interrupt = Date.now()
         interruptCounterRef.current = interrupt
 
-        console.log('LLM: userMessage', tts.state.audioQueue)
-        
+        console.log('DEBUG: submitMessage: tts.state.isSpeaking', tts.state.isSpeaking)
+        if(tts.state.isSpeaking) {
+          tts.actions.stopSpeaking()
+        }
+
         llm.actions.processUserInput({
           text: userMessage,
           human: true,
