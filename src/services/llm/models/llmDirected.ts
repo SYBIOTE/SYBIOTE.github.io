@@ -35,7 +35,7 @@ async function loadDirectedResponses(): Promise<DirectedConfig> {
     directedConfig = config
     return config
   } catch (error) {
-    console.error('Directed LLM: Failed to load responses:', error)
+    logger.error('Directed LLM: Failed to load responses:', error)
     throw error
   }
 }
@@ -89,7 +89,7 @@ export async function llmDirected(params: LLMParams): Promise<LLMResult> {
   const { userMessage, interrupt, latestInterrupt, responseCallback, updateMessages, setThinking } = params
 
   if (interrupt < latestInterrupt) {
-    console.log('LLM: Directed request outdated, stopping')
+    logger.log('LLM: Directed request outdated, stopping')
     return { success: false, error: new Error('Request outdated') }
   }
 
@@ -114,7 +114,7 @@ export async function llmDirected(params: LLMParams): Promise<LLMResult> {
 
     for (let i = 0; i < sentences.length; i++) {
       if (interrupt < latestInterrupt) {
-        console.log('LLM: Directed request interrupted')
+        logger.log('LLM: Directed request interrupted')
         break
       }
 
@@ -144,7 +144,7 @@ export async function llmDirected(params: LLMParams): Promise<LLMResult> {
 
     return { success: true, fullResponse }
   } catch (error) {
-    console.error('LLM: Directed reasoning error', error)
+    logger.error('LLM: Directed reasoning error', error)
     setThinking?.(false)
     return { success: false, error: error as Error }
   }

@@ -45,7 +45,7 @@ vad.actions.initializeVAD()
 const vadService = useVADService({
   config: { vadThreshold: 0.8, microphoneEnabled: true },
   onVADResult: (result) => {
-    console.log('Speech detected:', result.isSpeech, 'Confidence:', result.confidence)
+    logger.log('Speech detected:', result.isSpeech, 'Confidence:', result.confidence)
   }
 })
 ```
@@ -94,7 +94,7 @@ const sttService = useSTTService({
   config: { language: 'en-US', continuous: true },
   onPerform: (result) => {
     if (result.final) {
-      console.log('Final transcript:', result.text)
+      logger.log('Final transcript:', result.text)
     }
   }
 })
@@ -147,7 +147,7 @@ llm.actions.clearHistory()
 const llmService = useLLMService({
   config: { llm_provider: 'ollama', ollama_url: 'http://localhost:11434' },
   onResponse: (response) => {
-    console.log('AI Response:', response.breath)
+    logger.log('AI Response:', response.breath)
   }
 })
 ```

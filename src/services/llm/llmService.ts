@@ -41,6 +41,7 @@ import { llmLocal } from './models/llmLocal'
 import { llmOllama, checkOllamaHealth } from './models/llmOllama'
 import { defaultLLMConfig, SYSTEM_PROMPT, type LLMConfig, AVAILABLE_LOCAL_MODELS } from './config/llmConfig'
 import type { LLMStatusUpdate, LLMResponse, LLMState, LLMPerformRequest } from './llmTypes'
+import { logger } from '../../utils/logger'
 
 // Pick a conservative default model for low-memory devices
 function pickConservativeLocalModel(cfg: LLMConfig): string {
@@ -101,7 +102,7 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
       // Guard: require WebGPU support
       const hasWebGPU = typeof (navigator as unknown as { gpu?: unknown }).gpu !== 'undefined'
       if (!hasWebGPU) {
-        console.warn('LLM: WebGPU not available, skipping local model load and using fallback responses')
+        logger.warn('LLM: WebGPU not available, skipping local model load and using fallback responses')
         setState((prev) => ({ ...prev, loading: false, ready: false, engine: null }))
         if (onStatus) {
           onStatus({ color: 'error', text: 'WebGPU not available; using fallback responses' })
@@ -156,7 +157,7 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
 
       completed(engine)
     } catch (err) {
-      console.error('LLM - worker fetch error', err)
+      logger.error('LLM - worker fetch error', err)
       setState((prev) => ({ ...prev, loading: false }))
 
       if (onStatus) {
@@ -178,15 +179,15 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
       setState((prev) => ({ ...prev, ready: true }))
     } else if (config.llm_provider === 'ollama' && config.ollama_url) {
       // Run health check for Ollama
-      console.log('🚀 [LLM Service] Initializing Ollama provider...')
+      logger.log('🚀 [LLM Service] Initializing Ollama provider...')
       const health = await checkOllamaHealth(config.ollama_url)
       
       if (health.backend && health.ollama) {
-        console.log('✅ [LLM Service] Ollama backend and service are healthy')
+        logger.log('✅ [LLM Service] Ollama backend and service are healthy')
         setState((prev) => ({ ...prev, ready: true }))
       } else {
-        console.warn('⚠️ [LLM Service] Ollama health check failed:', health.error)
-        console.warn('⚠️ [LLM Service] Service may not work correctly. Backend:', health.backend, 'Ollama:', health.ollama)
+        logger.warn('⚠️ [LLM Service] Ollama health check failed:', health.error)
+        logger.warn('⚠️ [LLM Service] Service may not work correctly. Backend:', health.backend, 'Ollama:', health.ollama)
         // Still mark as ready to allow retry
         setState((prev) => ({ ...prev, ready: true }))
       }
@@ -228,9 +229,9 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
     const healthCheckInterval = setInterval(async () => {
       const health = await checkOllamaHealth(config.ollama_url!)
       if (!health.backend || !health.ollama) {
-        console.warn('⚠️ [Health Check] Periodic check failed:', health.error)
+        logger.warn('⚠️ [Health Check] Periodic check failed:', health.error)
       } else {
-        console.log('✅ [Health Check] Periodic check passed')
+        logger.log('✅ [Health Check] Periodic check passed')
       }
     }, 30000) // 30 seconds
 
@@ -246,7 +247,7 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
 
       // If model is loading or not ready, use directed responses as fallback
       if (state.loading || !state.ready) {
-        console.log('LLM: Model not ready, using directed responses as fallback')
+        logger.log('LLM: Model not ready, using directed responses as fallback')
         
         if (onStatus) {
           onStatus({
@@ -283,7 +284,7 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
         try {
           const result = await llmDirected(baseParams)
           if (!result.success && result.error) {
-            console.error('LLM: Directed fallback failed:', result.error)
+            logger.error('LLM: Directed fallback failed:', result.error)
             if (onStatus) {
               onStatus({
                 color: 'error',
@@ -292,7 +293,7 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
             }
           }
         } catch (error) {
-          console.error('LLM: Fallback error:', error)
+          logger.error('LLM: Fallback error:', error)
           if (onStatus) {
             onStatus({
               color: 'error',
@@ -339,7 +340,7 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
         if (config.llm_provider === 'script') {
           const result = await llmDirected(baseParams)
           if (!result.success && result.error) {
-            console.error('LLM: Directed reasoning failed:', result.error)
+            logger.error('LLM: Directed reasoning failed:', result.error)
           }
         } else if (config.llm_provider === 'ollama' && config.ollama_model) {
           const result = await llmOllama({
@@ -348,8 +349,8 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
             llmModel: config.ollama_model
           })
           if (!result.success && result.error) {
-            console.error('LLM: Ollama reasoning failed:', result.error)
-            console.log('LLM: Falling back to scripted LLM due to Ollama failure')
+            logger.error('LLM: Ollama reasoning failed:', result.error)
+            logger.log('LLM: Falling back to scripted LLM due to Ollama failure')
             
             // Fallback to scripted LLM when Ollama fails
             if (onStatus) {
@@ -361,7 +362,7 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
             
             const fallbackResult = await llmDirected(baseParams)
             if (!fallbackResult.success && fallbackResult.error) {
-              console.error('LLM: Scripted fallback also failed:', fallbackResult.error)
+              logger.error('LLM: Scripted fallback also failed:', fallbackResult.error)
               if (onStatus) {
                 onStatus({
                   color: 'error',
@@ -376,9 +377,9 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
             engine: state.engine
           })
           if (!result.success && result.error) {
-            console.error('LLM: Local reasoning failed:', result.error)
+            logger.error('LLM: Local reasoning failed:', result.error)
             // Fallback to scripted LLM when local model fails
-            console.log('LLM: Falling back to scripted LLM due to local model failure')
+            logger.log('LLM: Falling back to scripted LLM due to local model failure')
             
             if (onStatus) {
               onStatus({
@@ -389,7 +390,7 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
             
             const fallbackResult = await llmDirected(baseParams)
             if (!fallbackResult.success && fallbackResult.error) {
-              console.error('LLM: Scripted fallback also failed:', fallbackResult.error)
+              logger.error('LLM: Scripted fallback also failed:', fallbackResult.error)
               if (onStatus) {
                 onStatus({
                   color: 'error',
@@ -412,9 +413,9 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
             llmUrl: config.openai_api_url
           })
           if (!result.success && result.error) {
-            console.error('LLM: Remote reasoning failed:', result.error)
+            logger.error('LLM: Remote reasoning failed:', result.error)
             // Fallback to scripted LLM when cloud API fails
-            console.log('LLM: Falling back to scripted LLM due to cloud API failure')
+            logger.log('LLM: Falling back to scripted LLM due to cloud API failure')
             
             if (onStatus) {
               onStatus({
@@ -425,7 +426,7 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
             
             const fallbackResult = await llmDirected(baseParams)
             if (!fallbackResult.success && fallbackResult.error) {
-              console.error('LLM: Scripted fallback also failed:', fallbackResult.error)
+              logger.error('LLM: Scripted fallback also failed:', fallbackResult.error)
               if (onStatus) {
                 onStatus({
                   color: 'error',
@@ -435,9 +436,9 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
             }
           }
         } else {
-          console.error('LLM: Unsupported provider or missing configuration', config.llm_provider)
+          logger.error('LLM: Unsupported provider or missing configuration', config.llm_provider)
           // Fallback to scripted LLM when provider is unsupported
-          console.log('LLM: Falling back to scripted LLM due to unsupported provider')
+          logger.log('LLM: Falling back to scripted LLM due to unsupported provider')
           
           if (onStatus) {
             onStatus({
@@ -448,7 +449,7 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
           
           const fallbackResult = await llmDirected(baseParams)
           if (!fallbackResult.success && fallbackResult.error) {
-            console.error('LLM: Scripted fallback also failed:', fallbackResult.error)
+            logger.error('LLM: Scripted fallback also failed:', fallbackResult.error)
             if (onStatus) {
               onStatus({
                 color: 'error',
@@ -458,9 +459,9 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
           }
         }
       } catch (error) {
-        console.error('LLM - error processing input:', error)
+        logger.error('LLM - error processing input:', error)
         // Last resort: try scripted LLM on any unexpected error
-        console.log('LLM: Unexpected error, attempting scripted LLM fallback')
+        logger.log('LLM: Unexpected error, attempting scripted LLM fallback')
         
         try {
           if (onStatus) {
@@ -472,7 +473,7 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
           
           const fallbackResult = await llmDirected(baseParams)
           if (!fallbackResult.success && fallbackResult.error) {
-            console.error('LLM: Scripted fallback also failed:', fallbackResult.error)
+            logger.error('LLM: Scripted fallback also failed:', fallbackResult.error)
             if (onStatus) {
               onStatus({
                 color: 'error',
@@ -481,7 +482,7 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
             }
           }
         } catch (fallbackError) {
-          console.error('LLM: Fallback error handler also failed:', fallbackError)
+          logger.error('LLM: Fallback error handler also failed:', fallbackError)
           if (onStatus) {
             onStatus({
               color: 'error',

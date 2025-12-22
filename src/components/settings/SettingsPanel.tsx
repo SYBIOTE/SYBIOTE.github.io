@@ -234,7 +234,7 @@ export const SettingsPanel = ({ isOpen, onClose }: SettingsPanelProps) => {
         }
       }
     } catch (error) {
-      console.warn('Could not load settings:', error)
+      logger.warn('Could not load settings:', error)
     }
   }, [locale])
 
@@ -243,7 +243,7 @@ export const SettingsPanel = ({ isOpen, onClose }: SettingsPanelProps) => {
     try {
       localStorage.setItem('app-settings', JSON.stringify(settings))
     } catch (error) {
-      console.warn('Could not save settings:', error)
+      logger.warn('Could not save settings:', error)
     }
   }, [settings])
 

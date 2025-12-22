@@ -9,8 +9,6 @@ import { GLTFLoader } from 'three/examples/jsm/Addons.js'
 import type { GLTFParser } from 'three/examples/jsm/Addons.js'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
 import { loadMixamoAnimation } from '../../../utils/animationUtil'
-
-
 import { AvatarOptions } from './AvatarOptions'
 import { Vector3 } from 'three'
 import  {ANIMATION_CLIPS, getRandomClip, updateAnimationDurations } from '../../../services/animation/config/animationClips'
@@ -92,6 +90,7 @@ export const useExternalAnimations = (avatarRef: React.RefObject<THREE.Object3D>
 
   // Load VRMA animations
   const vrmaGLTFs = vrmaClips.map((clip) =>
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     useLoader(GLTFLoader, clip.path, (loader) => {
       loader.register((parser: GLTFParser) => new VRMAnimationLoaderPlugin(parser))
     })
@@ -113,7 +112,7 @@ export const useExternalAnimations = (avatarRef: React.RefObject<THREE.Object3D>
   // Memoize clip paths for stable dependency tracking
   const fbxClipPathsKey = useMemo(() => 
     fbxClips.map(c => c.path).sort().join('|'),
-    [fbxClips.length]
+    [fbxClips]
   )
 
   // Process FBX files and detect/convert Mixamo animations
@@ -144,7 +143,7 @@ export const useExternalAnimations = (avatarRef: React.RefObject<THREE.Object3D>
           const hasMixamoRig = detectMixamoRig(fbxAsset)
           
           if (hasMixamoRig) {
-            console.log(`Detected Mixamo animation: ${clip.name}, converting for VRM...`)
+            logger.log(`Detected Mixamo animation: ${clip.name}, converting for VRM...`)
             const convertedClip = await loadMixamoAnimation(clip.path, vrm as VRM)
             convertedClip.name = clip.name
             return { name: clip.name, clip: convertedClip }
@@ -154,7 +153,7 @@ export const useExternalAnimations = (avatarRef: React.RefObject<THREE.Object3D>
             return { name: clip.name, clip: animation }
           }
         } catch (error) {
-          console.error(`Error processing FBX animation ${clip.name}:`, error)
+          logger.error(`Error processing FBX animation ${clip.name}:`, error)
         }
         return null
       })
@@ -256,7 +255,7 @@ const AvatarModelComponent = ({ agentState, visemeService, emoteService, animati
   }, [gltf, state.isModelLoaded, setState])
 
 
-  console.log('gltf loaded: ',  state.isModelLoaded)
+  logger.log('gltf loaded: ',  state.isModelLoaded)
 
   const isVRM = selectedModel.toLowerCase().endsWith('.vrm')
   const vrm = isVRM ? (gltf.userData.vrm as VRM) : undefined
@@ -295,7 +294,7 @@ const AvatarModelComponent = ({ agentState, visemeService, emoteService, animati
     // If found, position the camera in front of the head (only once, for setup)
     if (head && avatarRef.current) {
       // Get world position of the head
-      console.log('head', avatarRef.current ,vrm)
+      logger.log('head', avatarRef.current ,vrm)
       const headWorldPos = new Vector3()
       head.getWorldPosition(headWorldPos)
       // Get the avatar's forward direction in world space (-Z in local space)
@@ -337,7 +336,7 @@ const AvatarModelComponent = ({ agentState, visemeService, emoteService, animati
 
     animationService.actions.setup(validActions, mixer, avatarRef.current || undefined , ANIMATION_CLIPS.idle_loop)
 
-    console.log(`Animation service setup with ${Object.keys(actions).length} animations`)
+    logger.log(`Animation service setup with ${Object.keys(actions).length} animations`)
     // Make avatar visible after idle animation is applied
     setTimeout(() => {
       setIsAvatarVisible(true)
@@ -353,7 +352,7 @@ const AvatarModelComponent = ({ agentState, visemeService, emoteService, animati
     if (isVRM && vrm) {
       // VRM expression manager route
       visemeService.actions.setupForVRM(vrm)
-      console.log('Viseme service wired to VRM expressionManager')
+      logger.log('Viseme service wired to VRM expressionManager')
     } else {
       // GLB morph target route
       const morphTargets: { morphTargetInfluences: number[] }[] = []
@@ -387,7 +386,7 @@ const AvatarModelComponent = ({ agentState, visemeService, emoteService, animati
     if (isVRM && vrm) {
       // VRM expression manager route
       emoteService.actions.setupForVRM(vrm)
-      console.log('emote service wired to VRM expressionManager')
+      logger.log('emote service wired to VRM expressionManager')
 
       // Get bones from VRM humanoid if available
       if (vrm.humanoid) {
@@ -457,7 +456,7 @@ const AvatarModelComponent = ({ agentState, visemeService, emoteService, animati
     if (startupPlayedRef.current) return
     if (!isAvatarVisible) return // Wait until avatar is visible
     if (!agentState.ttsIsSpeaking) {
-      console.log('TTS: Not Speaking', agentState.ttsIsSpeaking)
+      logger.log('TTS: Not Speaking', agentState.ttsIsSpeaking)
       animationService.actions.performAction({
         clip: getRandomClip('idle'),
         loopCount: Infinity,
@@ -465,7 +464,7 @@ const AvatarModelComponent = ({ agentState, visemeService, emoteService, animati
       })
       return;
     }
-    console.log('TTS: Speaking', agentState.ttsIsSpeaking)
+    logger.log('TTS: Speaking', agentState.ttsIsSpeaking)
 
     animationService.actions.performAction({
       clip: ANIMATION_CLIPS.talk,

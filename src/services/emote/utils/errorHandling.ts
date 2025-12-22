@@ -19,7 +19,7 @@ export const safeExecute = <T>(operation: () => T, errorMessage: string): EmoteR
     const result = operation()
     return createSuccess(result)
   } catch (error) {
-    console.warn(errorMessage, error)
+    logger.warn(errorMessage, error)
     return { success: false, error: errorMessage } as EmoteResult<T>
   }
 }

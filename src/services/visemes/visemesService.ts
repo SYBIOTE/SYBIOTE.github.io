@@ -52,12 +52,12 @@ export function visemesSequence(
   const time = performance.now()
   // Input validation
   if (!whisperData) {
-    console.warn('visemesSequence: No whisper data provided')
+    logger.warn('visemesSequence: No whisper data provided')
     return []
   }
 
   if (!whisperData.words || !whisperData.wtimes || !whisperData.wdurations) {
-    console.warn('visemesSequence: Incomplete whisper data', {
+    logger.warn('visemesSequence: Incomplete whisper data', {
       hasWords: !!whisperData.words,
       hasTimes: !!whisperData.wtimes,
       hasDurations: !!whisperData.wdurations
@@ -66,7 +66,7 @@ export function visemesSequence(
   }
 
   if (whisperData.words.length === 0) {
-    console.warn('visemesSequence: Empty words array')
+    logger.warn('visemesSequence: Empty words array')
     return []
   }
 
@@ -76,12 +76,12 @@ export function visemesSequence(
   // Validate sequence items
   const validSequence = sequence.filter((item) => {
     if (!item.ts || !Array.isArray(item.ts) || item.ts.length !== 3) {
-      console.warn('visemesSequence: Invalid timestamp array', item)
+      logger.warn('visemesSequence: Invalid timestamp array', item)
       return false
     }
 
     if (!item.vs || Object.keys(item.vs).length === 0) {
-      console.warn('visemesSequence: Empty viseme values', item)
+      logger.warn('visemesSequence: Empty viseme values', item)
       return false
     }
 
@@ -95,7 +95,7 @@ export function visemesSequence(
     item.ts[2] += time + config.timing.fudgeFactor
   }
 
-  console.log(`visemesSequence: Generated ${validSequence.length} valid visemes from ${whisperData.words.length} words`)
+  logger.log(`visemesSequence: Generated ${validSequence.length} valid visemes from ${whisperData.words.length} words`)
   return validSequence
 }
 
@@ -106,7 +106,7 @@ export function visemesUpdate(volume: VisemeState, _delta: number, config: Visem
   const startTime = performance.now()
 
   if (!volume || !volume.sequence) {
-    console.warn('visemesUpdate: Invalid volume state')
+    logger.warn('visemesUpdate: Invalid volume state')
     return
   }
 
@@ -139,13 +139,13 @@ export function visemesUpdate(volume: VisemeState, _delta: number, config: Visem
 
     Object.entries(item.vs).forEach(([key, valueArray]) => {
       if (!valueArray || !Array.isArray(valueArray) || valueArray.length < 2) {
-        console.warn('visemesUpdate: Invalid value array for viseme', key)
+        logger.warn('visemesUpdate: Invalid value array for viseme', key)
         return
       }
 
       let value = valueArray[1]
       if (typeof value !== 'number' || isNaN(value)) {
-        console.warn('visemesUpdate: Invalid value for viseme', key, value)
+        logger.warn('visemesUpdate: Invalid value for viseme', key, value)
         return
       }
 
@@ -209,13 +209,13 @@ export function visemesToRig(volume: VisemeState, _delta: number, amplify: numbe
       try {
         volume.vrm!.expressionManager!.setValue(key, value)
       } catch (error) {
-        console.error('visemesToRig: Error setting VRM expression', key, value, error)
+        logger.error('visemesToRig: Error setting VRM expression', key, value, error)
       }
     })
 
     const rigApplyTime = performance.now() - startTime
     if (rigApplyTime > 5) {
-      console.warn(`visemesToRig: VRM update took ${rigApplyTime.toFixed(2)}ms, updated ${targetsUpdated} targets`)
+      logger.warn(`visemesToRig: VRM update took ${rigApplyTime.toFixed(2)}ms, updated ${targetsUpdated} targets`)
     }
     return
   }
@@ -244,7 +244,7 @@ export function visemesToRig(volume: VisemeState, _delta: number, amplify: numbe
 
   const rigApplyTime = performance.now() - startTime
   if (rigApplyTime > 5) {
-    console.warn(`visemesToRig: GLB update took ${rigApplyTime.toFixed(2)}ms, updated ${targetsUpdated} targets`)
+    logger.warn(`visemesToRig: GLB update took ${rigApplyTime.toFixed(2)}ms, updated ${targetsUpdated} targets`)
   }
 }
 
@@ -278,16 +278,16 @@ export function setupVisemeStateForVRM(state: VisemeState, vrm: VRM): void {
       state.isVRMMode = true
       state.targets = createEmptyVRMVisemeTarget()
       state.dirty = {}
-      console.log('VRM detected: Using 5-expression mode (aa, ee, ih, oh, ou)')
+      logger.log('VRM detected: Using 5-expression mode (aa, ee, ih, oh, ou)')
     } else {
       // This VRM supports full visemes - keep GLB mode
       state.isVRMMode = false
-      console.log('VRM detected: Using 14-viseme mode (full Oculus set)')
+      logger.log('VRM detected: Using 14-viseme mode (full Oculus set)')
     }
 
-    console.log('VRM Available expressions:', expressions)
+    logger.log('VRM Available expressions:', expressions)
   } catch (error) {
-    console.warn('Could not detect VRM expression capabilities, defaulting to GLB mode')
+    logger.warn('Could not detect VRM expression capabilities, defaulting to GLB mode')
     state.isVRMMode = false
   }
 }

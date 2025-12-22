@@ -127,7 +127,7 @@ export async function isMixamoAnimation(url: string): Promise<boolean> {
 		}
 		return hasMixamoRig;
 	} catch (error) {
-		console.error('Error checking if FBX is Mixamo:', error);
+		logger.error('Error checking if FBX is Mixamo:', error);
 		return false;
 	}
 }

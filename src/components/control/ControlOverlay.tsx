@@ -30,7 +30,7 @@ export const ControlOverlay = memo(({
       AppConfigState.set((prev) => ({ ...prev, microphone: true }))
       agent.actions.setSTTDesired(true)
     })
-    console.log('AR + STT mode activated - click the AR button in the 3D view to enter AR')
+    logger.log('AR + STT mode activated - click the AR button in the 3D view to enter AR')
   }, [xrStore, agent.actions])
   return (
     <>

@@ -19,6 +19,7 @@ import { defaultTTSConfig, type TTSConfig, type WhisperData } from './tts/ttsCon
 import { defaultSTTConfig, type STTConfig } from './stt/sttConfig'
 import { defaultLLMConfig, type LLMConfig } from './llm/config/llmConfig'
 import { shouldTriggerBargeIn } from '../integration/emotionIntegration'
+import { logger } from '../utils/logger'
 
 // STT service result interface (defined locally in sttService.ts)
 interface STTPerformResult {
@@ -228,10 +229,10 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
   const emotes = useEmoteService()
   const animations = useAnimationService()
   // Initialize LLM service
-  const llmService = useLLMService({
+  const llm = useLLMService({
     config: llmConfig,
     onStatus: (status: LLMStatusUpdate) => {
-      console.log('LLM status:', status)
+      logger.log('LLM status:', status)
       callbacks.onLLMStatus?.(status)
     },
     onResponse: (response: LLMResponse) => {
@@ -297,7 +298,7 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
         if (shouldTriggerBargeIn({ text: result.text, isUser: true, id: '', timestamp: interrupt })) {
           if(tts.state.isSpeaking){tts.actions.stopSpeaking()}
           emotes.actions.onBargeIn()
-          console.log('STT: Stop command detected - barge-in activated')
+          logger.log('STT: Stop command detected - barge-in activated')
         }
 
         // Auto-submit or set interim transcript
@@ -309,7 +310,7 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
         }
 
         interruptCounterRef.current = interrupt
-        llmService.actions.processUserInput({
+        llm.actions.processUserInput({
           text: result.text,
           human: true,
           final: true,
@@ -320,7 +321,7 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
         setCurrentInterimTranscript(result.text)
       }
 
-      console.log('STT: result:', result)
+      logger.log('STT: result:', result)
       callbacks.onSTTResult?.(result)
     },
     onInterimTranscript: (text) => {
@@ -354,9 +355,9 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
         const interrupt = Date.now()
         interruptCounterRef.current = interrupt
 
-        console.log('submitMessage: userMessage:', userMessage , tts.state.isSpeaking)
-        console.log('submitMessage: appConfig.bargeInEnabled:', appConfig.bargeInEnabled)
-        llmService.actions.processUserInput({
+        console.log('LLM: userMessage', tts.state.audioQueue)
+        
+        llm.actions.processUserInput({
           text: userMessage,
           human: true,
           final: true,
@@ -365,7 +366,7 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
         })
       }
     },
-    [appConfig.bargeInEnabled, conversation.actions, llmService.actions]
+    [appConfig.bargeInEnabled, conversation.actions, llm.actions]
   )
 
   const toggleMicrophone = useCallback(
@@ -393,13 +394,13 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
       conversation,
       vad,
       stt,
-      llm: llmService,
+      llm: llm,
       tts,
       visemes,
       emotes,
       animations
     }),
-    [conversation, vad, stt, llmService, tts, visemes, emotes, animations]
+    [conversation, vad, stt, llm, tts, visemes, emotes, animations]
   )
 
   // Memoize the actions object to prevent unnecessary re-renders
@@ -416,9 +417,9 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
       setSTTDesired: stt.actions.setDesired,
 
       // LLM actions
-      loadLLM: llmService.actions.load,
-      processUserInput: llmService.actions.processUserInput,
-      clearLLMHistory: llmService.actions.clearHistory,
+      loadLLM: llm.actions.load,
+      processUserInput: llm.actions.processUserInput,
+      clearLLMHistory: llm.actions.clearHistory,
 
       // TTS actions
       speak: tts.actions.speak,
@@ -455,42 +456,7 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
       resetEmotes: emotes.actions.reset,
       onEmoteBargein: emotes.actions.onBargeIn
     }),
-    [
-      vad.actions.startListening,
-      vad.actions.stopListening,
-      vad.actions.initializeVAD,
-      stt.actions.startListening,
-      stt.actions.stopListening,
-      stt.actions.setDesired,
-      llmService.actions.load,
-      llmService.actions.processUserInput,
-      llmService.actions.clearHistory,
-      tts.actions.speak,
-      tts.actions.stopSpeaking,
-      tts.actions.playAudioBuffer,
-      tts.actions.getQueueStatus,
-      conversation.actions.addMessage,
-      conversation.actions.streamMessage,
-      conversation.actions.clearAllMessages,
-      submitMessage,
-      toggleMicrophone,
-      triggerBargein,
-      visemes.actions.setupForVRM,
-      visemes.actions.setupForMorphTargets,
-      visemes.actions.update,
-      visemes.actions.applyToRig,
-      visemes.actions.reset,
-      emotes.actions.setupForVRM,
-      emotes.actions.setupForMorphTargets,
-      emotes.actions.setEmotion,
-      emotes.actions.performAction,
-      emotes.actions.triggerGaze,
-      emotes.actions.update,
-      emotes.actions.applyToVRM,
-      emotes.actions.applyToMorphTargets,
-      emotes.actions.reset,
-      emotes.actions.onBargeIn
-    ]
+    [vad.actions.startListening, vad.actions.stopListening, vad.actions.initializeVAD, stt.actions.startListening, stt.actions.stopListening, stt.actions.setDesired, llm.actions.load, llm.actions.processUserInput, llm.actions.clearHistory, tts.actions.speak, tts.actions.stopSpeaking, tts.actions.playAudioBuffer, tts.actions.getQueueStatus, conversation.actions.addMessage, conversation.actions.streamMessage, conversation.actions.clearAllMessages, conversation.actions.getMessagebyId, submitMessage, toggleMicrophone, triggerBargein, visemes.actions.setupForVRM, visemes.actions.setupForMorphTargets, visemes.actions.update, visemes.actions.applyToRig, visemes.actions.reset, emotes.actions.setupForVRM, emotes.actions.setupForMorphTargets, emotes.actions.setEmotion, emotes.actions.performAction, emotes.actions.triggerGaze, emotes.actions.update, emotes.actions.applyToVRM, emotes.actions.applyToMorphTargets, emotes.actions.reset, emotes.actions.onBargeIn]
   )
 
   const state = useMemo(
@@ -502,10 +468,10 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
       sttDesired: stt.state.desired,
       currentTranscript: currentInterimTranscript,
       currentSubtitle: currentSubtitleText,
-      llmReady: llmService.state.ready,
-      llmLoading: llmService.state.loading,
-      llmThinking: llmService.state.thinking,
-      llmMessages: llmService.state.messages,
+      llmReady: llm.state.ready,
+      llmLoading: llm.state.loading,
+      llmThinking: llm.state.thinking,
+      llmMessages: llm.state.messages,
       ttsIsSpeaking: tts.state.isSpeaking,
       ttsAudioQueue: tts.state.audioQueue,
       messages: conversation.state.messages,
@@ -518,10 +484,10 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
       stt.state.desired,
       currentInterimTranscript,
       currentSubtitleText,
-      llmService.state.ready,
-      llmService.state.loading,
-      llmService.state.thinking,
-      llmService.state.messages,
+      llm.state.ready,
+      llm.state.loading,
+      llm.state.thinking,
+      llm.state.messages,
       tts.state.isSpeaking,
       tts.state.audioQueue,
       conversation.state.messages,  

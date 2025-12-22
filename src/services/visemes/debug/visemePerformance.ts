@@ -37,7 +37,7 @@ export class VisemePerformanceMonitor {
     // Log performance warnings
     if (frameTime > 16.67) {
       // 60fps threshold
-      console.warn(`Viseme frame took ${frameTime.toFixed(2)}ms (target: <16.67ms)`)
+      logger.warn(`Viseme frame took ${frameTime.toFixed(2)}ms (target: <16.67ms)`)
     }
   }
 

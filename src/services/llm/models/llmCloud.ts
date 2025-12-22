@@ -46,7 +46,7 @@ export async function llmCloud(params: LLMParams): Promise<LLMResult> {
     ...(isFlowise && { question: userMessage })
   })
 
-  console.log('LLM - sending request to remote', body)
+  logger.log('LLM - sending request to remote', body)
 
   const props: RequestInit = {
     method: 'POST',
@@ -58,16 +58,16 @@ export async function llmCloud(params: LLMParams): Promise<LLMResult> {
   }
 
   try {
-    console.log('LLM - sending request to', llmUrl, props)
+    logger.log('LLM - sending request to', llmUrl, props)
     const response = await fetch(llmUrl, props)
 
     if (!response.ok) {
-      console.error('LLM: reasoning error', response)
+      logger.error('LLM: reasoning error', response)
       return { success: false, error: new Error(`HTTP ${response.status}: ${response.statusText}`) }
     }
 
     if (interrupt < latestInterrupt) {
-      console.log('LLM: Cloud request outdated, stopping')
+      logger.log('LLM: Cloud request outdated, stopping')
       return { success: false, error: new Error('Request outdated') }
     }
 
@@ -119,7 +119,7 @@ export async function llmCloud(params: LLMParams): Promise<LLMResult> {
 
     return { success: true, fullResponse: '' }
   } catch (err) {
-    console.error('LLM: reasoning catch error - bad remote url?', err)
+    logger.error('LLM: reasoning catch error - bad remote url?', err)
     return { success: false, error: err as Error }
   }
 }

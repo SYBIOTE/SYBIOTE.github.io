@@ -45,7 +45,7 @@ async function getAvailableModels(llmUrl: string): Promise<string[]> {
     const response = await ollama.list()
     return (response.models || []).map((m: any) => m.name)
   } catch (err) {
-    console.error('Failed to get available models:', err)
+    logger.error('Failed to get available models:', err)
     return []
   }
 }
@@ -65,20 +65,20 @@ async function findFallbackModel(llmUrl: string, requestedModel: string, preferr
     return requestedModel
   }
 
-  console.warn(`⚠️ [Model Fallback] Requested model "${requestedModel}" not available`)
-  console.log(`📦 [Model Fallback] Available models:`, availableModels.join(', '))
+  logger.warn(`⚠️ [Model Fallback] Requested model "${requestedModel}" not available`)
+  logger.log(`📦 [Model Fallback] Available models:`, availableModels.join(', '))
 
   // Try preferred fallbacks in order
   for (const fallback of preferredFallbacks) {
     if (availableModels.includes(fallback)) {
-      console.log(`✅ [Model Fallback] Using fallback model: ${fallback}`)
+      logger.log(`✅ [Model Fallback] Using fallback model: ${fallback}`)
       return fallback
     }
   }
 
   // Use first available model as last resort
   const firstAvailable = availableModels[0]
-  console.log(`⚠️ [Model Fallback] Using first available model: ${firstAvailable}`)
+  logger.log(`⚠️ [Model Fallback] Using first available model: ${firstAvailable}`)
   return firstAvailable
 }
 
@@ -88,7 +88,7 @@ async function findFallbackModel(llmUrl: string, requestedModel: string, preferr
 export async function checkOllamaHealth(llmUrl: string): Promise<{ backend: boolean; ollama: boolean; availableModels?: string[]; error?: string }> {
   try {
     // Check 1: Backend health endpoint
-    console.log('🔍 [Health Check] Checking backend connectivity...', llmUrl)
+    logger.log('🔍 [Health Check] Checking backend connectivity...', llmUrl)
     const healthResponse = await fetch(`${llmUrl}/health`, {
       method: 'GET',
       headers: {
@@ -98,31 +98,31 @@ export async function checkOllamaHealth(llmUrl: string): Promise<{ backend: bool
     })
 
     if (!healthResponse.ok) {
-      console.error('❌ [Health Check] Backend health check failed:', healthResponse.status, healthResponse.statusText)
+      logger.error('❌ [Health Check] Backend health check failed:', healthResponse.status, healthResponse.statusText)
       return { backend: false, ollama: false, error: `Backend returned ${healthResponse.status}` }
     }
 
     const healthData = await healthResponse.json().catch(() => null)
-    console.log('✅ [Health Check] Backend is reachable:', healthData)
+    logger.log('✅ [Health Check] Backend is reachable:', healthData)
 
     // Check 2: Ollama API through backend using ollama/browser
-    console.log('🔍 [Health Check] Checking Ollama connectivity through backend...')
+    logger.log('🔍 [Health Check] Checking Ollama connectivity through backend...')
     try {
       const ollama = createOllamaClient(llmUrl)
 
       const listResponse = await ollama.list()
       const modelNames = (listResponse.models || []).map((m: any) => m.name)
-      console.log('✅ [Health Check] Ollama is connected through backend')
-      console.log('📦 [Health Check] Available models:', modelNames.join(', ') || 'None')
+      logger.log('✅ [Health Check] Ollama is connected through backend')
+      logger.log('📦 [Health Check] Available models:', modelNames.join(', ') || 'None')
 
       return { backend: true, ollama: true, availableModels: modelNames }
     } catch (ollamaErr) {
-      console.error('❌ [Health Check] Ollama API check failed:', ollamaErr)
+      logger.error('❌ [Health Check] Ollama API check failed:', ollamaErr)
       return { backend: true, ollama: false, error: `Ollama API error: ${ollamaErr instanceof Error ? ollamaErr.message : 'Unknown error'}` }
     }
   } catch (err) {
     const error = err instanceof Error ? err.message : 'Unknown error'
-    console.error('❌ [Health Check] Health check failed:', error)
+    logger.error('❌ [Health Check] Health check failed:', error)
     return { backend: false, ollama: false, error }
   }
 }
@@ -153,7 +153,7 @@ export async function llmOllama(params: LLMParams): Promise<LLMResult> {
 
   const breathHelper = (fragment: string | null = null, finished = false) => {
     if (latestInterrupt > interrupt) {
-      console.log('LLM: skipping - work is old', interrupt)
+      logger.log('LLM: skipping - work is old', interrupt)
       return
     }
 
@@ -201,14 +201,14 @@ export async function llmOllama(params: LLMParams): Promise<LLMResult> {
     
     if (!actualModel) {
       const error = new Error(`No models available on Ollama server. Requested: ${llmModel}`)
-      console.error('LLM: No models available:', error)
+      logger.error('LLM: No models available:', error)
       setThinking?.(false)
       return { success: false, error }
     }
 
     // Log if fallback was used
     if (actualModel !== llmModel) {
-      console.warn(`⚠️ [LLM] Model fallback: "${llmModel}" → "${actualModel}"`)
+      logger.warn(`⚠️ [LLM] Model fallback: "${llmModel}" → "${actualModel}"`)
     }
 
     const ollama = createOllamaClient(llmUrl)
@@ -220,7 +220,7 @@ export async function llmOllama(params: LLMParams): Promise<LLMResult> {
       content: msg.content
     }))
 
-    console.log('LLM - sending Ollama request to', llmUrl, 'with model', actualModel)
+    logger.log('LLM - sending Ollama request to', llmUrl, 'with model', actualModel)
 
     const response = await ollama.chat({
       model: actualModel,
@@ -230,7 +230,7 @@ export async function llmOllama(params: LLMParams): Promise<LLMResult> {
 
     for await (const chunk of response) {
       if (latestInterrupt > interrupt) {
-        console.log('LLM: Ollama request outdated, stopping')
+        logger.log('LLM: Ollama request outdated, stopping')
         break
       }
 
@@ -248,7 +248,7 @@ export async function llmOllama(params: LLMParams): Promise<LLMResult> {
 
     return { success: true, fullResponse }
   } catch (err) {
-    console.error('LLM: Ollama reasoning error', err)
+    logger.error('LLM: Ollama reasoning error', err)
     setThinking?.(false)
     return { success: false, error: err as Error }
   }

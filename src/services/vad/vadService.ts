@@ -34,10 +34,10 @@ export const useVADService = ({
   const [vadInstance, setVadInstance] = useState<VADInstance | null>(null)
 
 
-  useEffect(()=>{console.log("set listening" , isListening)},[isListening])
+  useEffect(()=>{logger.log("set listening" , isListening)},[isListening])
   const handleVADResult = useCallback(
     (result: VADResult) => {
-      // console.log('VAD Result:', result)
+      // logger.log('VAD Result:', result)
       setIsDetecting(result.isSpeech)
 
       // Call callback if provided
@@ -48,8 +48,8 @@ export const useVADService = ({
 
   const initializeVAD = useCallback(async () => {
     try {
-      const originalWarn = console.warn
-      console.warn = (...args) => {
+      const originalWarn = logger.warn
+      logger.warn = (...args) => {
         if (args[0]?.includes?.('onnxruntime') || 
             args[0]?.includes?.('Removing initializer')) {
           return // Suppress these warnings
@@ -71,12 +71,12 @@ export const useVADService = ({
           }
         },
         onSpeechStart: () => {
-          console.log('Speech started')
+          logger.log('Speech started')
           setIsDetecting(true)
           onSpeechStart?.()
         },
         onSpeechEnd: (audio: Float32Array) => {
-          //   console.log('Speech ended', audio)
+          //   logger.log('Speech ended', audio)
           setIsDetecting(false)
 
           // Convert Float32Array to ArrayBuffer for compatibility
@@ -93,11 +93,11 @@ export const useVADService = ({
           onSpeechEnd?.(buffer)
         }
       })
-      console.warn = originalWarn
+      logger.warn = originalWarn
       vadRef.current = vad
       setVadInstance(vad)
     } catch (error) {
-      console.error('Failed to initialize VAD:', error)
+      logger.error('Failed to initialize VAD:', error)
     }
   }, [config.vadThreshold, handleVADResult, onSpeechStart, onSpeechEnd])
 
@@ -111,7 +111,7 @@ export const useVADService = ({
         vadRef.current.start()
         setIsListening(true)
       } catch (error) {
-        console.error('Failed to start VAD:', error)
+        logger.error('Failed to start VAD:', error)
       }
     }
   }, [vadInstance, initializeVAD])
@@ -122,9 +122,9 @@ export const useVADService = ({
         vadRef.current.pause()
         setIsListening(false)
         setIsDetecting(false)
-        console.log('VAD stopped listening')
+        logger.log('VAD stopped listening')
       } catch (error) {
-        console.error('Failed to stop VAD:', error)
+        logger.error('Failed to stop VAD:', error)
       }
     }
   }, [])

@@ -95,7 +95,7 @@ export const resetEmoteState = (state: EmoteState ): void => {
   applyExpression(state, VRM_EXPRESSIONS.neutral, 1)
 
   applyEmotion(state, 'neutral')
-  console.log('Emote state reset to neutral')
+  logger.log('Emote state reset to neutral')
 }
 
 /**
@@ -246,7 +246,7 @@ export const startPerformance = (state: EmoteState, performanceData: Performance
 
     const emotionResult = applyEmotion(state, performanceData.emotion)
     if (!emotionResult.success) {
-      console.warn('Failed to apply emotion during performance:', emotionResult.error)
+      logger.warn('Failed to apply emotion during performance:', emotionResult.error)
     }
     
 
@@ -266,7 +266,7 @@ export const startPerformance = (state: EmoteState, performanceData: Performance
  */
 export const handleBargeIn = (state: EmoteState): void => {
   resetEmoteState(state)
-  console.log('Emote system relaxing due to barge-in')
+  logger.log('Emote system relaxing due to barge-in')
 }
 
 /**
@@ -327,7 +327,7 @@ export const setupEmoteStateForVRM = (state: EmoteState, vrm: VRM): EmoteResult 
       vrm.lookAt.target?.position.copy(new Vector3(0, 0, 1)) // Look forward by default
     }
 
-    console.log('VRM integration setup complete')
+    logger.log('VRM integration setup complete')
   }, 'VRM setup failed')
 }
 /**
@@ -347,6 +347,6 @@ export const setupEmoteStateForMorphTargets = (
     state.morphs = morphs
     state.dictionary = dictionary
 
-    console.log('Morph targets integration setup complete')
+    logger.log('Morph targets integration setup complete')
   }, 'Morph targets setup failed')
 }

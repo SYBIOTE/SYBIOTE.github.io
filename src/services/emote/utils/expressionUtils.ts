@@ -19,7 +19,7 @@ export const applyExpressionSafely = (state: EmoteState, expressionName: string,
     applyExpression(state, expressionName, value)
     return true
   } catch (error) {
-    console.warn(`Failed to apply expression ${expressionName}:`, error)
+    logger.warn(`Failed to apply expression ${expressionName}:`, error)
     return false
   }
 }

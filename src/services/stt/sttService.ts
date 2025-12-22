@@ -87,13 +87,13 @@ export const useSTTService = ({
     const windowWithSpeech = window as WindowWithSpeech
 
     if (!windowWithSpeech.webkitSpeechRecognition && !windowWithSpeech.SpeechRecognition) {
-      console.error('STT: Speech recognition not supported in this browser')
+      logger.error('STT: Speech recognition not supported in this browser')
       return
     }
 
     const SpeechRecognitionClass = windowWithSpeech.SpeechRecognition || windowWithSpeech.webkitSpeechRecognition
     if (!SpeechRecognitionClass) {
-      console.error('STT: Speech recognition constructor not found')
+      logger.error('STT: Speech recognition constructor not found')
       return
     }
 
@@ -108,7 +108,7 @@ export const useSTTService = ({
       try {
         recognition.start()
       } catch {
-        console.error('STT: recognizer started but with error')
+        logger.error('STT: recognizer started but with error')
       }
       activeRef.current = true
     }
@@ -118,7 +118,7 @@ export const useSTTService = ({
       try {
         recognition.stop()
       } catch {
-        console.error('STT: recognizer stopped but with error')
+        logger.error('STT: recognizer stopped but with error')
       }
       activeRef.current = false
     }
@@ -128,7 +128,7 @@ export const useSTTService = ({
       const errorType = anyEvent?.error
 
       if (event) {
-        console.error('STT: speech recognition error, restarting', { error: errorType, event })
+        logger.error('STT: speech recognition error, restarting', { error: errorType, event })
       }
 
       // Stop current session safely

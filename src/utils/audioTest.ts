@@ -2,37 +2,37 @@
  * Audio Services Test Utilities
  *
  * This file contains test utilities to verify that the audio services
- * are working correctly. These can be run from the browser console.
+ * are working correctly. These can be run from the browser logger.
  */
 
 // Test VAD Service
 export const testVAD = async () => {
-  console.log('Testing VAD Service...')
+  logger.log('Testing VAD Service...')
 
   // Check if VAD package is available
   try {
     const { MicVAD } = await import('@ricky0123/vad-web')
-    console.log('✅ VAD package loaded successfully')
+    logger.log('✅ VAD package loaded successfully')
 
     // Test VAD initialization
     const vad = await MicVAD.new({
       model: 'v5',
-      onSpeechStart: () => console.log('🎤 Speech detected'),
-      onSpeechEnd: (audio) => console.log('🔇 Speech ended, audio length:', audio.length)
+      onSpeechStart: () => logger.log('🎤 Speech detected'),
+      onSpeechEnd: (audio) => logger.log('🔇 Speech ended, audio length:', audio.length)
     })
 
-    console.log('✅ VAD initialized successfully')
+    logger.log('✅ VAD initialized successfully')
     vad.pause() // Clean up
     return true
   } catch (error) {
-    console.error('❌ VAD test failed:', error)
+    logger.error('❌ VAD test failed:', error)
     return false
   }
 }
 
 // Test Web Speech API availability
 export const testSpeechAPI = () => {
-  console.log('Testing Web Speech API...')
+  logger.log('Testing Web Speech API...')
 
   const windowWithSpeech = window as Window & {
     webkitSpeechRecognition?: unknown
@@ -42,13 +42,13 @@ export const testSpeechAPI = () => {
   const hasSpeechRecognition = !!windowWithSpeech.webkitSpeechRecognition || !!windowWithSpeech.SpeechRecognition
   const hasSpeechSynthesis = !!window.speechSynthesis
 
-  console.log('Speech Recognition available:', hasSpeechRecognition ? '✅' : '❌')
-  console.log('Speech Synthesis available:', hasSpeechSynthesis ? '✅' : '❌')
+  logger.log('Speech Recognition available:', hasSpeechRecognition ? '✅' : '❌')
+  logger.log('Speech Synthesis available:', hasSpeechSynthesis ? '✅' : '❌')
 
   if (hasSpeechSynthesis) {
     const voices = speechSynthesis.getVoices()
-    console.log('Available voices:', voices.length)
-    voices.slice(0, 3).forEach((voice) => console.log(`  - ${voice.name} (${voice.lang})`))
+    logger.log('Available voices:', voices.length)
+    voices.slice(0, 3).forEach((voice) => logger.log(`  - ${voice.name} (${voice.lang})`))
   }
 
   return hasSpeechRecognition && hasSpeechSynthesis
@@ -56,23 +56,23 @@ export const testSpeechAPI = () => {
 
 // Test TTS
 export const testTTS = async (text: string = 'Hello, this is a test of the text to speech system.') => {
-  console.log('Testing TTS with text:', text)
+  logger.log('Testing TTS with text:', text)
 
   if (!window.speechSynthesis) {
-    console.error('❌ Speech synthesis not available')
+    logger.error('❌ Speech synthesis not available')
     return false
   }
 
   return new Promise<boolean>((resolve) => {
     const utterance = new SpeechSynthesisUtterance(text)
 
-    utterance.onstart = () => console.log('🔊 TTS started')
+    utterance.onstart = () => logger.log('🔊 TTS started')
     utterance.onend = () => {
-      console.log('✅ TTS completed')
+      logger.log('✅ TTS completed')
       resolve(true)
     }
     utterance.onerror = (error) => {
-      console.error('❌ TTS error:', error)
+      logger.error('❌ TTS error:', error)
       resolve(false)
     }
 
@@ -82,26 +82,26 @@ export const testTTS = async (text: string = 'Hello, this is a test of the text 
 
 // Run all tests
 export const runAllAudioTests = async () => {
-  console.log('🧪 Running Audio Services Tests...')
-  console.log('='.repeat(50))
+  logger.log('🧪 Running Audio Services Tests...')
+  logger.log('='.repeat(50))
 
   const speechAPITest = testSpeechAPI()
   const vadTest = await testVAD()
   const ttsTest = await testTTS()
 
-  console.log('='.repeat(50))
-  console.log('Test Results:')
-  console.log('Web Speech API:', speechAPITest ? '✅ PASS' : '❌ FAIL')
-  console.log('VAD Service:', vadTest ? '✅ PASS' : '❌ FAIL')
-  console.log('TTS Service:', ttsTest ? '✅ PASS' : '❌ FAIL')
+  logger.log('='.repeat(50))
+  logger.log('Test Results:')
+  logger.log('Web Speech API:', speechAPITest ? '✅ PASS' : '❌ FAIL')
+  logger.log('VAD Service:', vadTest ? '✅ PASS' : '❌ FAIL')
+  logger.log('TTS Service:', ttsTest ? '✅ PASS' : '❌ FAIL')
 
   const allPassed = speechAPITest && vadTest && ttsTest
-  console.log('Overall:', allPassed ? '✅ ALL TESTS PASSED' : '❌ SOME TESTS FAILED')
+  logger.log('Overall:', allPassed ? '✅ ALL TESTS PASSED' : '❌ SOME TESTS FAILED')
 
   return allPassed
 }
 
-// Make tests available globally for browser console
+// Make tests available globally for browser logger
 if (typeof window !== 'undefined') {
   const globalWindow = window as Window & { audioTests?: unknown }
   globalWindow.audioTests = {
@@ -111,6 +111,6 @@ if (typeof window !== 'undefined') {
     runAllAudioTests
   }
 
-  console.log('Audio tests available at window.audioTests')
-  console.log('Run window.audioTests.runAllAudioTests() to test all services')
+  logger.log('Audio tests available at window.audioTests')
+  logger.log('Run window.audioTests.runAllAudioTests() to test all services')
 }

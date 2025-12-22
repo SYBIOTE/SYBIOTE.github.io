@@ -13,7 +13,7 @@ self.addEventListener('message', async (e) => {
   const id = e.data.id
   const text = e.data.text || 'please supply some text'
   const voiceId = e.data.voice || 'en_GB-hfc_male-medium'
-  console.log('TTS Worker received message:', { id, text, voiceId })
+  logger.log('TTS Worker received message:', { id, text, voiceId })
   tts.predict({text, voiceId}).then(audio => {
     new Promise((resolve, reject) => {
       const reader = new FileReader()
@@ -23,7 +23,7 @@ self.addEventListener('message', async (e) => {
     }).then(audio => {
       self.postMessage({ audio, id })
     }).catch(error => {
-      console.error('TTS Worker Error:', error)
+      logger.error('TTS Worker Error:', error)
       self.postMessage({ error: error.message, id })
     })
   })
@@ -56,6 +56,7 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
   const messageQueue = useRef<QueuedMessage[]>([])
   const nextExpectedId = useRef(0)
   const workerRef = useRef<Worker | null>(null)
+  const currentResolveRef = useRef<(() => void) | null>(null)
 
   // Initialize worker for local TTS
   const getOrCreateWorker = useCallback(() => {
@@ -90,7 +91,7 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
           source.start(0)
         })
         .catch((error) => {
-          console.error('Audio decode error:', error)
+          logger.error('Audio decode error:', error)
           reject(error)
         })
     })
@@ -188,7 +189,7 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
   const generateAudioForMessage = useCallback(
     async (message: QueuedMessage) => {
       message.status = 'generating'
-      console.log(`Generating audio for message ${message.id}`)
+      logger.log(`Generating audio for message ${message.id}`)
 
       try {
         if (config.mode === 'remote') {
@@ -200,7 +201,7 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
         }
         message.status = 'ready'
       } catch (error) {
-        console.error(`Error generating audio for message ${message.id}:`, error)
+        logger.error(`Error generating audio for message ${message.id}:`, error)
         message.status = 'error'
         message.error = error instanceof Error ? error.message : 'Unknown error'
       }
@@ -230,7 +231,7 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
         // If message is not ready after generation, skip for now
         if (nextMessage.status !== 'ready') {
           if (nextMessage.status === 'error') {
-            console.error(`Skipping message ${nextMessage.id} due to error:`, nextMessage.error)
+            logger.error(`Skipping message ${nextMessage.id} due to error:`, nextMessage.error)
             messageQueue.current = messageQueue.current.filter((msg) => msg.id !== nextMessage.id)
             nextExpectedId.current = nextMessage.id + 1
             continue
@@ -247,7 +248,7 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
 
         // Play the message
         nextMessage.status = 'playing'
-        console.log(`Playing message ${nextMessage.id}`)
+        logger.log(`Playing message ${nextMessage.id}`)
 
         // Generate whisper data and notify speech start
         const whisperData = approximateWhisperDataFromText(nextMessage.text, config.speed, 0)
@@ -259,6 +260,9 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
           // Handle different TTS modes for playback
           if (config.mode === 'browser') {
             await new Promise<void>((resolve, reject) => {
+              // Store resolve function so we can call it when stopping
+              currentResolveRef.current = resolve
+              
               const utterance = new SpeechSynthesisUtterance(nextMessage.text)
               utterance.rate = config.speed
               utterance.pitch = config.pitch
@@ -296,7 +300,7 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
                 
                 if (maleVoice) {
                   utterance.voice = maleVoice
-                  console.log('TTS: Using male voice:', maleVoice.name, maleVoice.lang)
+                  logger.log('TTS: Using male voice:', maleVoice.name, maleVoice.lang)
                 }
               } else if (isFemale) {
                 const femaleVoice = findVoiceByLang('en-IN', false) || 
@@ -306,11 +310,19 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
                 
                 if (femaleVoice) {
                   utterance.voice = femaleVoice
-                  console.log('TTS: Using female voice:', femaleVoice.name, femaleVoice.lang)
+                  logger.log('TTS: Using female voice:', femaleVoice.name, femaleVoice.lang)
                 }
               }
-              utterance.onend = () => resolve()
-              utterance.onerror = (event) => reject(new Error(`Browser TTS Error: ${event.error}`))
+              
+              utterance.onend = () => {
+                currentResolveRef.current = null
+                resolve()
+              }
+              
+              utterance.onerror = (event) => {
+                currentResolveRef.current = null
+                reject(new Error(`Browser TTS Error: ${event.error}`))
+              }
 
               speechSynthesis.speak(utterance)
             })
@@ -318,7 +330,7 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
             await playAudioBuffer(nextMessage.audio)
           }
         } catch (playbackError) {
-          console.error(`Error playing message ${nextMessage.id}:`, playbackError)
+          logger.error(`Error playing message ${nextMessage.id}:`, playbackError)
         }
 
         // Mark as completed and remove from queue
@@ -332,23 +344,14 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
         onSpeechEnd()
       }
     } catch (error) {
-      console.error('Queue processing error:', error)
+      logger.error('Queue processing error:', error)
       if (onSpeechEnd) {
         onSpeechEnd()
       }
     } finally {
       isProcessing.current = false
     }
-  }, [
-    generateAudioForMessage,
-    config.speed,
-    config.pitch,
-    config.volume,
-    config.mode,
-    onSpeechStart,
-    playAudioBuffer,
-    onSpeechEnd
-  ])
+  }, [onSpeechEnd, config.speed, config.mode, config.pitch, config.volume, config.voice, onSpeechStart, generateAudioForMessage, playAudioBuffer])
 
   // Add message to queue and assign ID
   const speak = useCallback(
@@ -367,7 +370,7 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
       }
 
       messageQueue.current.push(queuedMessage)
-      console.log(`Queued message ${messageId}:`, cleanedText.substring(0, 50))
+      logger.log(`Queued message ${messageId}:`, cleanedText.substring(0, 50))
 
       // For local mode, start generating all pending messages immediately
       if (config.mode === 'local') {
@@ -388,8 +391,15 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
   )
 
   const stopSpeaking = useCallback(() => {
+    // Stop browser speech synthesis
     if ('speechSynthesis' in window) {
       speechSynthesis.cancel()
+    }
+
+    // Resolve the current Promise to unblock processQueue
+    if (currentResolveRef.current) {
+      currentResolveRef.current()
+      currentResolveRef.current = null
     }
 
     // Terminate worker if it exists
@@ -435,7 +445,7 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
   const state = useMemo(() => ({
     isSpeaking: isProcessing.current,
     audioQueue: messageQueue.current.length
-  }), [isProcessing.current, messageQueue.current.length])
+  }), [])
 
   const actions = useMemo(
     () => ({

@@ -16,7 +16,7 @@ export async function llmLocal(params: LLMParams): Promise<LLMResult> {
     params
 
   if (!engine) {
-    console.error('LLM: Engine not ready')
+    logger.error('LLM: Engine not ready')
     return { success: false, error: new Error('Engine not ready') }
   }
 
@@ -28,7 +28,7 @@ export async function llmLocal(params: LLMParams): Promise<LLMResult> {
 
   const breathHelper = (fragment: string | null = null, finished = false) => {
     if (latestInterrupt > interrupt) {
-      console.log('LLM: skipping - work is old', interrupt)
+      logger.log('LLM: skipping - work is old', interrupt)
       return
     }
 
@@ -65,7 +65,7 @@ export async function llmLocal(params: LLMParams): Promise<LLMResult> {
         })
       }
 
-      console.log('LLM - publishing fragment =', breath, 'time =', interrupt)
+      logger.log('LLM - publishing fragment =', breath, 'time =', interrupt)
       breath = fragment.slice(i)
       bcounter++
     }
@@ -78,14 +78,14 @@ export async function llmLocal(params: LLMParams): Promise<LLMResult> {
       role: msg.role,
       content: msg.content
     }))
-    console.log('LLM - sending local request', requestMessages)
+    logger.log('LLM - sending local request', requestMessages)
 
     const asyncChunkGenerator = await engine.chat.completions.create({
       messages: requestMessages,
       stream: true
     })
 
-    console.log(asyncChunkGenerator)
+    logger.log(asyncChunkGenerator)
 
     const isAsyncIterable = (obj: unknown): obj is AsyncIterable<WebLLMStreamChunk> => {
       return obj != null && typeof obj === 'object' && Symbol.asyncIterator in obj
@@ -93,7 +93,7 @@ export async function llmLocal(params: LLMParams): Promise<LLMResult> {
 
     if (isAsyncIterable(asyncChunkGenerator)) {
       for await (const chunk of asyncChunkGenerator) {
-        console.log({ chunk })
+        logger.log({ chunk })
         if (!chunk.choices || !chunk.choices.length || !chunk.choices[0].delta) continue
         const content = chunk.choices[0].delta.content
         const finished = chunk.choices[0].finish_reason
@@ -110,14 +110,14 @@ export async function llmLocal(params: LLMParams): Promise<LLMResult> {
     }
 
     const paragraph = await engine.getMessage()
-    console.log({ paragraph })
+    logger.log({ paragraph })
 
     updateMessages?.(userMessage, paragraph)
     setThinking?.(false)
 
     return { success: true, fullResponse: paragraph }
   } catch (err) {
-    console.error('LLM: Local reasoning error', err)
+    logger.error('LLM: Local reasoning error', err)
     setThinking?.(false)
     return { success: false, error: err as Error }
   }
