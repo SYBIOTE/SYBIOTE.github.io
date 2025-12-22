@@ -75,6 +75,7 @@ const processVRMATracks = (clip: THREE.AnimationClip): THREE.AnimationClip => {
 }
 
 // Custom hook to load external animation files, including VRMA animations
+// eslint-disable-next-line react-refresh/only-export-components
 export const useExternalAnimations = (avatarRef: React.RefObject<THREE.Object3D>, vrm?: VRMCore) => {
   // Memoize clip filtering to avoid recreating arrays on every render
   const { vrmaClips, fbxClips, gltfClips } = useMemo(() => {
@@ -96,9 +97,11 @@ export const useExternalAnimations = (avatarRef: React.RefObject<THREE.Object3D>
   )
 
   // Load FBX animations
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const fbxAssets = fbxClips.map((clip) => useLoader(FBXLoader, clip.path))
 
   // Load GLTF/GLB animations
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const gltfGLTFs = gltfClips.map((clip) => useGLTF(clip.path))
 
   // State for Mixamo-converted animations
