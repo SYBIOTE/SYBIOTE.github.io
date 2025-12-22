@@ -29,7 +29,7 @@ const SceneContent = ({
   animationService,
   store
 }: Scene3DProps & { store: XRStore }) => {
-  const controlsRef = useRef<typeof OrbitControls>(null)
+  const controlsRef = useRef<any>(null)
   const { camera } = useThree()
   const [camTarget, setCamTarget] = useState<[number, number, number]>(sceneConfig.cameraTarget)
   const [camPos, setCamPos] = useState<[number, number, number]>(sceneConfig.cameraPosition)
