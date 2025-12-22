@@ -13,7 +13,7 @@ import { loadMixamoAnimation } from '../../../utils/animationUtil'
 
 import { AvatarOptions } from './AvatarOptions'
 import { Vector3 } from 'three'
-import  {ANIMATION_CLIPS, getClipsByCategory, getRandomClip, updateAnimationDurations } from '../../../services/animation/config/animationClips'
+import  {ANIMATION_CLIPS, getRandomClip, updateAnimationDurations } from '../../../services/animation/config/animationClips'
 import type { useAnimationService } from '../../../services/animation/useAnimationService'
 import type { useEmoteService } from '../../../services/emote/useEmoteService'
 import type { useVisemeService } from '../../../services/visemes/useVisemeService'

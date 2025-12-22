@@ -59,7 +59,6 @@ const viewport3DComponent = ({
           visemeService={visemeService}
           emoteService={emoteService}
           animationService={animationService}
-          conversationService={conversationService}
           setXRStore={setXRStore}
         />
       </div>

@@ -29,11 +29,11 @@ const SceneContent = ({
   animationService,
   store
 }: Scene3DProps & { store: XRStore }) => {
-  const controlsRef = useRef<any>(null)
+  const controlsRef = useRef<typeof OrbitControls>(null)
   const { camera } = useThree()
   const [camTarget, setCamTarget] = useState<[number, number, number]>(sceneConfig.cameraTarget)
   const [camPos, setCamPos] = useState<[number, number, number]>(sceneConfig.cameraPosition)
-  const subtitleMessage = agentState.llmThinking ? 'Thinking......' : (agentState.currentSubtitle || '')
+  const subtitleMessage = agentState.llmThinking ? 'Thinking ......' : (agentState.currentSubtitle || '')
 
   const avatarAgentState = useMemo(() => ({
     llmThinking: agentState.llmThinking,
