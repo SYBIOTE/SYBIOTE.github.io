@@ -1,5 +1,5 @@
 import type { XRStore } from '@react-three/xr'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 
 import { Viewport3D } from '../components/scene/Viewport3D'
 import { ChatOverlay } from '../components/chat/ChatOverlay'
@@ -18,6 +18,8 @@ import SectionNavRail from '../components/sections/SectionNavRail'
 import SettingsButton from '../components/settings/SettingsButton'
 import { ControlOverlay } from '../components/control/ControlOverlay'
 import { initializeViewport } from '../utils/viewportUtils'
+import type { LLMStatusUpdate } from '../services/llm/llmTypes'
+import { AgentProvider, useAgentContext } from '../components/scene/avatar/AgentContext'
 
 export const config = {
   vad: defaultVadConfig,
@@ -26,9 +28,98 @@ export const config = {
   llm: defaultLLMConfig
 }
 
+const AgentDependentContent = memo(({ 
+  appState, 
+  handleAppStateChange, 
+  xrStore 
+}: { 
+  appState: AppConfig
+  handleAppStateChange: (newAppState: AppConfig) => void
+  xrStore: XRStore | null
+}) => {
+  const { state :{ messages , vadIsDetecting }, actions :{ triggerGaze, performEmotionAction , getMessagebyId } } = useAgentContext() // Get from context instead of props
+  const chatMessages = useMemo(
+    () => messages.map(getMessagebyId),
+    [messages, getMessagebyId]
+  )
 
-export const App = () => {
+  // Moved from App - this prevents App from rerendering when vadIsDetecting changes
+  useEffect(() => {
+    if (vadIsDetecting) {
+      triggerGaze()
+      performEmotionAction({emotion: 'alert', relaxTime: 500 })
+    }
+  }, [vadIsDetecting, triggerGaze, performEmotionAction])
+
+  return (
+    <>
+      <SectionNavRail messages={chatMessages} />
+      <ChatOverlay config={appState} />
+      {xrStore && (
+        <ControlOverlay
+          config={appState}
+          handleAppStateChange={handleAppStateChange}
+          xrStore={xrStore}
+        />
+      )}
+    </>
+  )
+})
+
+AgentDependentContent.displayName = 'AgentDependentContent'
+
+const AppComponent = () => {
   const { isMobile } = useResponsiveLayout() // Layout service for responsive behavior
+
+  const containerStyle = useMemo<CSSProperties>(() => ({
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100dvh',
+    width: '100vw',
+    maxWidth: '100vw',
+    overflow: 'hidden',
+    background: 'radial-gradient(circle at top, #0F1113 0%, #1B1E20 100%)',
+    color: '#FFFFFF',
+    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+    fontWeight: 400,
+    lineHeight: 1.5,
+    boxSizing: 'border-box',
+    ...(isMobile && {
+      height: '100dvh',
+      width: '100vw',
+      maxHeight: '100dvh',
+      maxWidth: '100vw',
+      position: 'fixed',
+      top: 0,
+      left: 0
+    }),
+    ...(!isMobile && {
+      justifyContent: 'center',
+      alignItems: 'center'
+    })
+  }), [isMobile])
+
+  const viewportStyle = useMemo<CSSProperties>(() => ({
+    flex: 1,
+    position: 'relative',
+    height: '100%',
+    width: '100%',
+    minHeight: 0,
+    maxHeight: '100dvh',
+    maxWidth: '100vw',
+    overflow: 'hidden',
+    boxSizing: 'border-box',
+    ...(isMobile && {
+      height: '100dvh',
+      width: '100vw',
+      maxHeight: '100dvh',
+      maxWidth: '100vw'
+    }),
+    ...(!isMobile && {
+      height: '100%',
+      width: '100%'
+    })
+  }), [isMobile]) 
 
   const xrStore = useRef<XRStore | null>(null)
   const [appState, setAppState] = useSimpleStore(AppConfigState)
@@ -51,119 +142,50 @@ export const App = () => {
     [ appState.autoSubmitEnabled, appState.bargeInEnabled]
   )
 
-  const [statusState, setStatusState] = useState<{ color: 'ready' | 'loading' | 'error'; text: string }>({
+  const [statusState, setStatusState] = useState<LLMStatusUpdate>({
     color: 'loading',
     text: 'Loading local model…'
   })
 
+
+  const onLLMStatus = useCallback((status: LLMStatusUpdate) => {
+    setStatusState({ color: status.color, text: status.text })
+  }, [])
+
   const agent = useAgent(agentConfig, {
-    onLLMStatus: (status) => {
-      setStatusState({ color: status.color, text: status.text })
-    }
+    onLLMStatus
   })
-
-
-  const chatMessages = useMemo(
-    () => agent.state.messages.map((id) => agent.services.conversation.actions.getMessagebyId(id)),
-    [agent.state.messages, agent.services.conversation.actions]
-  )
 
   const handleAppStateChange = useCallback((newAppState: AppConfig) => {
     setAppState(newAppState)
-    agentConfig.vad.microphoneEnabled = newAppState.microphone
-  }, [agentConfig, setAppState])
+  }, [setAppState])
 
-  useEffect(() => {
-    agent.services.emotes.actions.triggerGaze()
-    agent.services.emotes.actions.performAction({emotion: 'alert' , relaxTime: 500 })    
-  },[agent.state.vadIsDetecting])
-
+  console.log('AppComponent')
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100dvh', // Dynamic viewport height for mobile browsers
-        width: '100vw',
-        maxWidth: '100vw',
-        overflow: 'hidden',
-        background: 'radial-gradient(circle at top, #0F1113 0%, #1B1E20 100%)',
-        color: '#FFFFFF',
-        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-        fontWeight: 400,
-        lineHeight: 1.5,
-        boxSizing: 'border-box',
-        // Mobile-specific optimizations
-        ...(isMobile && {
-          height: '100dvh', // Use dynamic viewport height
-          width: '100vw',
-          maxHeight: '100dvh',
-          maxWidth: '100vw',
-          position: 'fixed',
-          top: 0,
-          left: 0
-        }),
-        // Desktop vertical layout
-        ...(!isMobile && {
-          justifyContent: 'center',
-          alignItems: 'center'
-        })
-      }}
-    >
-      {/* Main 3D Viewport - Responsive */}
-      <div
-        style={{
-          flex: 1,
-          position: 'relative',
-          height: '100%',
-          width: '100%',
-          minHeight: 0, // Allow flex item to shrink
-          maxHeight: '100dvh', // Use dynamic viewport height
-          maxWidth: '100vw',
-          overflow: 'hidden',
-          boxSizing: 'border-box',
-          // Mobile-specific viewport sizing
-          ...(isMobile && {
-            height: '100dvh', // Use dynamic viewport height
-            width: '100vw',
-            maxHeight: '100dvh',
-            maxWidth: '100vw'
-          }),
-          // Desktop viewport sizing
-          ...(!isMobile && {
-            height: '100%',
-            width: '100%'
-          })
-        }}
-      >
-        <Viewport3D
-          agentState={agent.state}
-          sceneConfig={sceneConfig}
-          visemeService={agent.services.visemes}
-          emoteService={agent.services.emotes}
-          animationService={agent.services.animations}
-          setXRStore={setXRStore}
-        />
+    <AgentProvider agent={agent}>
+      <div style={containerStyle}>
+        <div style={viewportStyle}>
+          <Viewport3D
+            sceneConfig={sceneConfig}
+            setXRStore={setXRStore}
+          />
 
-        <LogoOverlay />
-        <SectionNavRail messages={chatMessages} />
-        <ChatOverlay
-          config={appState}
-          agent={agent}
-        />
-        <ControlOverlay
-          config={appState}
-          handleAppStateChange={handleAppStateChange}
-          agent={agent}
-          xrStore={xrStore.current!}
-        />
-        <SettingsButton />
-        <LLMLoadingBar
-          statusText={statusState.text}
-          statusColor={statusState.color}
-          visible={agentConfig.llm.llm_provider === 'mlc'}
-        />
+          <LogoOverlay />
+          <AgentDependentContent
+            appState={appState}
+            handleAppStateChange={handleAppStateChange}
+            xrStore={xrStore.current}
+          />
+          <SettingsButton />
+          <LLMLoadingBar
+            statusText={statusState.text}
+            statusColor={statusState.color}
+            visible={agentConfig.llm.llm_provider === 'mlc'}
+          />
+        </div>
       </div>
-    </div>
+    </AgentProvider>
   )
 }
+
+export const App = memo(AppComponent)

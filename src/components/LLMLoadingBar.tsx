@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Tooltip } from './common/Tooltip'
+import type { LLMStatusUpdate } from '../services/llm/llmTypes'
 
 type Status = 'idle' | 'loading' | 'ready' | 'error'
 
 type Props = {
-  statusText?: string
-  statusColor?: 'ready' | 'loading' | 'error'
+  statusText?: LLMStatusUpdate['text']
+  statusColor?: LLMStatusUpdate['color']
   visible: boolean
 }
 

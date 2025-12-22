@@ -10,12 +10,11 @@ import type { GLTFParser } from 'three/examples/jsm/Addons.js'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
 import { loadMixamoAnimation } from '../../../utils/animationUtil'
 import { AvatarOptions } from './AvatarOptions'
-import { Vector3 } from 'three'
+import { AnimationAction, Vector3 } from 'three'
 import  {ANIMATION_CLIPS, getRandomClip, updateAnimationDurations } from '../../../services/animation/config/animationClips'
-import type { useAnimationService } from '../../../services/animation/useAnimationService'
-import type { useEmoteService } from '../../../services/emote/useEmoteService'
-import type { useVisemeService } from '../../../services/visemes/useVisemeService'
 import type { AnimationClip } from '../../../services/animation/animationTypes'
+import debounce from 'lodash/debounce'
+import { useAgentContext } from './AgentContext'
 
 const AVATAR_MODEL = AvatarOptions.Rahul
 
@@ -28,13 +27,6 @@ export const AvatarState = createSimpleStore({
 })
 
 interface AvatarModelProps {
-  agentState: {
-    llmThinking: boolean
-    ttsIsSpeaking: boolean
-  }  
-  visemeService?: ReturnType<typeof useVisemeService>
-  emoteService?: ReturnType<typeof useEmoteService>
-  animationService?: ReturnType<typeof useAnimationService>
   onHeadLocated?: (target: [number, number, number], position: [number, number, number]) => void
 }
 
@@ -233,7 +225,7 @@ export const useExternalAnimations = (avatarRef: React.RefObject<THREE.Object3D>
   return { actions, mixer, animations: allAnimations }
 }
 
-const AvatarModelComponent = ({ agentState, visemeService, emoteService, animationService, onHeadLocated }: AvatarModelProps) => {
+const AvatarModelComponent = ({ onHeadLocated }: AvatarModelProps) => {
   const { camera: viewerCamera } = useThree()
 
   const [state , setState] = useSimpleStore(AvatarState)
@@ -258,7 +250,8 @@ const AvatarModelComponent = ({ agentState, visemeService, emoteService, animati
   const vrm = isVRM ? (gltf.userData.vrm as VRM) : undefined
   const avatarScene = isVRM ? vrm?.scene : gltf.scene
   const avatarRef = useRef<THREE.Object3D>(null)
-  
+  const {state :{ currentAnimation }, actions :{ updateAnimation , updateVisemes , applyVisemesToRig , updateEmotes , applyEmotesToVRM , applyEmotesToMorphTargets , setupAvatarReferences , setupEmotesForVRM, setupEmotesForMorphTargets, setupVisemesForVRM, setPersonality, setupVisemesForMorphTargets ,setupAnimations, performEmotionAction, performAnimationAction, speak }, services :{ animations, visemes, emotes } } = useAgentContext() // Get from context instead of props
+
   // Only for setup: position the camera along the forward of the face of the avatar once, when avatar loads
   // TODO : very manual and hardcoded, must standarize avatar input 
   useEffect(() => {
@@ -318,37 +311,38 @@ const AvatarModelComponent = ({ agentState, visemeService, emoteService, animati
   const { actions, mixer } = useExternalAnimations(avatarRef as any, vrm)
   // Setup animation service with R3F
   useEffect(() => {
-    if (!avatarScene || !animationService || !actions || !mixer || !animationsEnabled) return
+    if (!avatarScene || !animations || !actions || !mixer || !animationsEnabled) return
 
     // Setup the animation service with R3F actions and mixer
     // Filter out null actions
-    const validActions: Record<string, THREE.AnimationAction> = {}
+    const validActions: Record<string, AnimationAction> = {}
     Object.entries(actions).forEach(([name, action]) => {
       if (action) {
         validActions[name] = action
       }
     })
 
-    animationService.actions.setPersonality('professional')
+    console.log('validActions', validActions)
 
-    animationService.actions.setup(validActions, mixer, avatarRef.current || undefined , ANIMATION_CLIPS.idle_loop)
+    setPersonality('professional')
+    setupAnimations(validActions, mixer, avatarRef.current || undefined , ANIMATION_CLIPS.idle_loop)
 
     logger.log(`Animation service setup with ${Object.keys(actions).length} animations`)
     // Make avatar visible after idle animation is applied
     setTimeout(() => {
       setIsAvatarVisible(true)
-    }, 100) // Small delay to ensure animation is applied
+    }, 300) // Small delay to ensure animation is applied
 
     // Start the sequence after a short delay to ensure everything is initialized
     
-  }, [animationsEnabled, animationService, actions, mixer])
+  }, [animationsEnabled, actions, mixer, avatarScene, animations, setPersonality, setupAnimations])
 
   useEffect(() => {
-    if (!avatarScene || !visemesEnabled || !visemeService) return
+    if (!avatarScene || !visemesEnabled || !visemes) return
 
     if (isVRM && vrm) {
       // VRM expression manager route
-      visemeService.actions.setupForVRM(vrm)
+      setupVisemesForVRM(vrm)
       logger.log('Viseme service wired to VRM expressionManager')
     } else {
       // GLB morph target route
@@ -369,20 +363,20 @@ const AvatarModelComponent = ({ agentState, visemeService, emoteService, animati
 
       morphTargetsRef.current = morphTargets as THREE.Mesh[]
       if (morphTargets.length > 0 && Object.keys(dictionary).length > 0) {
-        visemeService.actions.setupForMorphTargets(morphTargets, dictionary)
+        setupVisemesForMorphTargets(morphTargets, dictionary)
       }
     }
-  }, [avatarScene, visemesEnabled, visemeService, isVRM, vrm])
-
+  }, [avatarScene, visemesEnabled, setupVisemesForMorphTargets, isVRM, vrm, visemes, setupVisemesForVRM])
+  
   // Setup emote service integration
   useEffect(() => {
-    if (!avatarScene || !emotesEnabled || !emoteService) return
+    if (!avatarScene || !emotesEnabled || !emotes) return
 
     let bones: Record<string, THREE.Bone> = {}
 
     if (isVRM && vrm) {
-      // VRM expression manager route
-      emoteService.actions.setupForVRM(vrm)
+      // VRM expression manager route 
+      setupEmotesForVRM(vrm)
       logger.log('emote service wired to VRM expressionManager')
 
       // Get bones from VRM humanoid if available
@@ -434,107 +428,67 @@ const AvatarModelComponent = ({ agentState, visemeService, emoteService, animati
 
       // Setup emote service with morph targets and bones
       if (morphTargets.length > 0 && Object.keys(emoteDictionary).length > 0) {
-        emoteService.actions.setupForMorphTargets(morphTargets, emoteDictionary)
+        setupEmotesForMorphTargets(morphTargets, emoteDictionary)
       }
 
       // Provide avatar references for gaze and head control
     }
-    emoteService.actions.setAvatarReferences({
+    setupAvatarReferences({
       bones,
       node: avatarRef.current ?? undefined,
       camera: viewerCamera // Camera will be set by the scene
     })
-  }, [avatarScene, emotesEnabled, emoteService])
-
-  useEffect(() => {
-    if (agentState.llmThinking) return
-    if (!avatarScene || !actions || !mixer  ) return
-    if (!animationService) return
-    if (startupPlayedRef.current) return
-    if (!isAvatarVisible) return // Wait until avatar is visible
-    if (!agentState.ttsIsSpeaking) {
-      logger.log('TTS: Not Speaking', agentState.ttsIsSpeaking)
-      animationService.actions.performAction({
-        clip: getRandomClip('idle'),
-        loopCount: Infinity,
-        blendTime: 1000,
-      })
-      return;
-    }
-    logger.log('TTS: Speaking', agentState.ttsIsSpeaking)
-
-    animationService.actions.performAction({
-      clip: ANIMATION_CLIPS.talk,
-      immediate: true,
-      loopCount: Infinity,
-      blendTime: 0,
-      speed: .2
-    })
-  }, [agentState.llmThinking , agentState.ttsIsSpeaking])
+  }, [avatarScene, emotesEnabled, isVRM, vrm, viewerCamera, emotes, setupAvatarReferences, setupEmotesForVRM, setupEmotesForMorphTargets])
 
 
   useEffect(() => { 
     if (!animationsEnabled || !emotesEnabled) return
     if (!avatarScene || !actions || !mixer  ) return
-    if (!emoteService || !animationService) return
+    if (!emotes || !animations) return
     if (startupPlayedRef.current) return
     if (!isAvatarVisible) return // Wait until avatar is visible
+
     // Mark startup as played to prevent re-execution
-    const startupTimer = setTimeout(() => { 
 
-      emoteService.actions.performAction({emotion: 'happy', relaxTime: ANIMATION_CLIPS.wave.duration})
+    console.log('DEBUG:performStartupAnimation')
+    performEmotionAction({emotion: 'happy', relaxTime: ANIMATION_CLIPS.wave.duration})
+    performAnimationAction({
+      clip: ANIMATION_CLIPS.wave,
+      immediate: true,
+      loopCount: 1,
+      blendTime: 300,
+      speed: .5
+    })
+    speak("Oh hey There! , Welcome to my website! I'm Rahul, ask me anything about my work and projects!")
 
-      
-      animationService.actions.performAction({
-        clip: ANIMATION_CLIPS.wave,
-        immediate: true,
-        loopCount: 1,
-        blendTime: 300,
-        speed: .5
-      })
+    startupPlayedRef.current = true
 
-      // After surprise_greet duration, blend to idle_loop
-      animationService.actions.performAction({
-        clip: getRandomClip('idle'),
-        loopCount: Infinity,
-        blendTime: 2000 // 1 second blend
-      })
-      startupPlayedRef.current = true
-
-    }, 500)
-    return () => clearTimeout(startupTimer)
-
-    // Startup animation sequence
-      // First play the surprise_greet animation
-     
-
-
-  }, [animationsEnabled, animationService, actions, mixer, emoteService, isAvatarVisible])
+  }, [animationsEnabled, emotesEnabled, isAvatarVisible, avatarScene, actions, mixer, emotes, animations, performEmotionAction, performAnimationAction, speak])
   // Animation service will handle its own initialization
 
   useFrame((_, delta) => {
     if (isVRM && vrm) vrm.expressionManager?.update()
     // Update animation service using R3F integration
-    if (animationsEnabled && animationService) {
-      animationService.actions.update(delta)
+    if (animationsEnabled && animations) {
+      updateAnimation(delta)
     }
 
     // Update visemes for lip sync
-    if (visemesEnabled && visemeService) {
-      visemeService.actions.update(delta)
-      visemeService.actions.applyToRig(delta)
+    if (visemesEnabled && visemes) {
+      updateVisemes(delta)
+      applyVisemesToRig(delta)
     }
 
     // Update emotes for facial expressions and behaviors
-    if (emotesEnabled && emoteService) {
-      emoteService.actions.update(delta)
+    if (emotesEnabled && emotes) {
+      updateEmotes(delta)
 
       if (isVRM && vrm) {
-        emoteService.actions.applyToVRM(vrm)
+        applyEmotesToVRM(vrm)
       } else {
         // Apply to morph targets if available
         if (morphTargetsRef.current.length > 0) {
-          const dictionary = emoteService.state.emote.dictionary
+          const dictionary = emotes.state.emote.dictionary
           if (dictionary) {
             // Filter to only meshes with morph targets
             const validMorphs = morphTargetsRef.current.filter((mesh) => mesh.morphTargetInfluences !== undefined) as {
@@ -542,7 +496,7 @@ const AvatarModelComponent = ({ agentState, visemeService, emoteService, animati
             }[]
 
             if (validMorphs.length > 0) {
-              emoteService.actions.applyToMorphTargets(validMorphs, dictionary)
+              applyEmotesToMorphTargets(validMorphs, dictionary)
             }
           }
         }
@@ -550,30 +504,40 @@ const AvatarModelComponent = ({ agentState, visemeService, emoteService, animati
     }
   })
 
-  // Handle avatar click to play finger_gun animation
+  const performAvatarClick = useMemo(
+    () => debounce(() => {
+      if (animationsEnabled && emotesEnabled) {
+        const randomAction = getRandomClip('action') as AnimationClip
+        performEmotionAction({
+          emotion: randomAction.name == ANIMATION_CLIPS.look_around.name ? 'alert' : 'happy' , 
+          relaxTime: randomAction.duration - 1000
+        })
+
+        performAnimationAction({
+          clip: randomAction,
+          immediate: true,
+          loopCount: 1,
+          blendTime : 1000
+        })   
+        if(randomAction.speech?.chance && Math.random() < randomAction.speech.chance) { 
+          speak(randomAction.speech?.text)
+        }
+  
+      }
+    }, 600, { leading: true, trailing: false }),
+      [animationsEnabled, emotesEnabled, performEmotionAction, performAnimationAction, speak]
+  )
+
+  useEffect(() => {
+    return () => performAvatarClick.cancel()
+  }, [performAvatarClick])
+
+  // Handle avatar click to play finger_gun animation (debounced)
   const handleAvatarClick = useCallback((event: any) => {
+    if( currentAnimation?.category === 'action') return // don't allow clicking on action clips
     event.stopPropagation()
-    if (animationService && emoteService) {
-      const randomAction = getRandomClip('action') as AnimationClip
-      emoteService.actions.performAction({
-        emotion: randomAction.name === ANIMATION_CLIPS.look_around.name ? 'alert' : 'happy' , 
-        relaxTime: randomAction.duration - 2000
-      })
-
-      animationService.actions.performAction({
-        clip: randomAction,
-        immediate: true,
-        loopCount: 1,
-        blendTime : 1000
-      })
-
-      animationService.actions.performAction({
-        clip: getRandomClip('idle'),
-        loopCount: Infinity,
-        blendTime : 1000
-      })
-    }
-  }, [animationService])
+    performAvatarClick()
+  }, [currentAnimation, performAvatarClick])
 
   return (
     <primitive 

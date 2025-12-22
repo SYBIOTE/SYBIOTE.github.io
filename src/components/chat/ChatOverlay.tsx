@@ -3,33 +3,32 @@ import { memo, useCallback, useState } from 'react'
 import { ChatInput } from './ChatInput'
 import { type AppConfig } from '../../app/appConfig'
 import { shouldTriggerBargeIn } from '../../integration/emotionIntegration'
-import type { AgentService } from '../../services/useAgent'
+import { useAgentContext } from '../scene/avatar/AgentContext'
 
 interface ChatOverlayProps {
   config: AppConfig
-  agent: AgentService
 }
 
 
 export const ChatOverlay = memo(({
   config,
-  agent,
 }: ChatOverlayProps) => {
+  const { state :{ vadIsDetecting, currentTranscript, sttIsListening }, actions :{ triggerBargein, submitMessage } } = useAgentContext() // Get from context instead of props
   const [currentInputMessage, setCurrentInputMessage] = useState('')
   const handleSubmit = useCallback((message: string) => {
     if(shouldTriggerBargeIn({text: message, isUser: true, id: '', timestamp: 0})) {
-      agent.actions.triggerBargein()
+      triggerBargein()
     }
-    agent.actions.submitMessage(message)
+    submitMessage(message)
     setCurrentInputMessage('')
-  }, [agent.actions, shouldTriggerBargeIn])
+  }, [triggerBargein, submitMessage])
   
   const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       handleSubmit(currentInputMessage)
     }
-  }, [agent.actions, currentInputMessage, handleSubmit])
+  }, [currentInputMessage, handleSubmit])
 
 
 
@@ -42,9 +41,9 @@ export const ChatOverlay = memo(({
         onSubmit={handleSubmit}
         onKeyPress={handleKeyPress}
         isRecording={config.microphone}
-        vadDetecting={agent.state.vadIsDetecting}
-        sttTranscript={agent.state.currentTranscript}
-        sttListening={agent.state.sttIsListening}
+        vadDetecting={vadIsDetecting}
+        sttTranscript={currentTranscript}
+        sttListening={sttIsListening}
       />
     </>
   )

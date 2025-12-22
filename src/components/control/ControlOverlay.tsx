@@ -4,13 +4,12 @@ import { ToggleButton } from '../common/ToggleButton'
 import { useTranslation } from 'react-i18next'
 import type { XRStore } from '@react-three/xr'
 import { AppConfigState, type AppConfig } from '../../app/appConfig'
-import type { AgentService } from '../../services/useAgent'
 import { ControlPanel } from './ControlPanel'
+import { useAgentContext } from '../scene/avatar/AgentContext'
 
 interface ControlOverlayProps {
   config: AppConfig
   handleAppStateChange: (newAppState: AppConfig) => void
-  agent: AgentService
   xrStore: XRStore
 }
 
@@ -18,20 +17,20 @@ interface ControlOverlayProps {
 export const ControlOverlay = memo(({
   config,
   handleAppStateChange,
-  agent,
   xrStore,
 }: ControlOverlayProps) => {
   const { t } = useTranslation()
   const [isButtonsVisible, setIsButtonsVisible] = useState(true)
-  
+  const { state :{ vadIsDetecting, ttsIsSpeaking }, actions :{ setSTTDesired } } = useAgentContext() // Get from context instead of props
+
   const handleEnterARMode = useCallback(() => {
     if (!xrStore) return
     xrStore.enterAR().then(() => {
       AppConfigState.set((prev) => ({ ...prev, microphone: true }))
-      agent.actions.setSTTDesired(true)
+      setSTTDesired(true)
     })
     logger.log('AR + STT mode activated - click the AR button in the 3D view to enter AR')
-  }, [xrStore, agent.actions])
+  }, [xrStore, setSTTDesired])
   return (
     <>
       {/* Control Buttons */}
@@ -40,8 +39,8 @@ export const ControlOverlay = memo(({
         isRecording={config.microphone}
         handleAppStateChange={handleAppStateChange}
         onEnterARMode={handleEnterARMode}
-        vadDetecting={agent.state.vadIsDetecting}
-        ttsActive={agent.state.ttsIsSpeaking}
+        vadDetecting={vadIsDetecting}
+        ttsActive={ttsIsSpeaking}
         isVisible={isButtonsVisible}
       />
 

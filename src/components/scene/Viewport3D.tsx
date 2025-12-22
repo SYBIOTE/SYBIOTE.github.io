@@ -4,28 +4,20 @@ import { memo } from 'react'
 
 import { Scene3D } from './Scene3D'
 import type { SceneConfig } from '../../app/sceneTypes'
-import type { useAnimationService } from '../../services/animation/useAnimationService'
-import type { useEmoteService } from '../../services/emote/useEmoteService'
-import type { useVisemeService } from '../../services/visemes/useVisemeService'
-import type { AgentService } from '../../services/useAgent'
 
 interface Viewport3DProps {
-  agentState: AgentService['state']
   sceneConfig: SceneConfig
-  visemeService?: ReturnType<typeof useVisemeService>
-  emoteService?: ReturnType<typeof useEmoteService>
-  animationService?: ReturnType<typeof useAnimationService>
   setXRStore?: (store: XRStore) => void
 }
 
 const viewport3DComponent = ({
-  agentState,
   sceneConfig,
-  visemeService,
-  emoteService,
-  animationService,
   setXRStore
 }: Viewport3DProps) => {
+
+
+
+  console.log('Viewport3DComponent')
   return (
     <div
       style={{
@@ -51,11 +43,7 @@ const viewport3DComponent = ({
         id="avatar-viewport"
       >
         <Scene3D
-          agentState={agentState}
           sceneConfig={sceneConfig}
-          visemeService={visemeService}
-          emoteService={emoteService}
-          animationService={animationService}
           setXRStore={setXRStore}
         />
       </div>

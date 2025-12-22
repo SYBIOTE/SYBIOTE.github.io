@@ -18,6 +18,10 @@ export interface AnimationClip {
 
   // Blending configuration
   blendCurve?: BlendCurve // Easing function for transitions (defaults to 'linear')
+  speech?: {
+    text: string
+    chance?: number
+  }
 }
 
 export interface AnimationState {

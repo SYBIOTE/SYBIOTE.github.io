@@ -20,6 +20,8 @@ import { defaultSTTConfig, type STTConfig } from './stt/sttConfig'
 import { defaultLLMConfig, type LLMConfig } from './llm/config/llmConfig'
 import { shouldTriggerBargeIn } from '../integration/emotionIntegration'
 import { logger } from '../utils/logger'
+import type { AnimationAction, AnimationMixer, Camera, Object3D } from 'three'
+import type { AnimationClip, AnimationPerformanceData, AnimationState } from './animation/animationTypes'
 
 // STT service result interface (defined locally in sttService.ts)
 interface STTPerformResult {
@@ -110,6 +112,11 @@ export interface AgentService {
 
     // Conversation state
     messages: ConversationId[]
+
+     // Animation state
+    currentAnimation: AnimationClip | null
+    // Emote state
+    currentEmotion: EmotionType
   }
 
   // Actions
@@ -159,16 +166,27 @@ export interface AgentService {
     resetVisemes: () => void
 
     // Emote actions (for external avatar control)
+    setupAvatarReferences: (references: { bones?: Record<string, unknown>; node?: Object3D; camera: Camera }) => void
     setupEmotesForVRM: (vrm: VRM) => void
     setupEmotesForMorphTargets: (morphs: MorphTargetObject[], dictionary: Record<string, number[]>) => void
     setEmotion: (emotion: EmotionType) => void
-    performAction: (performanceData: PerformanceData) => void
+    performEmotionAction: (performanceData: PerformanceData) => void
     triggerGaze: (options?: GazeOptions) => void
     updateEmotes: (_delta: number) => void
     applyEmotesToVRM: (vrm: VRM) => void
     applyEmotesToMorphTargets: (morphs: MorphTargetObject[], dictionary: Record<string, number[]>) => void
     resetEmotes: () => void
     onEmoteBargein: () => void
+
+       // Animation actions (for external avatar control)
+    setPersonality: (personality: string) => void
+    setupAnimations: (actions: Record<string, AnimationAction>, mixer: AnimationMixer, avatar?: Object3D, animation?: AnimationClip) => void
+    setCycling: (cycling: boolean) => void  
+    performAnimationAction: (performanceData: AnimationPerformanceData) => void
+    updateAnimation: (_delta: number) => void
+    getCurrentAnimationInfo: (state: AnimationState) => void
+    getAvailableAnimationClips: () => AnimationClip[],
+    onAnimationBargein: () => void,
   }
 
   // Service instances (for advanced usage)
@@ -296,8 +314,7 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
         const interrupt = Date.now()
         // Handle barge-in if detected
         if (shouldTriggerBargeIn({ text: result.text, isUser: true, id: '', timestamp: interrupt })) {
-          if(tts.state.isSpeaking){tts.actions.stopSpeaking()}
-          emotes.actions.onBargeIn()
+          triggerBargein()
           logger.log('STT: Stop command detected - barge-in activated')
         }
 
@@ -355,8 +372,7 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
         const interrupt = Date.now()
         interruptCounterRef.current = interrupt
 
-        console.log('DEBUG: submitMessage: tts.state.isSpeaking', tts.state.isSpeaking)
-        if(tts.state.isSpeaking) {
+        if(tts.state.isSpeaking && appConfig.bargeInEnabled) {
           tts.actions.stopSpeaking()
         }
 
@@ -369,7 +385,7 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
         })
       }
     },
-    [appConfig.bargeInEnabled, conversation.actions, llm.actions]
+    [conversation.actions, tts.state.isSpeaking, tts.actions, llm.actions, appConfig.bargeInEnabled]
   )
 
   const toggleMicrophone = useCallback(
@@ -389,7 +405,8 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
     }
 
     emotes.actions.onBargeIn()
-  }, [tts.state.isSpeaking, tts.actions, emotes])
+    animations.actions.onBargeIn()
+  }, [tts.state.isSpeaking, tts.actions, emotes, animations.actions])
 
   // Memoize the services object to prevent unnecessary re-renders
   const services = useMemo(
@@ -397,7 +414,7 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
       conversation,
       vad,
       stt,
-      llm: llm,
+      llm,
       tts,
       visemes,
       emotes,
@@ -448,18 +465,29 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
       resetVisemes: visemes.actions.reset,
 
       // Emote actions
+      setupAvatarReferences: emotes.actions.setAvatarReferences,
       setupEmotesForVRM: emotes.actions.setupForVRM,
       setupEmotesForMorphTargets: emotes.actions.setupForMorphTargets,
       setEmotion: emotes.actions.setEmotion,
-      performAction: emotes.actions.performAction,
+      performEmotionAction: emotes.actions.performAction,
       triggerGaze: emotes.actions.triggerGaze,
       updateEmotes: emotes.actions.update,
       applyEmotesToVRM: emotes.actions.applyToVRM,
       applyEmotesToMorphTargets: emotes.actions.applyToMorphTargets,
       resetEmotes: emotes.actions.reset,
-      onEmoteBargein: emotes.actions.onBargeIn
+      onEmoteBargein: emotes.actions.onBargeIn,
+
+      // Animation actions
+      setPersonality: animations.actions.setPersonality,
+      setupAnimations: animations.actions.setup,
+      setCycling: animations.actions.setCycling,
+      performAnimationAction: animations.actions.performAction,
+      updateAnimation: animations.actions.update,
+      getCurrentAnimationInfo: animations.actions.getCurrentInfo,
+      getAvailableAnimationClips: animations.actions.getAvailableClips,
+      onAnimationBargein: animations.actions.onBargeIn,
     }),
-    [vad.actions.startListening, vad.actions.stopListening, vad.actions.initializeVAD, stt.actions.startListening, stt.actions.stopListening, stt.actions.setDesired, llm.actions.load, llm.actions.processUserInput, llm.actions.clearHistory, tts.actions.speak, tts.actions.stopSpeaking, tts.actions.playAudioBuffer, tts.actions.getQueueStatus, conversation.actions.addMessage, conversation.actions.streamMessage, conversation.actions.clearAllMessages, conversation.actions.getMessagebyId, submitMessage, toggleMicrophone, triggerBargein, visemes.actions.setupForVRM, visemes.actions.setupForMorphTargets, visemes.actions.update, visemes.actions.applyToRig, visemes.actions.reset, emotes.actions.setupForVRM, emotes.actions.setupForMorphTargets, emotes.actions.setEmotion, emotes.actions.performAction, emotes.actions.triggerGaze, emotes.actions.update, emotes.actions.applyToVRM, emotes.actions.applyToMorphTargets, emotes.actions.reset, emotes.actions.onBargeIn]
+    [vad.actions.startListening, vad.actions.stopListening, vad.actions.initializeVAD, stt.actions.startListening, stt.actions.stopListening, stt.actions.setDesired, llm.actions.load, llm.actions.processUserInput, llm.actions.clearHistory, tts.actions.speak, tts.actions.stopSpeaking, tts.actions.playAudioBuffer, tts.actions.getQueueStatus, conversation.actions.addMessage, conversation.actions.streamMessage, conversation.actions.clearAllMessages, conversation.actions.getMessagebyId, submitMessage, toggleMicrophone, triggerBargein, visemes.actions.setupForVRM, visemes.actions.setupForMorphTargets, visemes.actions.update, visemes.actions.applyToRig, visemes.actions.reset, emotes.actions.setAvatarReferences, emotes.actions.setupForVRM, emotes.actions.setupForMorphTargets, emotes.actions.setEmotion, emotes.actions.performAction, emotes.actions.triggerGaze, emotes.actions.update, emotes.actions.applyToVRM, emotes.actions.applyToMorphTargets, emotes.actions.reset, emotes.actions.onBargeIn, animations.actions.setup, animations.actions.setCycling, animations.actions.performAction, animations.actions.update, animations.actions.getCurrentInfo, animations.actions.getAvailableClips, animations.actions.onBargeIn, animations.actions.setPersonality  ]
   )
 
   const state = useMemo(
@@ -478,29 +506,20 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
       ttsIsSpeaking: tts.state.isSpeaking,
       ttsAudioQueue: tts.state.audioQueue,
       messages: conversation.state.messages,
+      currentAnimation: animations.state.currentClip,
+      currentEmotion: emotes.state.emote.currentEmotion,
+      currentPersonality: animations.state.currentPersonality,
     }),
-    [ 
-      vad.state.isListening,
-      vad.state.isDetecting,
-      stt.state.isListening,
-      stt.state.allowed,
-      stt.state.desired,
-      currentInterimTranscript,
-      currentSubtitleText,
-      llm.state.ready,
-      llm.state.loading,
-      llm.state.thinking,
-      llm.state.messages,
-      tts.state.isSpeaking,
-      tts.state.audioQueue,
-      conversation.state.messages,  
-    ]
+    [vad.state.isListening, vad.state.isDetecting, stt.state.isListening, stt.state.allowed, stt.state.desired, currentInterimTranscript, currentSubtitleText, llm.state.ready, llm.state.loading, llm.state.thinking, llm.state.messages, tts.state.isSpeaking, tts.state.audioQueue, conversation.state.messages, animations.state.currentClip, emotes.state.emote.currentEmotion, animations.state.currentPersonality]
   )
 
   // Return the unified service interface
-  return {
-    state,
-    actions,
-    services
-  }
+  return useMemo(
+    () => ({
+      state,
+      actions,
+      services
+    }),
+    [state, actions, services]
+  )
 }

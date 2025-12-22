@@ -11,6 +11,7 @@ import {
   getPersonalityAnimationClips,
   initializeAnimationState,
   initializeDefaultAnimation,
+  handleBargeIn,
   resetAnimationState,
   setAnimationEnabled,
   setupAnimationState,
@@ -27,15 +28,14 @@ export const useAnimationService = () => {
   }, [])
 
   const performAction = useCallback((performanceData: AnimationPerformanceData) => {
-    const startTime = performance.now()
-    startPerformance(animationStateRef.current, performanceData, startTime)
+    startPerformance(animationStateRef.current, performanceData)
   }, [])
 
   const reset = useCallback(() => {
     resetAnimationState(animationStateRef.current)
   }, [])
 
-  const enableCycling = useCallback((enabled: boolean) => {
+  const setCycling = useCallback((enabled: boolean) => {
     setAnimationEnabled(animationStateRef.current, enabled)
   }, [])
 
@@ -54,6 +54,10 @@ export const useAnimationService = () => {
     updateAnimation(animationStateRef.current, delta)
   }, [])
 
+  const onBargeIn = useCallback(() => {
+    handleBargeIn(animationStateRef.current)
+  }, [])
+
   const getCurrentInfo = useCallback(() => {
     return getCurrentAnimationInfo(animationStateRef.current)
   }, [])
@@ -70,14 +74,15 @@ export const useAnimationService = () => {
       enqueue: (performanceData: AnimationPerformanceData) =>
         enqueueAnimation(animationStateRef.current, performanceData),
       clearQueue: () => clearAnimationQueue(animationStateRef.current),
-      enableCycling,
+      setCycling,
       reset,
       setup,
       update,
       getCurrentInfo,
       getAvailableClips,
+      onBargeIn,
     }),
-    [setPersonality, performAction, enqueueAnimation, clearAnimationQueue, enableCycling, reset, setup, update, getCurrentInfo, getAvailableClips]
+    [setPersonality, performAction, setCycling, reset, setup, update, getCurrentInfo, getAvailableClips, onBargeIn]
   )
 
   const state = useMemo(

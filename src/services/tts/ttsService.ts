@@ -356,6 +356,8 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
   // Add message to queue and assign ID
   const speak = useCallback(
     async (text: string) => {
+
+      console.log('DEBUG:speak', text)
       if (!text.trim()) return null
 
       const messageId = globalId++
@@ -408,7 +410,8 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
       workerRef.current = null
     }
 
-    const lastMessageId = messageQueue.current[messageQueue.current.length - 1].id + 1
+
+    const lastMessageId = messageQueue.current.length > 0 ? messageQueue.current[messageQueue.current.length - 1].id + 1 : globalId - 1
     // Clear the queue
     messageQueue.current = []
     nextExpectedId.current = lastMessageId

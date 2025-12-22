@@ -49,7 +49,7 @@ export const ANIMATION_CLIPS = {
     priority: 1,
     loopCount: 1,
     blendCurve: 'easeInOut',
-    speed: 1
+    speed: 1,
   },
   'blush':{
     name: 'blush',
@@ -61,7 +61,11 @@ export const ANIMATION_CLIPS = {
     priority: 1,
     loopCount: 1,
     blendCurve: 'easeInOut',
-    speed: 1
+    speed: 1,
+    speech: {
+      text: 'I feel embarrassed',
+      chance: 0.5
+    }
   },
   // Action animations
   'look_around': {
@@ -74,7 +78,11 @@ export const ANIMATION_CLIPS = {
     priority: 1,
     loopCount: 1,
     blendCurve: 'easeInOut',
-    speed: 1
+    speed: 1,
+    speech: {
+      text: 'What was that?',
+      chance: 0.5
+    }
   },
   'dance_move': {
     name: 'dance_move',
@@ -110,7 +118,11 @@ export const ANIMATION_CLIPS = {
     priority: 2,
     loopCount: 1,
     blendCurve: 'easeInOut',
-    speed: 1
+    speed: 1,
+    speech: {
+      text: 'Hello , great to see you!',
+      chance: 0.5
+    }
   }
 } as Record<string, AnimationClip>
 

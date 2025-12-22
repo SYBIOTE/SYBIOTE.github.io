@@ -87,11 +87,13 @@ export function setAnimationEnabled(state: AnimationState, enabled: boolean) {
   state.enabled = enabled
 }
 
-export function startPerformance(state: AnimationState, performanceData: AnimationPerformanceData, _startTime: number) {
+export function startPerformance(state: AnimationState, performanceData: AnimationPerformanceData) {  
+  console.log('animationService: startPerformance', performanceData , {...state.actions})
   if (!state.actions) return
-
   // Find the corresponding configured clip
   const configuredClip = performanceData.clip
+
+  console.log('animationService: configuredClip', configuredClip)
   if (!configuredClip) {
     // Fallback: if clip is unknown, attempt to play the raw action directly
     const action = state.actions[performanceData.clip.name]
@@ -132,12 +134,22 @@ export function startPerformance(state: AnimationState, performanceData: Animati
 
   // If immediate is requested and we are not transitioning, play now; otherwise queue it
   if (performanceData.immediate && !state.isTransitioning) {
+    console.log('animationService: playing clip', runtimeClip.name)
     playClip(state, runtimeClip, blendMs)
     state.lastChangeTime = performance.now()
   } else {
     if (!state.queue) state.queue = []
     state.queue.push({ clip: runtimeClip, blendTime: blendMs })
   }
+}
+
+
+export function handleBargeIn(state: AnimationState): void {
+
+  initializeDefaultAnimation(state, state.currentPersonality)
+
+  console.log('Animation system relaxing due to barge-in')
+
 }
 
 // --------------------- Main Update Loop ---------------------
@@ -306,7 +318,6 @@ function playClip(state: AnimationState, clip: AnimationClip, blendTime: number,
   const action = state.actions[clip.name]
 
   if (!action) return
-
   action.reset()
   // Normalize loop configuration: ensure at least one iteration for LoopOnce, support finite repeats and Infinity
   let loopMode: THREE.AnimationActionLoopStyles
@@ -333,6 +344,8 @@ function playClip(state: AnimationState, clip: AnimationClip, blendTime: number,
     state.currentClip = clip
     return
   }
+
+
 
   // Set up weight-based transition
   const currentAction = state.actions[state.currentClip.name]
