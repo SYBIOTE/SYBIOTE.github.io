@@ -19,7 +19,7 @@ import SettingsButton from '../components/settings/SettingsButton'
 import { ControlOverlay } from '../components/control/ControlOverlay'
 import { initializeViewport } from '../utils/viewportUtils'
 import type { LLMStatusUpdate } from '../services/llm/llmTypes'
-import { AgentProvider, useAgentContext } from '../components/scene/avatar/AgentContext'
+import { AgentProvider, useAgentActions, useAgentState } from '../components/scene/avatar/AgentContext'
 
 export const config = {
   vad: defaultVadConfig,
@@ -37,7 +37,9 @@ const AgentDependentContent = memo(({
   handleAppStateChange: (newAppState: AppConfig) => void
   xrStore: XRStore | null
 }) => {
-  const { state :{ messages , vadIsDetecting }, actions :{ triggerGaze, performEmotionAction , getMessagebyId } } = useAgentContext() // Get from context instead of props
+  const { messages , vadIsDetecting } = useAgentState()
+  const { triggerGaze, performEmotionAction , getMessagebyId } = useAgentActions()
+  
   const chatMessages = useMemo(
     () => messages.map(getMessagebyId),
     [messages, getMessagebyId]
@@ -49,7 +51,7 @@ const AgentDependentContent = memo(({
       triggerGaze()
       performEmotionAction({emotion: 'alert', relaxTime: 500 })
     }
-  }, [vadIsDetecting, triggerGaze, performEmotionAction])
+  }, [vadIsDetecting])
 
   return (
     <>

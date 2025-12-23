@@ -3,7 +3,7 @@ import { memo, useCallback, useState } from 'react'
 import { ChatInput } from './ChatInput'
 import { type AppConfig } from '../../app/appConfig'
 import { shouldTriggerBargeIn } from '../../integration/emotionIntegration'
-import { useAgentContext } from '../scene/avatar/AgentContext'
+import {  useAgentActions, useAgentState } from '../scene/avatar/AgentContext'
 
 interface ChatOverlayProps {
   config: AppConfig
@@ -13,7 +13,8 @@ interface ChatOverlayProps {
 export const ChatOverlay = memo(({
   config,
 }: ChatOverlayProps) => {
-  const { state :{ vadIsDetecting, currentTranscript, sttIsListening }, actions :{ triggerBargein, submitMessage } } = useAgentContext() // Get from context instead of props
+  const {vadIsDetecting, currentTranscript, sttIsListening} = useAgentState()
+  const {triggerBargein, submitMessage} = useAgentActions()
   const [currentInputMessage, setCurrentInputMessage] = useState('')
   const handleSubmit = useCallback((message: string) => {
     if(shouldTriggerBargeIn({text: message, isUser: true, id: '', timestamp: 0})) {

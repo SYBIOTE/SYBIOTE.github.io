@@ -1,33 +1,36 @@
-import { createContext, useContext, useMemo, type ReactNode } from 'react'
+import { createContext, useContext, type ReactNode } from 'react'
 import type { AgentService } from '../../../services/useAgent'
 
-interface AgentContextValue {
-  agent: AgentService
+const AgentStateContext = createContext<AgentService['state'] | null>(null)
+const AgentActionsContext = createContext<AgentService['actions'] | null>(null)
+const AgentServicesContext = createContext<AgentService['services'] | null>(null)
+
+export const useAgentState = () => {
+  const v = useContext(AgentStateContext)
+  if (!v) throw new Error('useAgentState must be used within AgentProvider')
+  return v
 }
 
-const AgentContext = createContext<AgentContextValue | null>(null)
-
-export const useAgentContext = (): AgentService => {
-  const context = useContext(AgentContext)
-  if (!context) {
-    throw new Error('useAgentContext must be used within AgentProvider')
-  }
-  return context.agent
+export const useAgentActions = () => {
+  const v = useContext(AgentActionsContext)
+  if (!v) throw new Error('useAgentActions must be used within AgentProvider')
+  return v
 }
 
-interface AgentProviderProps {
-  agent: AgentService
-  children: ReactNode
+export const useAgentServices = () => {
+  const v = useContext(AgentServicesContext)
+  if (!v) throw new Error('useAgentServices must be used within AgentProvider')
+  return v
 }
 
-export const AgentProvider = ({ agent, children }: AgentProviderProps) => {
-  // Memoize context value to prevent rerenders when agent reference changes
-  // This ensures only components that subscribe to agent state will rerender
-  const contextValue = useMemo(() => ({ agent }), [agent])
-  
+export const AgentProvider = ({ agent, children }: { agent: AgentService; children: ReactNode }) => {
   return (
-    <AgentContext.Provider value={contextValue}>
-      {children}
-    </AgentContext.Provider>
+    <AgentStateContext.Provider value={agent.state}>
+      <AgentActionsContext.Provider value={agent.actions}>
+        <AgentServicesContext.Provider value={agent.services}>
+          {children}
+        </AgentServicesContext.Provider>
+      </AgentActionsContext.Provider>
+    </AgentStateContext.Provider>
   )
 }

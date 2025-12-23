@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import type { XRStore } from '@react-three/xr'
 import { AppConfigState, type AppConfig } from '../../app/appConfig'
 import { ControlPanel } from './ControlPanel'
-import { useAgentContext } from '../scene/avatar/AgentContext'
+import { useAgentActions, useAgentState } from '../scene/avatar/AgentContext'
 
 interface ControlOverlayProps {
   config: AppConfig
@@ -21,7 +21,8 @@ export const ControlOverlay = memo(({
 }: ControlOverlayProps) => {
   const { t } = useTranslation()
   const [isButtonsVisible, setIsButtonsVisible] = useState(true)
-  const { state :{ vadIsDetecting, ttsIsSpeaking }, actions :{ setSTTDesired } } = useAgentContext() // Get from context instead of props
+  const { vadIsDetecting, ttsIsSpeaking } = useAgentState()
+  const { setSTTDesired } = useAgentActions()
 
   const handleEnterARMode = useCallback(() => {
     if (!xrStore) return

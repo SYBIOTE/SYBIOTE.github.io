@@ -1,14 +1,14 @@
 import { Environment, OrbitControls } from '@react-three/drei'
 import { Canvas, useThree } from '@react-three/fiber'
 import { createXRStore, XR, type XRStore } from '@react-three/xr'
-import { memo, Suspense, useEffect, useMemo, useRef, useState } from 'react'
+import { memo, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 
 import type { SceneConfig } from '../../app/sceneTypes'
 import { AvatarModel } from './avatar/AvatarModel'
 import SubtitleBox from './SubtitleBox3d'
 import { LoadingIndicator3D } from './LoadingIndicator3D'
-import { useAgentContext } from './avatar/AgentContext'
+import { useAgentContext, useAgentState } from './avatar/AgentContext'
 
 interface Scene3DProps {
   sceneConfig: SceneConfig
@@ -23,7 +23,7 @@ const SceneContent = ({
   const { camera } = useThree()
   const [camTarget, setCamTarget] = useState<[number, number, number]>(sceneConfig.cameraTarget)
   const [camPos, setCamPos] = useState<[number, number, number]>(sceneConfig.cameraPosition)
-  const {  state :{ llmThinking, currentSubtitle } } = useAgentContext() // Get from context instead of props
+  const {  llmThinking, currentSubtitle } = useAgentState() // Get from context instead of props
 
 
   console.log('DEBUG:Scene3D', llmThinking, currentSubtitle)
@@ -38,10 +38,14 @@ const SceneContent = ({
     }
   }, [camPos, camTarget, camera])
 
-  const handleHeadLocated = (target: [number, number, number], position: [number, number, number]) => {
-    setCamTarget(target)
-    setCamPos(position)
-  }
+  const handleHeadLocated = useCallback(
+    (target: [number, number, number], position: [number, number, number]) => {
+      setCamTarget(target)
+      setCamPos(position)
+    },
+    [setCamTarget, setCamPos]
+  )
+
   return (
     <XR store={store}>
       {/* Camera setup */}

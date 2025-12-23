@@ -14,7 +14,7 @@ import { AnimationAction, Vector3 } from 'three'
 import  {ANIMATION_CLIPS, getRandomClip, updateAnimationDurations } from '../../../services/animation/config/animationClips'
 import type { AnimationClip } from '../../../services/animation/animationTypes'
 import debounce from 'lodash/debounce'
-import { useAgentContext } from './AgentContext'
+import { useAgentActions, useAgentContext } from './AgentContext'
 
 const AVATAR_MODEL = AvatarOptions.Rahul
 
@@ -250,7 +250,7 @@ const AvatarModelComponent = ({ onHeadLocated }: AvatarModelProps) => {
   const vrm = isVRM ? (gltf.userData.vrm as VRM) : undefined
   const avatarScene = isVRM ? vrm?.scene : gltf.scene
   const avatarRef = useRef<THREE.Object3D>(null)
-  const {state :{ currentAnimation }, actions :{ updateAnimation , updateVisemes , applyVisemesToRig , updateEmotes , applyEmotesToVRM , applyEmotesToMorphTargets , setupAvatarReferences , setupEmotesForVRM, setupEmotesForMorphTargets, setupVisemesForVRM, setPersonality, setupVisemesForMorphTargets ,setupAnimations, performEmotionAction, performAnimationAction, speak }, services :{ animations, visemes, emotes } } = useAgentContext() // Get from context instead of props
+  const agentActions = useAgentActions()
 
   // Only for setup: position the camera along the forward of the face of the avatar once, when avatar loads
   // TODO : very manual and hardcoded, must standarize avatar input 
@@ -311,7 +311,7 @@ const AvatarModelComponent = ({ onHeadLocated }: AvatarModelProps) => {
   const { actions, mixer } = useExternalAnimations(avatarRef as any, vrm)
   // Setup animation service with R3F
   useEffect(() => {
-    if (!avatarScene || !animations || !actions || !mixer || !animationsEnabled) return
+    if (!avatarScene || !actions || !mixer || !animationsEnabled) return
 
     // Setup the animation service with R3F actions and mixer
     // Filter out null actions
@@ -324,8 +324,8 @@ const AvatarModelComponent = ({ onHeadLocated }: AvatarModelProps) => {
 
     console.log('validActions', validActions)
 
-    setPersonality('professional')
-    setupAnimations(validActions, mixer, avatarRef.current || undefined , ANIMATION_CLIPS.idle_loop)
+    agentActions.setPersonality('professional')
+    agentActions.setupAnimations(validActions, mixer, avatarRef.current || undefined , ANIMATION_CLIPS.idle_loop)
 
     logger.log(`Animation service setup with ${Object.keys(actions).length} animations`)
     // Make avatar visible after idle animation is applied
@@ -342,7 +342,7 @@ const AvatarModelComponent = ({ onHeadLocated }: AvatarModelProps) => {
 
     if (isVRM && vrm) {
       // VRM expression manager route
-      setupVisemesForVRM(vrm)
+      agentActions.setupVisemesForVRM(vrm)
       logger.log('Viseme service wired to VRM expressionManager')
     } else {
       // GLB morph target route
@@ -363,7 +363,7 @@ const AvatarModelComponent = ({ onHeadLocated }: AvatarModelProps) => {
 
       morphTargetsRef.current = morphTargets as THREE.Mesh[]
       if (morphTargets.length > 0 && Object.keys(dictionary).length > 0) {
-        setupVisemesForMorphTargets(morphTargets, dictionary)
+        agentActions.setupVisemesForMorphTargets(morphTargets, dictionary)
       }
     }
   }, [avatarScene, visemesEnabled, setupVisemesForMorphTargets, isVRM, vrm, visemes, setupVisemesForVRM])
@@ -376,7 +376,7 @@ const AvatarModelComponent = ({ onHeadLocated }: AvatarModelProps) => {
 
     if (isVRM && vrm) {
       // VRM expression manager route 
-      setupEmotesForVRM(vrm)
+      agentActions.setupEmotesForVRM(vrm)
       logger.log('emote service wired to VRM expressionManager')
 
       // Get bones from VRM humanoid if available
@@ -428,12 +428,12 @@ const AvatarModelComponent = ({ onHeadLocated }: AvatarModelProps) => {
 
       // Setup emote service with morph targets and bones
       if (morphTargets.length > 0 && Object.keys(emoteDictionary).length > 0) {
-        setupEmotesForMorphTargets(morphTargets, emoteDictionary)
+        agentActions.setupEmotesForMorphTargets(morphTargets, emoteDictionary)
       }
 
       // Provide avatar references for gaze and head control
     }
-    setupAvatarReferences({
+    agentActions.setupAvatarReferences({
       bones,
       node: avatarRef.current ?? undefined,
       camera: viewerCamera // Camera will be set by the scene
@@ -451,15 +451,15 @@ const AvatarModelComponent = ({ onHeadLocated }: AvatarModelProps) => {
     // Mark startup as played to prevent re-execution
 
     console.log('DEBUG:performStartupAnimation')
-    performEmotionAction({emotion: 'happy', relaxTime: ANIMATION_CLIPS.wave.duration})
-    performAnimationAction({
+    agentActions.performEmotionAction({emotion: 'happy', relaxTime: ANIMATION_CLIPS.wave.duration})
+    agentActions.performAnimationAction({
       clip: ANIMATION_CLIPS.wave,
       immediate: true,
       loopCount: 1,
       blendTime: 300,
       speed: .5
     })
-    speak("Oh hey There! , Welcome to my website! I'm Rahul, ask me anything about my work and projects!")
+    agentActions.speak("Oh hey There! , Welcome to my website! I'm Rahul, ask me anything about my work and projects!")
 
     startupPlayedRef.current = true
 
@@ -470,21 +470,21 @@ const AvatarModelComponent = ({ onHeadLocated }: AvatarModelProps) => {
     if (isVRM && vrm) vrm.expressionManager?.update()
     // Update animation service using R3F integration
     if (animationsEnabled && animations) {
-      updateAnimation(delta)
+      agentActions.updateAnimation(delta)
     }
 
     // Update visemes for lip sync
     if (visemesEnabled && visemes) {
-      updateVisemes(delta)
-      applyVisemesToRig(delta)
+      agentActions.updateVisemes(delta)
+      agentActions.applyVisemesToRig(delta)
     }
 
     // Update emotes for facial expressions and behaviors
     if (emotesEnabled && emotes) {
-      updateEmotes(delta)
+      agentActions.updateEmotes(delta)
 
       if (isVRM && vrm) {
-        applyEmotesToVRM(vrm)
+        agentActions.applyEmotesToVRM(vrm)
       } else {
         // Apply to morph targets if available
         if (morphTargetsRef.current.length > 0) {
@@ -496,7 +496,7 @@ const AvatarModelComponent = ({ onHeadLocated }: AvatarModelProps) => {
             }[]
 
             if (validMorphs.length > 0) {
-              applyEmotesToMorphTargets(validMorphs, dictionary)
+              agentActions.applyEmotesToMorphTargets(validMorphs, dictionary)
             }
           }
         }
@@ -508,19 +508,19 @@ const AvatarModelComponent = ({ onHeadLocated }: AvatarModelProps) => {
     () => debounce(() => {
       if (animationsEnabled && emotesEnabled) {
         const randomAction = getRandomClip('action') as AnimationClip
-        performEmotionAction({
+        agentActions.performEmotionAction({
           emotion: randomAction.name == ANIMATION_CLIPS.look_around.name ? 'alert' : 'happy' , 
           relaxTime: randomAction.duration - 1000
         })
 
-        performAnimationAction({
+        agentActions.performAnimationAction({
           clip: randomAction,
           immediate: true,
           loopCount: 1,
           blendTime : 1000
         })  
         //if(randomAction.speech?.chance && Math.random() < randomAction.speech.chance) { 
-          speak(randomAction.speech?.text ?? 'Hello, how are you?')
+          agentActions.speak(randomAction.speech?.text ?? 'Hello, how are you?')
         //}
 
         performAnimationAction({

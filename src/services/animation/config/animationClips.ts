@@ -45,7 +45,7 @@ export const ANIMATION_CLIPS = {
     duration: 5000, // Will be updated from actual animation file
     weight: 1,
     blendTime: 1000,
-    category: 'gesture',
+    category: 'action',
     priority: 1,
     loopCount: 1,
     blendCurve: 'easeInOut',

@@ -77,7 +77,7 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
           const gainNode = audioContext.createGain()
           
           // Use global volume if available, otherwise use config volume
-          const volume = (window as any).globalTTSVolume ?? config.volume
+          const volume = (window as Window & { globalTTSVolume?: number }).globalTTSVolume ?? config.volume
           gainNode.gain.value = volume
           
           source.buffer = decodedAudio
@@ -238,7 +238,7 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
           } else if (nextMessage.status === 'generating') {
             // For local mode, wait a bit for generation to complete
             if (config.mode === 'local') {
-              await new Promise((resolve) => setTimeout(resolve, 100))
+              await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()))
               continue
             }
           }
@@ -267,50 +267,62 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
               utterance.rate = config.speed
               utterance.pitch = config.pitch
               // Use global volume if available, otherwise fall back to config volume
-              utterance.volume = (window as any).globalTTSVolume ?? config.volume
+              utterance.volume = (window as Window & { globalTTSVolume?: number }).globalTTSVolume ?? config.volume
 
-              // Parse voice gender from config and select appropriate voice
-              const voices = speechSynthesis.getVoices()
-              const isMale = config.voice.toLowerCase().includes('male')
-              const isFemale = config.voice.toLowerCase().includes('female')
+              const selectBrowserVoice = (voices: SpeechSynthesisVoice[]) => {
+                const desired = (config.voice || '').trim().toLowerCase()
+                if (!desired) return
 
-              // Helper function to find voice by language and gender
-              const findVoiceByLang = (lang: string, isMale: boolean) => {
-                return voices.find(voice => {
-                  if (voice.lang !== lang) return false
-                  
-                  const name = voice.name.toLowerCase()
-                  if (isMale) {
-                    // For male voices, look for male indicators or exclude female indicators
-                    return name.includes('male') || name.includes('rishi') || 
-                          (!name.includes('female') && !name.includes('veena') && !name.includes('alice'))
-                  } else {
-                    // For female voices, look for female indicators
-                    return name.includes('female') || name.includes('veena') || name.includes('alice')
-                  }
-                })
-              }
-
-              if (isMale) {
-                // Priority: Indian English -> UK English -> US English -> Default
-                const maleVoice = findVoiceByLang('en-IN', true) || 
-                                findVoiceByLang('en-GB', true) || 
-                                findVoiceByLang('en-US', true) ||
-                                voices.find(v => v.name.toLowerCase().includes('male'))
-                
-                if (maleVoice) {
-                  utterance.voice = maleVoice
-                  logger.log('TTS: Using male voice:', maleVoice.name, maleVoice.lang)
+                // If user provided an actual browser voice name, prefer exact match.
+                const exact = voices.find((v) => v.name.toLowerCase() === desired)
+                if (exact) {
+                  utterance.voice = exact
+                  logger.log('TTS: Using exact browser voice match:', exact.name, exact.lang)
+                  return
                 }
-              } else if (isFemale) {
-                const femaleVoice = findVoiceByLang('en-IN', false) || 
-                                  findVoiceByLang('en-GB', false) || 
-                                  findVoiceByLang('en-US', false) ||
-                                  voices.find(v => v.name.toLowerCase().includes('female'))
-                
-                if (femaleVoice) {
-                  utterance.voice = femaleVoice
-                  logger.log('TTS: Using female voice:', femaleVoice.name, femaleVoice.lang)
+
+                // Otherwise, fall back to gender/language heuristics based on config.voice.
+                const isMale = desired.includes('male')
+                const isFemale = desired.includes('female')
+                if (!isMale && !isFemale) return
+
+                const findVoiceByLang = (lang: string, male: boolean) =>
+                  voices.find((voice) => {
+                    if (voice.lang !== lang) return false
+                    const name = voice.name.toLowerCase()
+                    if (male) {
+                      return (
+                        name.includes('male') ||
+                        name.includes('rishi') ||
+                        (!name.includes('female') && !name.includes('veena') && !name.includes('alice'))
+                      )
+                    }
+                    return name.includes('female') || name.includes('veena') || name.includes('alice')
+                  })
+
+                if (isMale) {
+                  // Priority: Indian English -> UK English -> US English -> Default
+                  const maleVoice =
+                    findVoiceByLang('en-IN', true) ||
+                    findVoiceByLang('en-GB', true) ||
+                    findVoiceByLang('en-US', true) ||
+                    voices.find((v) => v.name.toLowerCase().includes('male'))
+
+                  if (maleVoice) {
+                    utterance.voice = maleVoice
+                    logger.log('TTS: Using male voice:', maleVoice.name, maleVoice.lang)
+                  }
+                } else if (isFemale) {
+                  const femaleVoice =
+                    findVoiceByLang('en-IN', false) ||
+                    findVoiceByLang('en-GB', false) ||
+                    findVoiceByLang('en-US', false) ||
+                    voices.find((v) => v.name.toLowerCase().includes('female'))
+
+                  if (femaleVoice) {
+                    utterance.voice = femaleVoice
+                    logger.log('TTS: Using female voice:', femaleVoice.name, femaleVoice.lang)
+                  }
                 }
               }
               
@@ -324,7 +336,39 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
                 reject(new Error(`Browser TTS Error: ${event.error}`))
               }
 
-              speechSynthesis.speak(utterance)
+              // Many browsers populate voices asynchronously. If not ready, wait for `voiceschanged`
+              // (no timeouts) and fall back to speaking on the next frame.
+              let didSpeak = false
+              const onVoicesChanged = () => {
+                if (didSpeak) return
+                didSpeak = true
+                speechSynthesis.removeEventListener('voiceschanged', onVoicesChanged)
+                const voices = speechSynthesis.getVoices()
+                if (voices.length > 0) selectBrowserVoice(voices)
+                speechSynthesis.speak(utterance)
+              }
+
+              const initialVoices = speechSynthesis.getVoices()
+              if (initialVoices.length > 0) {
+                didSpeak = true
+                selectBrowserVoice(initialVoices)
+                speechSynthesis.speak(utterance)
+              } else {
+                speechSynthesis.addEventListener('voiceschanged', onVoicesChanged)
+                speechSynthesis.getVoices() // kick voice loading in some browsers
+                requestAnimationFrame(() => {
+                  if (didSpeak) return
+                  const voices = speechSynthesis.getVoices()
+                  if (voices.length > 0) {
+                    onVoicesChanged()
+                  } else {
+                    // Fall back to default voice if voices never populate.
+                    didSpeak = true
+                    speechSynthesis.removeEventListener('voiceschanged', onVoicesChanged)
+                    speechSynthesis.speak(utterance)
+                  }
+                })
+              }
             })
           } else if (nextMessage.audio && nextMessage.audio.byteLength > 0) {
             await playAudioBuffer(nextMessage.audio)
