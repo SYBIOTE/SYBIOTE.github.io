@@ -15,7 +15,6 @@ import  {ANIMATION_CLIPS, getRandomClip, updateAnimationDurations } from '../../
 import type { AnimationClip } from '../../../services/animation/animationTypes'
 import debounce from 'lodash/debounce'
 import { useAgentActions, useAgentServices, useAgentState } from './AgentContext'
-import { AppConfigState } from '../../../app/appConfig'
 
 const AVATAR_MODEL = AvatarOptions.Rahul
 
