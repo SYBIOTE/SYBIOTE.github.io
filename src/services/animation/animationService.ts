@@ -88,12 +88,10 @@ export function setAnimationEnabled(state: AnimationState, enabled: boolean) {
 }
 
 export function startPerformance(state: AnimationState, performanceData: AnimationPerformanceData) {  
-  console.log('animationService: startPerformance', performanceData , {...state.actions})
   if (!state.actions) return
   // Find the corresponding configured clip
   const configuredClip = performanceData.clip
 
-  console.log('animationService: configuredClip', configuredClip)
   if (!configuredClip) {
     // Fallback: if clip is unknown, attempt to play the raw action directly
     const action = state.actions[performanceData.clip.name]
@@ -134,7 +132,6 @@ export function startPerformance(state: AnimationState, performanceData: Animati
 
   // If immediate is requested and we are not transitioning, play now; otherwise queue it
   if (performanceData.immediate && !state.isTransitioning) {
-    console.log('animationService: playing clip', runtimeClip.name)
     playClip(state, runtimeClip, blendMs)
     state.lastChangeTime = performance.now()
   } else {
@@ -205,7 +202,7 @@ export function updateAnimation(state: AnimationState, delta: number) {
       currentAction.setEffectiveWeight(1.0)
       return
     }
-    
+
     if (currentAction && nextAction) {
       // Blend weights: current fades out, next fades in
       currentAction.setEffectiveWeight(1.0 - easedProgress)

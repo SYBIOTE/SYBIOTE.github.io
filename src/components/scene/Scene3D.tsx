@@ -26,7 +26,6 @@ const SceneContent = ({
   const {  llmThinking, currentSubtitle } = useAgentState() // Get from context instead of props
 
 
-  console.log('DEBUG:Scene3D', llmThinking, currentSubtitle)
   const subtitleMessage = llmThinking ? 'Thinking ......' : (currentSubtitle || '')
 
   useEffect(() => {
@@ -99,7 +98,6 @@ const SceneContent = ({
 const Scene3DComponent = ({ sceneConfig, setXRStore }: Scene3DProps) => {
   const store = useMemo(() => createXRStore(), [])
   
-  console.log('Scene3DComponent')
 
   useEffect(() => {
     if (setXRStore) {

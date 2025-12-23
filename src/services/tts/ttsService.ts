@@ -303,7 +303,6 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
                 }
 
                 const pickBestMale = (candidates: SpeechSynthesisVoice[]) => {
-                  console.log('DEBUG:pickBestMale', candidates)
                   if (candidates.length === 0) return undefined
                   let best = candidates[0]
                   let bestScore = scoreMaleVoice(best)
@@ -370,11 +369,9 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
               }
 
               const initialVoices = speechSynthesis.getVoices()
-              console.log('DEBUG:initialVoices', initialVoices , utterance.voice)
               if (initialVoices.length > 0) {
                 didSpeak = true
                 selectBrowserVoice(initialVoices)
-                console.log('DEBUG:initialVoices', initialVoices , utterance.voice)
 
                 speechSynthesis.speak(utterance)
               } else {
@@ -389,7 +386,6 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
                     // Fall back to default voice if voices never populate.
                     didSpeak = true
                     speechSynthesis.removeEventListener('voiceschanged', onVoicesChanged)
-                    console.log('DEBUG:initialVoices', initialVoices , utterance.voice)
 
                     speechSynthesis.speak(utterance)
                   }
@@ -427,7 +423,6 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
   const speak = useCallback(
     async (text: string) => {
 
-      console.log('DEBUG:speak', text)
       if (!text.trim()) return null
 
       const messageId = globalId++

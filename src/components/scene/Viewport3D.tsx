@@ -17,7 +17,6 @@ const viewport3DComponent = ({
 
 
 
-  console.log('Viewport3DComponent')
   return (
     <div
       style={{

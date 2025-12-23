@@ -162,7 +162,6 @@ const AppComponent = () => {
     setAppState(newAppState)
   }, [setAppState])
 
-  console.log('AppComponent')
   return (
     <AgentProvider agent={agent}>
       <div style={containerStyle}>

@@ -337,7 +337,6 @@ const AvatarModelComponent = ({ onHeadLocated }: AvatarModelProps) => {
       }
     })
 
-    console.log('validActions', validActions)
 
     agentActions.setPersonality('professional')
     agentActions.setupAnimations(validActions, mixer, avatarRef.current || undefined , ANIMATION_CLIPS.idle_loop)
@@ -425,7 +424,6 @@ const AvatarModelComponent = ({ onHeadLocated }: AvatarModelProps) => {
 
     // Mark startup as played to prevent re-execution
 
-    console.log('DEBUG:performStartupAnimation')
     agentActions.performEmotionAction({emotion: 'happy', relaxTime: ANIMATION_CLIPS.wave.duration})
     agentActions.performAnimationAction({
       clip: ANIMATION_CLIPS.wave,
@@ -512,7 +510,6 @@ const AvatarModelComponent = ({ onHeadLocated }: AvatarModelProps) => {
   }, [agentState.currentAnimation, performAvatarClick])
 
 
-  console.log('DEBUG:AvatarModel')
   return (
     <primitive 
       ref={avatarRef} 
