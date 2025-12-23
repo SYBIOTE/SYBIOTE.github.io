@@ -14,7 +14,7 @@ import { AnimationAction, Vector3 } from 'three'
 import  {ANIMATION_CLIPS, getRandomClip, updateAnimationDurations } from '../../../services/animation/config/animationClips'
 import type { AnimationClip } from '../../../services/animation/animationTypes'
 import debounce from 'lodash/debounce'
-import { useAgentActions, useAgentContext } from './AgentContext'
+import { useAgentActions, useAgentServices, useAgentState } from './AgentContext'
 
 const AVATAR_MODEL = AvatarOptions.Rahul
 
@@ -229,7 +229,6 @@ const AvatarModelComponent = ({ onHeadLocated }: AvatarModelProps) => {
   const { camera: viewerCamera } = useThree()
 
   const [state , setState] = useSimpleStore(AvatarState)
-  const morphTargetsRef = useRef<THREE.Mesh[]>([])
   const bonesRef = useRef<Record<string, THREE.Bone>>({})
   const startupPlayedRef = useRef<boolean>(false)
   const [isAvatarVisible, setIsAvatarVisible] = useState<boolean>(false)
@@ -251,6 +250,22 @@ const AvatarModelComponent = ({ onHeadLocated }: AvatarModelProps) => {
   const avatarScene = isVRM ? vrm?.scene : gltf.scene
   const avatarRef = useRef<THREE.Object3D>(null)
   const agentActions = useAgentActions()
+  const agentState = useAgentState()
+  const {emotes} =  useAgentServices()
+
+  // Memoize morph-target meshes so we don't re-scan/filter inside the render loop (useFrame).
+  const morphTargetMeshes = useMemo(() => {
+    const morphs: Array<THREE.Mesh & { morphTargetInfluences: number[] }> = []
+    if (!avatarScene) return morphs
+
+    avatarScene.traverse((child) => {
+      if (child instanceof THREE.Mesh && child.morphTargetDictionary && child.morphTargetInfluences) {
+        morphs.push(child as THREE.Mesh & { morphTargetInfluences: number[] })
+      }
+    })
+
+    return morphs
+  }, [avatarScene])
 
   // Only for setup: position the camera along the forward of the face of the avatar once, when avatar loads
   // TODO : very manual and hardcoded, must standarize avatar input 
@@ -335,42 +350,11 @@ const AvatarModelComponent = ({ onHeadLocated }: AvatarModelProps) => {
 
     // Start the sequence after a short delay to ensure everything is initialized
     
-  }, [animationsEnabled, actions, mixer, avatarScene, animations, setPersonality, setupAnimations])
+  }, [animationsEnabled, actions, mixer, avatarScene, agentActions])
 
-  useEffect(() => {
-    if (!avatarScene || !visemesEnabled || !visemes) return
-
-    if (isVRM && vrm) {
-      // VRM expression manager route
-      agentActions.setupVisemesForVRM(vrm)
-      logger.log('Viseme service wired to VRM expressionManager')
-    } else {
-      // GLB morph target route
-      const morphTargets: { morphTargetInfluences: number[] }[] = []
-      const dictionary: Record<string, number[]> = {}
-
-      avatarScene.traverse((child) => {
-        if (child instanceof THREE.Mesh && child.morphTargetDictionary && child.morphTargetInfluences) {
-          morphTargets.push(child as THREE.Mesh & { morphTargetInfluences: number[] })
-          Object.entries(child.morphTargetDictionary).forEach(([name, index]) => {
-            if (name.startsWith('viseme_')) {
-              if (!dictionary[name]) dictionary[name] = []
-              dictionary[name].push(index)
-            }
-          })
-        }
-      })
-
-      morphTargetsRef.current = morphTargets as THREE.Mesh[]
-      if (morphTargets.length > 0 && Object.keys(dictionary).length > 0) {
-        agentActions.setupVisemesForMorphTargets(morphTargets, dictionary)
-      }
-    }
-  }, [avatarScene, visemesEnabled, setupVisemesForMorphTargets, isVRM, vrm, visemes, setupVisemesForVRM])
-  
   // Setup emote service integration
   useEffect(() => {
-    if (!avatarScene || !emotesEnabled || !emotes) return
+    if (!avatarScene || !emotesEnabled ) return
 
     let bones: Record<string, THREE.Bone> = {}
 
@@ -389,36 +373,28 @@ const AvatarModelComponent = ({ onHeadLocated }: AvatarModelProps) => {
         })
       }
     } else {
-      const morphTargets: { morphTargetInfluences: number[] }[] = []
       const emoteDictionary: Record<string, number[]> = {}
       bones = {}
 
-      // Collect morphable meshes for facial expressions
+      // Map morph targets for emotional expressions (use memoized morph-target meshes).
+      morphTargetMeshes.forEach((mesh) => {
+        Object.entries(mesh.morphTargetDictionary ?? {}).forEach(([name, index]) => {
+          if (
+            name.includes('eye') ||
+            name.includes('brow') ||
+            name.includes('mouth') ||
+            name.includes('nose') ||
+            name.includes('cheek') ||
+            name.includes('jaw')
+          ) {
+            if (!emoteDictionary[name]) emoteDictionary[name] = []
+            emoteDictionary[name].push(index)
+          }
+        })
+      })
+
+      // Collect bones for head/gaze control
       avatarScene.traverse((child) => {
-        if (child instanceof THREE.Mesh && child.morphTargetDictionary && child.morphTargetInfluences) {
-          const meshWithMorphTargets = child as THREE.Mesh & { morphTargetInfluences: number[] }
-          morphTargets.push(meshWithMorphTargets)
-
-          // Map morph targets for emotional expressions
-          Object.entries(child.morphTargetDictionary).forEach(([name, index]) => {
-            // Include all relevant facial expression morph targets
-            if (
-              name.includes('eye') ||
-              name.includes('brow') ||
-              name.includes('mouth') ||
-              name.includes('nose') ||
-              name.includes('cheek') ||
-              name.includes('jaw')
-            ) {
-              if (!emoteDictionary[name]) {
-                emoteDictionary[name] = []
-              }
-              emoteDictionary[name].push(index)
-            }
-          })
-        }
-
-        // Collect bones for head/gaze control
         if (child instanceof THREE.Bone) {
           bones[child.name] = child
         }
@@ -427,8 +403,8 @@ const AvatarModelComponent = ({ onHeadLocated }: AvatarModelProps) => {
       bonesRef.current = bones
 
       // Setup emote service with morph targets and bones
-      if (morphTargets.length > 0 && Object.keys(emoteDictionary).length > 0) {
-        agentActions.setupEmotesForMorphTargets(morphTargets, emoteDictionary)
+      if (morphTargetMeshes.length > 0 && Object.keys(emoteDictionary).length > 0) {
+        agentActions.setupEmotesForMorphTargets(morphTargetMeshes, emoteDictionary)
       }
 
       // Provide avatar references for gaze and head control
@@ -438,13 +414,12 @@ const AvatarModelComponent = ({ onHeadLocated }: AvatarModelProps) => {
       node: avatarRef.current ?? undefined,
       camera: viewerCamera // Camera will be set by the scene
     })
-  }, [avatarScene, emotesEnabled, isVRM, vrm, viewerCamera, emotes, setupAvatarReferences, setupEmotesForVRM, setupEmotesForMorphTargets])
+  }, [avatarScene, emotesEnabled, isVRM, vrm, viewerCamera, morphTargetMeshes])
 
 
   useEffect(() => { 
     if (!animationsEnabled || !emotesEnabled) return
     if (!avatarScene || !actions || !mixer  ) return
-    if (!emotes || !animations) return
     if (startupPlayedRef.current) return
     if (!isAvatarVisible) return // Wait until avatar is visible
 
@@ -463,41 +438,34 @@ const AvatarModelComponent = ({ onHeadLocated }: AvatarModelProps) => {
 
     startupPlayedRef.current = true
 
-  }, [animationsEnabled, emotesEnabled, isAvatarVisible, avatarScene, actions, mixer, emotes, animations, performEmotionAction, performAnimationAction, speak])
+  }, [animationsEnabled, emotesEnabled, isAvatarVisible, avatarScene])
   // Animation service will handle its own initialization
 
   useFrame((_, delta) => {
     if (isVRM && vrm) vrm.expressionManager?.update()
     // Update animation service using R3F integration
-    if (animationsEnabled && animations) {
+    if (animationsEnabled) {
       agentActions.updateAnimation(delta)
     }
 
     // Update visemes for lip sync
-    if (visemesEnabled && visemes) {
+    if (visemesEnabled) {
       agentActions.updateVisemes(delta)
       agentActions.applyVisemesToRig(delta)
     }
 
     // Update emotes for facial expressions and behaviors
-    if (emotesEnabled && emotes) {
+    if (emotesEnabled) {
       agentActions.updateEmotes(delta)
 
       if (isVRM && vrm) {
         agentActions.applyEmotesToVRM(vrm)
       } else {
         // Apply to morph targets if available
-        if (morphTargetsRef.current.length > 0) {
+        if (morphTargetMeshes.length > 0) {
           const dictionary = emotes.state.emote.dictionary
           if (dictionary) {
-            // Filter to only meshes with morph targets
-            const validMorphs = morphTargetsRef.current.filter((mesh) => mesh.morphTargetInfluences !== undefined) as {
-              morphTargetInfluences: number[]
-            }[]
-
-            if (validMorphs.length > 0) {
-              agentActions.applyEmotesToMorphTargets(validMorphs, dictionary)
-            }
+            agentActions.applyEmotesToMorphTargets(morphTargetMeshes, dictionary)
           }
         }
       }
@@ -523,7 +491,7 @@ const AvatarModelComponent = ({ onHeadLocated }: AvatarModelProps) => {
           agentActions.speak(randomAction.speech?.text ?? 'Hello, how are you?')
         //}
 
-        performAnimationAction({
+        agentActions.performAnimationAction({
           clip: getRandomClip('idle'),
           loopCount: Infinity,
           blendTime : 1000
@@ -532,7 +500,7 @@ const AvatarModelComponent = ({ onHeadLocated }: AvatarModelProps) => {
   
       }
     }, 600, { leading: true, trailing: false }),
-      [animationsEnabled, emotesEnabled, performEmotionAction, performAnimationAction, speak]
+      [animationsEnabled, emotesEnabled, agentActions]
   )
 
   useEffect(() => {
@@ -541,10 +509,10 @@ const AvatarModelComponent = ({ onHeadLocated }: AvatarModelProps) => {
 
   // Handle avatar click to play finger_gun animation (debounced)
   const handleAvatarClick = useCallback((event: any) => {
-    if( currentAnimation?.category === 'action') return // don't allow clicking on action clips
+    if( agentState.currentAnimation?.category === 'action') return // don't allow clicking on action clips
     event.stopPropagation()
     performAvatarClick()
-  }, [currentAnimation, performAvatarClick])
+  }, [agentState.currentAnimation, performAvatarClick])
 
 
   console.log('DEBUG:AvatarModel')
