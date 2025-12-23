@@ -15,6 +15,7 @@ import  {ANIMATION_CLIPS, getRandomClip, updateAnimationDurations } from '../../
 import type { AnimationClip } from '../../../services/animation/animationTypes'
 import debounce from 'lodash/debounce'
 import { useAgentActions, useAgentServices, useAgentState } from './AgentContext'
+import { AppConfigState } from '../../../app/appConfig'
 
 const AVATAR_MODEL = AvatarOptions.Rahul
 
@@ -476,10 +477,8 @@ const AvatarModelComponent = ({ onHeadLocated }: AvatarModelProps) => {
     () => debounce(() => {
       if (animationsEnabled && emotesEnabled) {
         const randomAction = getRandomClip('action') as AnimationClip
-        agentActions.performEmotionAction({
-          emotion: randomAction.name == ANIMATION_CLIPS.look_around.name ? 'alert' : 'happy' , 
-          relaxTime: randomAction.duration - 1000
-        })
+        agentActions.triggerBargein()
+        
 
         agentActions.performAnimationAction({
           clip: randomAction,
@@ -487,9 +486,8 @@ const AvatarModelComponent = ({ onHeadLocated }: AvatarModelProps) => {
           loopCount: 1,
           blendTime : 1000
         })  
-        //if(randomAction.speech?.chance && Math.random() < randomAction.speech.chance) { 
-          agentActions.speak(randomAction.speech?.text ?? 'Hello, how are you?')
-        //}
+        agentActions.speak(randomAction.speech?.text ?? ' Oh !')
+        
 
         agentActions.performAnimationAction({
           clip: getRandomClip('idle'),

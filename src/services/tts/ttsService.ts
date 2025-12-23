@@ -271,58 +271,79 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
 
               const selectBrowserVoice = (voices: SpeechSynthesisVoice[]) => {
                 const desired = (config.voice || '').trim().toLowerCase()
-                if (!desired) return
 
-                // If user provided an actual browser voice name, prefer exact match.
-                const exact = voices.find((v) => v.name.toLowerCase() === desired)
-                if (exact) {
-                  utterance.voice = exact
-                  logger.log('TTS: Using exact browser voice match:', exact.name, exact.lang)
-                  return
+                const looksFemale = (voice: SpeechSynthesisVoice) => {
+                  const name = voice.name.toLowerCase()
+                  // A small heuristic set that catches common female voices across platforms.
+                  return (
+                    name.includes('female') ||
+                    name.includes('zira') || // "Microsoft Zira" (female)
+                    name.includes('veena') ||
+                    name.includes('alice') ||
+                    name.includes('neerja')
+                  )
                 }
 
-                // Otherwise, fall back to gender/language heuristics based on config.voice.
-                const isMale = desired.includes('male')
-                const isFemale = desired.includes('female')
-                if (!isMale && !isFemale) return
+                const maleHintScore = (voice: SpeechSynthesisVoice) => {
+                  const name = voice.name.toLowerCase()
+                  // Positive hints for commonly-male voice names across platforms.
+                  if (name.includes('male')) return 3
+                  if (name.includes('david')) return 3 // "Microsoft David"
+                  if (name.includes('rishi')) return 3
+                  if (name.includes('mark')) return 2
+                  if (name.includes('daniel')) return 2
+                  return 0
+                }
 
-                const findVoiceByLang = (lang: string, male: boolean) =>
-                  voices.find((voice) => {
-                    if (voice.lang !== lang) return false
-                    const name = voice.name.toLowerCase()
-                    if (male) {
-                      return (
-                        name.includes('male') ||
-                        name.includes('rishi') ||
-                        (!name.includes('female') && !name.includes('veena') && !name.includes('alice'))
-                      )
+                const scoreMaleVoice = (voice: SpeechSynthesisVoice) => {
+                  if (looksFemale(voice)) return -100
+                  // Prefer local/offline voices when available.
+                  const localBoost = voice.localService ? 0.5 : 0
+                  return 1 + maleHintScore(voice) + localBoost
+                }
+
+                const pickBestMale = (candidates: SpeechSynthesisVoice[]) => {
+                  console.log('DEBUG:pickBestMale', candidates)
+                  if (candidates.length === 0) return undefined
+                  let best = candidates[0]
+                  let bestScore = scoreMaleVoice(best)
+                  for (let i = 1; i < candidates.length; i++) {
+                    const v = candidates[i]
+                    const s = scoreMaleVoice(v)
+                    if (s > bestScore) {
+                      best = v
+                      bestScore = s
                     }
-                    return name.includes('female') || name.includes('veena') || name.includes('alice')
-                  })
-
-                if (isMale) {
-                  // Priority: Indian English -> UK English -> US English -> Default
-                  const maleVoice =
-                    findVoiceByLang('en-IN', true) ||
-                    findVoiceByLang('en-GB', true) ||
-                    findVoiceByLang('en-US', true) ||
-                    voices.find((v) => v.name.toLowerCase().includes('male'))
-
-                  if (maleVoice) {
-                    utterance.voice = maleVoice
-                    logger.log('TTS: Using male voice:', maleVoice.name, maleVoice.lang)
                   }
-                } else if (isFemale) {
-                  const femaleVoice =
-                    findVoiceByLang('en-IN', false) ||
-                    findVoiceByLang('en-GB', false) ||
-                    findVoiceByLang('en-US', false) ||
-                    voices.find((v) => v.name.toLowerCase().includes('female'))
+                  return bestScore > -100 ? best : undefined
+                }
 
-                  if (femaleVoice) {
-                    utterance.voice = femaleVoice
-                    logger.log('TTS: Using female voice:', femaleVoice.name, femaleVoice.lang)
+                // If user provided an actual browser voice name, we only accept it if it doesn't
+                // look female (requirement: always male).
+                if (desired) {
+                  const exact = voices.find((v) => v.name.toLowerCase() === desired)
+                  if (exact && !looksFemale(exact)) {
+                    utterance.voice = exact
+                    logger.log('TTS: Using exact browser voice match (male):', exact.name, exact.lang)
+                    return
                   }
+                }
+
+                // Always attempt a male voice, regardless of config.voice.
+                // Priority: Indian English -> UK English -> US English -> any English -> anything
+                const byLang = (lang: string) => voices.filter((v) => v.lang === lang)
+                const isEnglish = (v: SpeechSynthesisVoice) => v.lang.toLowerCase().startsWith('en')
+
+                const maleVoice =
+                  pickBestMale(byLang('en-IN')) ||
+                  pickBestMale(byLang('en-GB')) ||
+                  pickBestMale(byLang('en-US')) ||
+                  pickBestMale(voices.filter(isEnglish)) ||
+                  pickBestMale(voices)
+
+                if (maleVoice) {
+                  utterance.voice = maleVoice
+                  logger.log('TTS: Using male voice:', maleVoice.name, maleVoice.lang)
                 }
               }
               
@@ -349,9 +370,12 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
               }
 
               const initialVoices = speechSynthesis.getVoices()
+              console.log('DEBUG:initialVoices', initialVoices , utterance.voice)
               if (initialVoices.length > 0) {
                 didSpeak = true
                 selectBrowserVoice(initialVoices)
+                console.log('DEBUG:initialVoices', initialVoices , utterance.voice)
+
                 speechSynthesis.speak(utterance)
               } else {
                 speechSynthesis.addEventListener('voiceschanged', onVoicesChanged)
@@ -365,6 +389,8 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
                     // Fall back to default voice if voices never populate.
                     didSpeak = true
                     speechSynthesis.removeEventListener('voiceschanged', onVoicesChanged)
+                    console.log('DEBUG:initialVoices', initialVoices , utterance.voice)
+
                     speechSynthesis.speak(utterance)
                   }
                 })
