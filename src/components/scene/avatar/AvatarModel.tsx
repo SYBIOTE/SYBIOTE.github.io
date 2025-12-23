@@ -219,7 +219,7 @@ export const useExternalAnimations = (avatarRef: React.RefObject<THREE.Object3D>
 
     updateAnimationDurations(animations)
     return animations
-  }, [vrmaGLTFs, gltfGLTFs, fbxAssets, mixamoAnimations, vrm, vrmaClips, gltfClips, fbxClips])
+  }, [mixamoAnimations, vrm, vrmaClips, gltfClips, fbxClips])
 
   const { actions, mixer } = useAnimations(allAnimations, avatarRef)
   return { actions, mixer, animations: allAnimations }
@@ -518,10 +518,17 @@ const AvatarModelComponent = ({ onHeadLocated }: AvatarModelProps) => {
           immediate: true,
           loopCount: 1,
           blendTime : 1000
-        })   
-        if(randomAction.speech?.chance && Math.random() < randomAction.speech.chance) { 
-          speak(randomAction.speech?.text)
-        }
+        })  
+        //if(randomAction.speech?.chance && Math.random() < randomAction.speech.chance) { 
+          speak(randomAction.speech?.text ?? 'Hello, how are you?')
+        //}
+
+        performAnimationAction({
+          clip: getRandomClip('idle'),
+          loopCount: Infinity,
+          blendTime : 1000
+        })
+
   
       }
     }, 600, { leading: true, trailing: false }),
@@ -539,6 +546,8 @@ const AvatarModelComponent = ({ onHeadLocated }: AvatarModelProps) => {
     performAvatarClick()
   }, [currentAnimation, performAvatarClick])
 
+
+  console.log('DEBUG:AvatarModel')
   return (
     <primitive 
       ref={avatarRef} 

@@ -197,6 +197,15 @@ export function updateAnimation(state: AnimationState, delta: number) {
     const currentAction = state.actions[state.currentClip.name]
     const nextAction = state.actions[state.nextClip.name]
 
+    if (currentAction && !nextAction) {
+      // Abort transition: keep current clip fully weighted
+      state.isTransitioning = false
+      state.nextClip = null
+      state.transitionProgress = 0
+      currentAction.setEffectiveWeight(1.0)
+      return
+    }
+    
     if (currentAction && nextAction) {
       // Blend weights: current fades out, next fades in
       currentAction.setEffectiveWeight(1.0 - easedProgress)
