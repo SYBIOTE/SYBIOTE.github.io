@@ -1,5 +1,5 @@
-// Test setup file for vitest
 import { vi } from 'vitest'
+import { logger } from './utils/logger'
 
 // Mock logger warnings for cleaner test output
-global.logger.warn = vi.fn()
+logger.warn = vi.fn()
