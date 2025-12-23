@@ -49,9 +49,12 @@ export const useVADService = ({
   const initializeVAD = useCallback(async () => {
     try {
       const originalWarn = logger.warn
-      logger.warn = (...args) => {
-        if (args[0]?.includes?.('onnxruntime') || 
-            args[0]?.includes?.('Removing initializer')) {
+      logger.warn = (...args: unknown[]) => {
+        const firstArgStr = typeof args[0] === 'string' ? args[0] : ''
+        if (
+          firstArgStr.includes('onnxruntime') || 
+          firstArgStr.includes('Removing initializer')
+        ) {
           return // Suppress these warnings
         }
         originalWarn(...args)

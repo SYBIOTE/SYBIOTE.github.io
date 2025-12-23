@@ -8,7 +8,7 @@ import type { SceneConfig } from '../../app/sceneTypes'
 import { AvatarModel } from './avatar/AvatarModel'
 import SubtitleBox from './SubtitleBox3d'
 import { LoadingIndicator3D } from './LoadingIndicator3D'
-import { useAgentContext, useAgentState } from './avatar/AgentContext'
+import { useAgentState } from './avatar/AgentContext'
 
 interface Scene3DProps {
   sceneConfig: SceneConfig
