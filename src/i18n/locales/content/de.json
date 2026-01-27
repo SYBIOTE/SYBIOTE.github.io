@@ -1,0 +1,222 @@
+{
+  "core": {
+    "name": "Rahul Ghosh",
+    "email": "ghoshr698@gmail.com",
+    "phone": "+91 9051186767",
+    "city": "Bengaluru, India",
+    "website": "https://rahulghosh.is-a.dev/",
+    "freelance": "Verfügbar",
+    "role": "Web 3D Ingenieur"
+  },
+  "profile": {
+    "about": {
+      "title": "Über mich",
+      "summary": "Ich liefere für das 3D-Web.",
+      "quote": "liefern, verkaufen, skalieren"
+    }
+  },
+  "contact": {
+    "description": "3D-Software für das Web erstellen und einen Top-Web-3D-Ingenieur benötigen? Schreiben Sie mir."
+  },
+  "resume": {
+    "summary": {
+      "title": "Zusammenfassung",
+      "content": "Ich entwickle skalierbare, leistungsstarke räumliche Systeme, die Nutzer in Kunden verwandeln.\nKontaktieren Sie mich, wenn Sie webbasiertes 3D benötigen, das liefert, verkauft und skaliert."
+    },
+    "education": {
+      "title": "Bildung",
+      "degree": "Bachelor in Computertechnik und Auszeichnung in Künstlicher Intelligenz",
+      "institution": "Army Institute of Technology, Pune, India — CGPA 8.84",
+      "period": "2019 — 2023"
+    },
+    "leadership": {
+      "title": "Führung und Errungenschaften",
+      "items": {
+        "godotDojo": {
+          "text": "Gründungsmitglied von Godot Dojo",
+          "link": "https://github.com/Godot-Dojo",
+          "linkLabel": "link"
+        },
+        "gameClub": {
+          "text": "Gründer, Spielentwicklung und Extended Reality Club",
+          "link": "https://youtu.be/HeLcvAUvC6U",
+          "linkLabel": "video"
+        },
+        "codingChallenge": {
+          "text": "Credit Suisse Global Coding Challenge 3.0 — Weltrang 102"
+        },
+        "armyAward": {
+          "text": "Indian Army Tech Excellence Award — Entwickelte ein hybrides KI/Algorithmus-basiertes Tarnmuster-Generierungstool, in ganz Indien eingesetzt"
+        },
+        "exit": {
+          "text": "75 Mio. $ Exit navigiert"
+        }
+      }
+    },
+    "experience": {
+      "title": "Berufserfahrung",
+      "jobs": {
+        "infiniteReality": {
+          "title": "WebXR-Ingenieur — Infinite Reality",
+          "period": "Feb 2024 — Sep 2025",
+          "achievements": [
+            "Leitung des clientseitigen Scripting-Systems mit Monaco Editor Integration in IRStudio",
+            "Entwurf von 2D/3D UI-Komponenten, Verbesserung der Benutzerfreundlichkeit um 35%",
+            "Entwicklung hochpräziser 3D-Gizmos, Steigerung der Bearbeitungsgeschwindigkeit um 50%+",
+            "Engine-Refactoring und Optimierungen: -20% Build-Größe, +15% Frame-Performance"
+          ]
+        },
+        "etherealEngine": {
+          "title": "WebXR-Ingenieur — Ethereal Engine (übernommen von Infinite Reality)",
+          "period": "Feb 2023 — Feb 2024",
+          "achievements": [
+            "Migration des Backends von Express zu Koa, -60% API-Antwortzeiten, 3× Durchsatz",
+            "Leitung der UI-Überholung in Übereinstimmung mit modernen UX-Standards",
+            "Architektur eines visuellen Scripting-Systems für Nicht-Programmierer-Workflows"
+          ]
+        },
+        "metawarp": {
+          "title": "XR-Anwendungsentwickler — Metawarp",
+          "period": "Dez 2022 — Feb 2023",
+          "achievements": [
+            "Entwicklung von XR- und GIS-Anwendungen",
+            "Mixed Reality Demontage/Montage-Workflows in Unity",
+            "VR-Kartenvisualisierung und 3D-Annotationen in Unreal",
+            "Optimierung von VR/MR-Apps für 72Hz-Betrieb"
+          ]
+        },
+        "jioTesseract": {
+          "title": "XR-Anwendungsentwickler — Jio Tesseract",
+          "period": "Apr 2022 — Gegenwart",
+          "achievements": [
+            "Veröffentlichung eines eigenständigen Wellen-Überlebensspiels \"Narakashur\"",
+            "Design von 4 einzigartigen Gegnern; Entwicklung von Wellensystem, UI, globaler Bestenliste",
+            "Nutzung der Gerätehardware für einzigartige Spielermechaniken"
+          ]
+        },
+        "prodigalTech": {
+          "title": "Backend-Ingenieur — Prodigal Tech (YC S18)",
+          "period": "Apr 2022 — Okt 2022",
+          "achievements": [
+            "Entwicklung und Wartung von ETL-Pipelines",
+            "Automatisierungen für 70%+ der technischen Operationen (−20% Pipeline-Zeit)",
+            "Datenqualitätsverbesserungen: Nachfüllung von 200k+ verpassten Audio-Dateien",
+            "Bereitschaftsdienst in einem 5-köpfigen Ingenieursteam"
+          ]
+        },
+        "assethub": {
+          "title": "Web3D-Ingenieur - AssetHub(Techstars '24)",
+          "period": "Sep 2025 - Gegenwart",
+          "achievements": [
+            "Entwicklung einer leistungsstarken 3D-Web-App für KI-basierte 3D-Asset-Entwicklung"
+          ]
+        },
+        "nirvanaxr": {
+          "title": "Gründer — Nirvana XR",
+          "period": "Jun 2025 — Gegenwart",
+          "achievements": [
+            "Entwicklung von Nirvana Animate, einer Web-First-3D-Animationssuite für Indie-Entwickler und Studios"
+          ]
+        }
+      }
+    }
+  },
+  "services": {
+    "items": {
+      "web3dDevelopment": {
+        "name": "Web3D-Entwicklung",
+        "desc": "Entwicklung von leistungsstarken Web3D-Anwendungen mit modernen Frameworks wie Three.js, React Three Fiber und Babylon.js für immersive Browser-Erlebnisse."
+      },
+      "gameDevelopment": {
+        "name": "Spieleentwicklung",
+        "desc": "Full-Stack-Spieleentwicklung vom Konzept bis zum Deployment, einschließlich Gameplay-Mechaniken, Systemdesign und Optimierung."
+      },
+      "xrDevelopment": {
+        "name": "XR-Entwicklung",
+        "desc": "Virtual Reality (VR), Augmented Reality (AR) und Mixed Reality (MR) Anwendungen mit immersiven Benutzererfahrungen."
+      },
+      "gameEngineProgramming": {
+        "name": "Spiele-Engine-Programmierung",
+        "desc": "Entwicklung benutzerdefinierter Spiele-Engines, Engine-Modifikationen und Low-Level-Systemprogrammierung für optimale Leistung."
+      },
+      "gameBackend": {
+        "name": "Spiele-Backend",
+        "desc": "Server-seitige Spielelogik, Multiplayer-Systeme, Datenbankdesign und Cloud-Infrastruktur für Spiele."
+      }
+    }
+  },
+  "portfolio": {
+    "items": {
+      "godotProjects": {
+        "title": "Godot Projekte",
+        "description": "Sammlung von XR- und Spieleentwicklungsprojekten mit der Godot-Engine.",
+        "extendedDescription": "Eine Sammlung von Projekten, die mit der Godot-Spiele-Engine entwickelt wurden, mit Fokus auf XR-Entwicklung, VR-Spiele und Engine-Tooling. Diese Projekte zeigen die Fähigkeiten von Godot für immersive Erlebnisse und tragen zum Open-Source-XR-Ökosystem bei."
+      },
+      "otherProjects": {
+        "title": "Andere Projekte",
+        "description": "Verschiedene Projekte in den Bereichen Grafik, XR und Spieleentwicklung."
+      },
+      "godotDojo": {
+        "title": "Godot Dojo",
+        "description": "Hauptentwickler an XR/VR-Demos zur Verbesserung der XR-Funktionalität von Godot.",
+        "extendedDescription": "Godot Dojo ist eine Organisation, die sich der Weiterentwicklung der XR-Entwicklung in der Godot-Spiele-Engine widmet. Als Kernentwickler habe ich zu mehreren VR-Demos und Tools beigetragen, die die Fähigkeiten von Godot für Virtual-Reality-Entwicklung zeigen."
+      },
+      "wizardVsRobot": {
+        "title": "Wizard vs Robot",
+        "description": "VR-Lokomotion, Gegner-KI mit 6DoF, gestenbasierte Bewegung.",
+        "extendedDescription": "Wizard vs Robot ist ein actionreiches VR-Spiel mit innovativen Bewegungsmechaniken und intelligenter Gegner-KI mit vollen 6 Freiheitsgraden. Spieler verwenden gestenbasiertes Zaubern, um robotische Feinde im immersiven Kampf zu bekämpfen."
+      },
+      "meshSlicerGodot": {
+        "title": "Mesh Slicer (Godot)",
+        "description": "Laufzeit-Slicing-Plugin mit Querschnittstexturen und Kräften.",
+        "extendedDescription": "Ein leistungsstarkes Laufzeit-Mesh-Slicing-Plugin für Godot, das das Echtzeit-Schneiden von 3D-Meshes entlang beliebiger Ebenen ermöglicht."
+      },
+      "cppRaytracer": {
+        "title": "C++ Raytracer",
+        "description": "Vulkan + ImGui Raytracer mit Path Tracing und Materialien.",
+        "extendedDescription": "Ein leistungsstarker Raytracer, der von Grund auf in C++ mit Vulkan für GPU-Beschleunigung und ImGui für Echtzeit-Parameteranpassung erstellt wurde."
+      },
+      "vrHorrorPrototype": {
+        "title": "VR-Horror-Prototyp",
+        "description": "VR-Grundlagen, Avatar-Integration, Waffen und Gesten.",
+        "extendedDescription": "Ein VR-Horror-Spielprototyp, der wesentliche Mechaniken für immersive gruselige Erlebnisse erkundet."
+      },
+      "threeDGestureRecognition": {
+        "title": "3D-Gestenerkennung",
+        "description": "$p-Algorithmus auf 3D adaptiert; editierbare Vorlagen und Runtime.",
+        "extendedDescription": "Eine Erweiterung des $P-Gestenerkennungsalgorithmus, angepasst für 3D-Raumerkennung."
+      },
+      "godotOculusPlatform": {
+        "title": "Godot Oculus Plattform",
+        "description": "C++/GDNative Plugin mit OAuth, Räume, Bestenlisten usw.",
+        "extendedDescription": "Ein umfassendes GDNative-Plugin für Godot, das vollen Zugriff auf das Oculus Platform SDK bietet."
+      },
+      "mrEarthViewer": {
+        "title": "MR Earth Viewer",
+        "description": "MR-Erdvisualisierung mit Unity und Bing Maps SDK.",
+        "extendedDescription": "Eine Mixed-Reality-Anwendung, die Satellitenbilder und 3D-Geländedaten in Ihren physischen Raum bringt."
+      },
+      "narakashur": {
+        "title": "Narakashur",
+        "description": "Eigenständiges Wellen-Survival-Spiel für Jio Mixed Reality Brille.",
+        "extendedDescription": "Narakashur ist ein Wellen-Überlebensspiel für Jio Mixed Reality Glasses mit 4 einzigartigen Gegnertypen."
+      },
+      "nirvanaAnimate": {
+        "title": "Nirvana Animate",
+        "description": "3D-Animationssuite für das Web, die Indie-Entwicklern und Studios ermöglicht, direkt im Browser zu riggen, zu retargeten und Animationen zu erstellen."
+      },
+      "etherealEngine": {
+        "title": "IR Engine",
+        "description": "Open-Source-3D-Toolkit für das soziale räumliche Web mit Multiplayer, Avataren, Weltbearbeitung, XR-Unterstützung und WebRTC-Netzwerk."
+      },
+      "assetHub": {
+        "title": "AssetHub",
+        "description": "KI-nativer 3D-Editor für schnelle Iteration von Konzeptkunst zu produktionsreifen 3D-Modellen mit KI-Mesh-Generierung und Texturverfeinerung."
+      },
+      "avatarAsWebsites": {
+        "title": "Avatar als Websites",
+        "description": "System zur Erstellung persönlicher 3D-Avatare und deren Umwandlung in interaktive Portfolio-Seiten im Web."
+      }
+    }
+  }
+}

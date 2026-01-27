@@ -1,0 +1,78 @@
+{
+  "sections": {
+    "resume": "रिज्यूमे",
+    "portfolio": "पोर्टफोलियो",
+    "services": "सेवाएं",
+    "contact": "संपर्क",
+    "chat": "चैट",
+    "controls": "नियंत्रण",
+    "settings": "सेटिंग्स",
+    "audio": "ऑडियो",
+    "language": "भाषा",
+    "accessibility": "पहुंच-योग्यता"
+  },
+  "labels": {
+    "email": "ईमेल:",
+    "city": "शहर:",
+    "phone": "फ़ोन:",
+    "website": "वेबसाइट:",
+    "freelance": "फ्रीलांस:"
+  },
+  "settings": {
+    "ariaLabel": "सेटिंग्स खोलें",
+    "audio": {
+      "masterVolume": "मास्टर वॉल्यूम",
+      "autoPlay": "ऑटो-प्ले ऑडियो"
+    },
+    "language": {
+      "interfaceLanguage": "इंटरफेस भाषा"
+    },
+    "accessibility": {
+      "reduceMotion": "गति कम करें"
+    }
+  },
+  "contact": {
+    "form": {
+      "namePlaceholder": "आपका नाम",
+      "emailPlaceholder": "ईमेल",
+      "messagePlaceholder": "संदेश",
+      "sendButton": "भेजें",
+      "messageSent": "संदेश भेजा गया",
+      "errorMessage": "संदेश भेजने में विफल। कृपया पुनः प्रयास करें।",
+      "sendingButton": "भेज रहा है..."
+    }
+  },
+  "chat": {
+    "controls": {
+      "microphone": {
+        "enable": "वॉयस डिटेक्शन सक्षम करें",
+        "vadListening": "VAD सुन रहा है - STT शुरू करने के लिए बोलें",
+        "voiceDetected": "आवाज़ पकड़ी गई - STT सक्रिय"
+      },
+      "cloudMode": {
+        "switchToLocal": "लोकल मोड में स्विच करें",
+        "switchToCloud": "क्लाउड मोड में स्विच करें"
+      },
+      "bargeIn": {
+        "enable": "बार्ज-इन सक्षम करें",
+        "disable": "बार्ज-इन अक्षम करें"
+      },
+      "autoSubmit": {
+        "enable": "ऑटो-सबमिट सक्षम करें",
+        "disable": "ऑटो-सबमिट अक्षम करें"
+      },
+      "agent": {
+        "enable": "एजेंट मोड सक्षम करें",
+        "disable": "एजेंट मोड अक्षम करें"
+      },
+      "arMode": "AR मोड में प्रवेश करें"
+    },
+    "input": {
+      "placeholder": "यहाँ अपना संदेश टाइप करें...",
+      "listening": "🎤 सुन रहे हैं...",
+      "sttReady": "🎤 STT तैयार - अब बोलें",
+      "starting": "🎤 शुरू हो रहा है..."
+    },
+    "controlsLabel": "नियंत्रण"
+  }
+}

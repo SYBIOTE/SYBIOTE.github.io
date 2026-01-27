@@ -1,0 +1,78 @@
+{
+  "sections": {
+    "resume": "Lebenslauf",
+    "portfolio": "Portfolio",
+    "services": "Dienstleistungen",
+    "contact": "Kontakt",
+    "chat": "Chat",
+    "controls": "Steuerung",
+    "settings": "Einstellungen",
+    "audio": "Audio",
+    "language": "Sprache",
+    "accessibility": "Barrierefreiheit"
+  },
+  "labels": {
+    "email": "E-Mail:",
+    "city": "Stadt:",
+    "phone": "Telefon:",
+    "website": "Website:",
+    "freelance": "Freelance:"
+  },
+  "settings": {
+    "ariaLabel": "Einstellungen öffnen",
+    "audio": {
+      "masterVolume": "Master-Lautstärke",
+      "autoPlay": "Audio automatisch abspielen"
+    },
+    "language": {
+      "interfaceLanguage": "Interface-Sprache"
+    },
+    "accessibility": {
+      "reduceMotion": "Bewegung reduzieren"
+    }
+  },
+  "contact": {
+    "form": {
+      "namePlaceholder": "Ihr Name",
+      "emailPlaceholder": "E-Mail",
+      "messagePlaceholder": "Nachricht",
+      "sendButton": "Senden",
+      "messageSent": "Nachricht gesendet",
+      "errorMessage": "Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es erneut.",
+      "sendingButton": "Wird gesendet..."
+    }
+  },
+  "chat": {
+    "controls": {
+      "microphone": {
+        "enable": "Spracherkennung aktivieren",
+        "vadListening": "VAD hört zu - Sprechen Sie, um STT zu starten",
+        "voiceDetected": "Stimme erkannt - STT aktiv"
+      },
+      "cloudMode": {
+        "switchToLocal": "Zu lokalem Modus wechseln",
+        "switchToCloud": "Zu Cloud-Modus wechseln"
+      },
+      "bargeIn": {
+        "enable": "Unterbrechung aktivieren",
+        "disable": "Unterbrechung deaktivieren"
+      },
+      "autoSubmit": {
+        "enable": "Automatisches Senden aktivieren",
+        "disable": "Automatisches Senden deaktivieren"
+      },
+      "agent": {
+        "enable": "Agent-Modus aktivieren",
+        "disable": "Agent-Modus deaktivieren"
+      },
+      "arMode": "AR-Modus betreten"
+    },
+    "input": {
+      "placeholder": "Geben Sie hier Ihre Nachricht ein...",
+      "listening": "🎤 Hört zu...",
+      "sttReady": "🎤 STT bereit - Sprechen Sie jetzt",
+      "starting": "🎤 Startet..."
+    },
+    "controlsLabel": "Steuerung"
+  }
+}

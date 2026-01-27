@@ -1,0 +1,78 @@
+{
+  "sections": {
+    "resume": "Resume",
+    "portfolio": "Portfolio",
+    "services": "Services",
+    "contact": "Contact",
+    "chat": "Chat",
+    "controls": "Controls",
+    "settings": "Settings",
+    "audio": "Audio",
+    "language": "Language",
+    "accessibility": "Accessibility"
+  },
+  "labels": {
+    "email": "Email:",
+    "city": "City:",
+    "website": "Website:",
+    "phone": "Phone:",
+    "freelance": "Freelance:"
+  },
+  "settings": {
+    "ariaLabel": "Open settings",
+    "audio": {
+      "masterVolume": "Master Volume",
+      "autoPlay": "Auto-play Audio"
+    },
+    "language": {
+      "interfaceLanguage": "Interface Language"
+    },
+    "accessibility": {
+      "reduceMotion": "Reduce Motion"
+    }
+  },
+  "contact": {
+    "form": {
+      "namePlaceholder": "Your name",
+      "emailPlaceholder": "Email",
+      "messagePlaceholder": "Message",
+      "sendButton": "Send",
+      "messageSent": "Message sent",
+      "errorMessage": "Failed to send message. Please try again.",
+      "sendingButton": "Sending..."
+    }
+  },
+  "chat": {
+    "controls": {
+      "microphone": {
+        "enable": "Enable Voice Detection",
+        "vadListening": "VAD Listening - Speak to Start STT",
+        "voiceDetected": "Voice Detected - STT Active"
+      },
+      "cloudMode": {
+        "switchToLocal": "Switch to Local Mode",
+        "switchToCloud": "Switch to Cloud Mode"
+      },
+      "bargeIn": {
+        "enable": "Enable Barge-in",
+        "disable": "Disable Barge-in"
+      },
+      "autoSubmit": {
+        "enable": "Enable Auto-submit",
+        "disable": "Disable Auto-submit"
+      },
+      "agent": {
+        "enable": "Enable Agent Mode",
+        "disable": "Disable Agent Mode"
+      },
+      "arMode": "Enter AR Mode"
+    },
+    "input": {
+      "placeholder": "Type your message here...",
+      "listening": "🎤 Listening...",
+      "sttReady": "🎤 STT Ready - Speak now",
+      "starting": "🎤 Starting..."
+    },
+    "controlsLabel": "Controls"
+  }
+}

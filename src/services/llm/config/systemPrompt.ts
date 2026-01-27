@@ -1,5 +1,7 @@
 // Import i18n instance directly
 import i18n from '../../../i18n/i18n'
+// Import content directly to dynamically extract all keys
+import enContent from '../../../i18n/locales/content/en.json'
 
 // Default system prompt values (fallback if i18n keys are missing)
 const DEFAULT_VALUES = {
@@ -13,95 +15,49 @@ const DEFAULT_VALUES = {
     degree: "Bachelor's in Computer Engineering & Honours in Artificial Intelligence",
     institution: 'Army Institute of Technology, Pune, India (CGPA: 8.84)',
     period: '2019-2023'
-  },
-  jobs: {
-    infiniteReality: {
-      title: 'WebXR Engineer — Infinite Reality',
-      achievements: [
-        'Co-led client-side scripting system with Monaco Editor integration',
-        'Designed 2D/3D UI components, improving usability by 35%',
-        'Built high-precision 3D gizmos, increasing editing speed by 50%+'
-      ]
-    },
-    etherealEngine: {
-      title: 'WebXR Engineer — Ethereal Engine (acq. by Infinite Reality)',
-      achievements: [
-        'Migrated backend from Express to Koa, -60% API response times, 3× throughput',
-        'Led UI overhaul aligning with modern UX standards',
-        'Architected visual scripting system enabling non-programmer workflows'
-      ]
-    },
-    metawarp: {
-      title: 'XR Application Developer — Metawarp',
-      achievements: [
-        'Developed XR and GIS applications',
-        'Mixed Reality disassembly/assembly workflows in Unity',
-        'VR map visualization and 3D annotations in Unreal',
-        'Optimized VR/MR apps to run at 72Hz'
-      ]
-    },
-    jioTesseract: {
-      title: 'XR Application Developer — Jio Tesseract',
-      achievements: [
-        'Shipped a standalone wave survival game "Narakashur"',
-        'Designed 4 unique enemies; built wave system, UI, global leaderboard',
-        'Leveraged device hardware for unique player mechanics'
-      ]
-    },
-    prodigalTech: {
-      title: 'Backend Engineer — Prodigal Tech (YC S18)',
-      achievements: [
-        'Developed and maintained ETL pipelines',
-        'Automations covering 70%+ of technical operations',
-        'Data quality improvements: backfilled 200k+ missed audio files',
-        'On-call in a team of 5 engineers'
-      ]
-    }
-  },
-  projects: {
-    godotDojo: {
-      title: 'Godot Dojo',
-      description: 'Core developer on XR/VR demos enhancing Godot\'s XR functionality.'
-    },
-    wizardVsRobot: {
-      title: 'Wizard vs Robot',
-      description: 'VR locomotion, enemy AI with 6DoF, gesture-based movement.'
-    },
-    meshSlicerGodot: {
-      title: 'Mesh Slicer (Godot)',
-      description: 'Runtime slicing plugin with cross-section textures and forces.'
-    },
-    cppRaytracer: {
-      title: 'C++ Raytracer',
-      description: 'Vulkan + ImGui ray tracer with path tracing and materials.'
-    },
-    vrHorrorPrototype: {
-      title: 'VR Horror Prototype',
-      description: 'VR essentials, avatar integration, weapons and gestures.'
-    },
-    threeDGestureRecognition: {
-      title: '3D Gesture Recognition',
-      description: 'Adapted $p algorithm to 3D with authorable templates.'
-    },
-    godotOculusPlatform: {
-      title: 'Godot Oculus Platform',
-      description: 'C++/GDNative plugin exposing OAuth, rooms, leaderboards, etc.'
-    },
-    mrEarthViewer: {
-      title: 'MR Earth Viewer',
-      description: 'MR Earth visualization built with Unity and Bing Maps SDK.'
-    },
-    narakashur: {
-      title: 'Narakashur',
-      description: 'Standalone wave survival game for Jio Mixed Reality Glasses.'
-    }
-  },
-  achievements: {
-    godotDojo: 'Founding Member of Godot Dojo',
-    gameClub: 'Founder, Game Development and Extended Reality club',
-    codingChallenge: 'Credit Suisse Global Coding Challenge 3.0 — Global rank 102',
-    armyAward: 'Indian Army Tech Excellence Award — Developed a hybrid AI/algorithm-based camouflage pattern generation tool, deployed across India',
-    interests: 'Interests: XR tech news, Japanese, research papers'
+  }
+}
+
+// Type guard for object with string keys
+const isRecord = (value: unknown): value is Record<string, unknown> => {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+// Helper to dynamically get all job keys from content
+const getAllJobKeys = (): string[] => {
+  try {
+    const content = enContent as Record<string, unknown>
+    const resume = isRecord(content.resume) ? content.resume : null
+    const experience = resume && isRecord(resume.experience) ? resume.experience : null
+    const jobs = experience && isRecord(experience.jobs) ? experience.jobs : null
+    return jobs ? Object.keys(jobs) : []
+  } catch {
+    return []
+  }
+}
+
+// Helper to dynamically get all project keys from content
+const getAllProjectKeys = (): string[] => {
+  try {
+    const content = enContent as Record<string, unknown>
+    const portfolio = isRecord(content.portfolio) ? content.portfolio : null
+    const items = portfolio && isRecord(portfolio.items) ? portfolio.items : null
+    return items ? Object.keys(items) : []
+  } catch {
+    return []
+  }
+}
+
+// Helper to dynamically get all achievement keys from content
+const getAllAchievementKeys = (): string[] => {
+  try {
+    const content = enContent as Record<string, unknown>
+    const resume = isRecord(content.resume) ? content.resume : null
+    const leadership = resume && isRecord(resume.leadership) ? resume.leadership : null
+    const items = leadership && isRecord(leadership.items) ? leadership.items : null
+    return items ? Object.keys(items) : []
+  } catch {
+    return []
   }
 }
 
@@ -115,19 +71,23 @@ const getTranslatedValue = (key: string, fallback: string): string => {
   }
 }
 
-// Helper function to get translated achievements array or fallback to defaults
-const getTranslatedAchievements = (jobKey: string, fallbackAchievements: string[]): string[] => {
+// Helper function to get translated achievements array dynamically
+const getTranslatedAchievements = (jobKey: string): string[] => {
   try {
     const achievements: string[] = []
-    fallbackAchievements.forEach((_, index) => {
-      const achievement = i18n.t(`resume.experience.jobs.${jobKey}.achievements.${index}`)
-      if (achievement) {
-        achievements.push(achievement)
+    let index = 0
+    while (true) {
+      const achievement = i18n.t(`resume.experience.jobs.${jobKey}.achievements.${index}`, { returnObjects: false })
+      // If we get the key back unchanged, we've reached the end
+      if (!achievement || achievement === `resume.experience.jobs.${jobKey}.achievements.${index}`) {
+        break
       }
-    })
-    return achievements.length > 0 ? achievements : fallbackAchievements
+      achievements.push(achievement)
+      index++
+    }
+    return achievements
   } catch {
-    return fallbackAchievements
+    return []
   }
 }
   // Helper to build personal info section
@@ -148,28 +108,37 @@ const buildEducation = (degree: string, institution: string, period: string) =>
 - ${institution}
 - Period: ${period}`
 
-// Helper to build experience section
-const buildExperience = (jobs: any) => {
-  const experienceList = Object.entries(jobs).map(([key, job]: [string, any]) =>
-    `- **${getTranslatedValue(`resume.experience.jobs.${key}.title`, job.title)}**: ${getTranslatedAchievements(key, job.achievements).join(', ')}`
-  ).join('\n')
-  return `**Professional Experience:**\n${experienceList}`
+// Helper to build experience section dynamically
+const buildExperience = () => {
+  const jobKeys = getAllJobKeys()
+  const experienceList = jobKeys.map((key) => {
+    const title = getTranslatedValue(`resume.experience.jobs.${key}.title`, '')
+    const achievements = getTranslatedAchievements(key)
+    return title && achievements.length > 0 ? `- **${title}**: ${achievements.join(', ')}` : null
+  }).filter((item): item is string => item !== null)
+  return `**Professional Experience:**\n${experienceList.join('\n')}`
 }
 
-// Helper to build projects section
-const buildProjects = (projects: any) => {
-  const projectList = Object.entries(projects).map(([key, project]: [string, any]) =>
-    `- **${getTranslatedValue(`portfolio.items.${key}.title`, project.title)}**: ${getTranslatedValue(`portfolio.items.${key}.description`, project.description)}`
-  ).join('\n')
-  return `**Key Projects:**\n${projectList}`
+// Helper to build projects section dynamically
+const buildProjects = () => {
+  const projectKeys = getAllProjectKeys()
+  const projectList = projectKeys.map((key) => {
+    const title = getTranslatedValue(`portfolio.items.${key}.title`, '')
+    const description = getTranslatedValue(`portfolio.items.${key}.description`, '')
+    return title && description ? `- **${title}**: ${description}` : null
+  }).filter((item): item is string => item !== null)
+  return `**Key Projects:**\n${projectList.join('\n')}`
 }
 
-// Helper to build achievements section
-const buildAchievements = (achievements: any) => {
-  const achievementList = Object.entries(achievements).map(([key, value]) =>
-    `- ${getTranslatedValue(`resume.leadership.items.${key}`, String(value))}`
-  ).join('\n')
-  return `**Leadership & Achievements:**\n${achievementList}`
+// Helper to build achievements section dynamically
+const buildAchievements = () => {
+  const achievementKeys = getAllAchievementKeys()
+  const achievementList = achievementKeys.map((key) => {
+    // Achievements have a "text" field in the structure
+    const value = getTranslatedValue(`resume.leadership.items.${key}.text`, '')
+    return value ? `- ${value}` : null
+  }).filter((item): item is string => item !== null)
+  return `**Leadership & Achievements:**\n${achievementList.join('\n')}`
 }
   
   // Function to construct system prompt using i18n keys with fallback to defaults
@@ -216,11 +185,11 @@ ${buildPersonalInfo(name, role, city, email, phone, freelance)}
 
 ${buildEducation(degree, institution, period)}
 
-${buildExperience(DEFAULT_VALUES.jobs)}
+${buildExperience()}
 
-${buildProjects(DEFAULT_VALUES.projects)}
+${buildProjects()}
 
-${buildAchievements(DEFAULT_VALUES.achievements)}
+${buildAchievements()}
 
 ${roleSection}`
 }
@@ -264,17 +233,20 @@ export const buildSystemPromptJSON = (): string => {
       "ECS and networking",
       "XR workflows"
     ],
-    experience: Object.entries(DEFAULT_VALUES.jobs).map(([key, job]) => ({
-      company: getTranslatedValue(`resume.experience.jobs.${key}.title`, job.title),
-      achievements: getTranslatedAchievements(key, job.achievements)
-    })),
-    projects: Object.entries(DEFAULT_VALUES.projects).map(([key, project]) => ({
-      name: getTranslatedValue(`portfolio.items.${key}.title`, project.title),
-      description: getTranslatedValue(`portfolio.items.${key}.description`, project.description)
-    })),
-    achievements: Object.entries(DEFAULT_VALUES.achievements).map(([key, value]) => 
-      getTranslatedValue(`resume.leadership.items.${key}`, String(value))
-    ),
+    experience: getAllJobKeys().map((key) => {
+      const title = getTranslatedValue(`resume.experience.jobs.${key}.title`, '')
+      const achievements = getTranslatedAchievements(key)
+      return { company: title, achievements }
+    }).filter(job => job.company && job.achievements.length > 0),
+    projects: getAllProjectKeys().map((key) => {
+      const title = getTranslatedValue(`portfolio.items.${key}.title`, '')
+      const description = getTranslatedValue(`portfolio.items.${key}.description`, '')
+      return { name: title, description }
+    }).filter(project => project.name && project.description),
+    achievements: getAllAchievementKeys().map((key) => {
+      // Achievements have a "text" field in the structure
+      return getTranslatedValue(`resume.leadership.items.${key}.text`, '')
+    }).filter((achievement): achievement is string => achievement !== ''),
     behavior_guidelines: [
       "Speak in the first person as if you are Rahul, but clarify you are an AI representation",
       "Keep responses brief and concise. Answer directly without unnecessary elaboration",

@@ -1,0 +1,78 @@
+{
+  "sections": {
+    "resume": "Currículum",
+    "portfolio": "Portafolio",
+    "services": "Servicios",
+    "contact": "Contacto",
+    "chat": "Chat",
+    "controls": "Controles",
+    "settings": "Configuración",
+    "audio": "Audio",
+    "language": "Idioma",
+    "accessibility": "Accesibilidad"
+  },
+  "labels": {
+    "email": "Correo:",
+    "city": "Ciudad:",
+    "phone": "Teléfono:",
+    "website": "Sitio web:",
+    "freelance": "Freelance:"
+  },
+  "settings": {
+    "ariaLabel": "Abrir configuración",
+    "audio": {
+      "masterVolume": "Volumen Principal",
+      "autoPlay": "Reproducción Automática de Audio"
+    },
+    "language": {
+      "interfaceLanguage": "Idioma de la Interfaz"
+    },
+    "accessibility": {
+      "reduceMotion": "Reducir Movimiento"
+    }
+  },
+  "contact": {
+    "form": {
+      "namePlaceholder": "Tu nombre",
+      "emailPlaceholder": "Correo",
+      "messagePlaceholder": "Mensaje",
+      "sendButton": "Enviar",
+      "messageSent": "Mensaje enviado",
+      "errorMessage": "Error al enviar el mensaje. Por favor, inténtalo de nuevo.",
+      "sendingButton": "Enviando..."
+    }
+  },
+  "chat": {
+    "controls": {
+      "microphone": {
+        "enable": "Habilitar Detección de Voz",
+        "vadListening": "VAD Escuchando - Habla para Iniciar STT",
+        "voiceDetected": "Voz Detectada - STT Activo"
+      },
+      "cloudMode": {
+        "switchToLocal": "Cambiar a Modo Local",
+        "switchToCloud": "Cambiar a Modo Nube"
+      },
+      "bargeIn": {
+        "enable": "Habilitar Interrupción",
+        "disable": "Deshabilitar Interrupción"
+      },
+      "autoSubmit": {
+        "enable": "Habilitar Envío Automático",
+        "disable": "Deshabilitar Envío Automático"
+      },
+      "agent": {
+        "enable": "Habilitar Modo Agente",
+        "disable": "Deshabilitar Modo Agente"
+      },
+      "arMode": "Entrar en Modo AR"
+    },
+    "input": {
+      "placeholder": "Escribe tu mensaje aquí...",
+      "listening": "🎤 Escuchando...",
+      "sttReady": "🎤 STT Listo - Habla ahora",
+      "starting": "🎤 Iniciando..."
+    },
+    "controlsLabel": "Controles"
+  }
+}

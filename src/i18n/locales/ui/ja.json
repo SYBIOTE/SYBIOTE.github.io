@@ -1,0 +1,78 @@
+{
+  "sections": {
+    "resume": "履歴書",
+    "portfolio": "ポートフォリオ",
+    "services": "サービス",
+    "contact": "お問い合わせ",
+    "chat": "チャット",
+    "controls": "コントロール",
+    "settings": "設定",
+    "audio": "オーディオ",
+    "language": "言語",
+    "accessibility": "アクセシビリティ"
+  },
+  "labels": {
+    "email": "メール:",
+    "city": "都市:",
+    "phone": "電話:",
+    "website": "ウェブサイト:",
+    "freelance": "フリーランス:"
+  },
+  "settings": {
+    "ariaLabel": "設定を開く",
+    "audio": {
+      "masterVolume": "マスター音量",
+      "autoPlay": "オーディオ自動再生"
+    },
+    "language": {
+      "interfaceLanguage": "インターフェース言語"
+    },
+    "accessibility": {
+      "reduceMotion": "モーション削減"
+    }
+  },
+  "contact": {
+    "form": {
+      "namePlaceholder": "お名前",
+      "emailPlaceholder": "メール",
+      "messagePlaceholder": "メッセージ",
+      "sendButton": "送信",
+      "messageSent": "メッセージが送信されました",
+      "errorMessage": "メッセージの送信に失敗しました。もう一度お試しください。",
+      "sendingButton": "送信中..."
+    }
+  },
+  "chat": {
+    "controls": {
+      "microphone": {
+        "enable": "音声検出を有効にする",
+        "vadListening": "VAD聞き取り中 - 話してSTTを開始",
+        "voiceDetected": "音声検出 - STTアクティブ"
+      },
+      "cloudMode": {
+        "switchToLocal": "ローカルモードに切り替え",
+        "switchToCloud": "クラウドモードに切り替え"
+      },
+      "bargeIn": {
+        "enable": "割り込みを有効にする",
+        "disable": "割り込みを無効にする"
+      },
+      "autoSubmit": {
+        "enable": "自動送信を有効にする",
+        "disable": "自動送信を無効にする"
+      },
+      "agent": {
+        "enable": "エージェントモードを有効にする",
+        "disable": "エージェントモードを無効にする"
+      },
+      "arMode": "ARモードに入る"
+    },
+    "input": {
+      "placeholder": "ここにメッセージを入力してください...",
+      "listening": "🎤 聞き取り中...",
+      "sttReady": "🎤 STT準備完了 - 今話してください",
+      "starting": "🎤 開始中..."
+    },
+    "controlsLabel": "コントロール"
+  }
+}

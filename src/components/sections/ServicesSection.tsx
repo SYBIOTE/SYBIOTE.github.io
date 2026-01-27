@@ -43,14 +43,13 @@ export const ServicesSection = () => {
   const { t } = useTranslation()
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   
-  const services = [
-    { id: 'gameDevelopment', name: t('services.items.gameDevelopment.name'), desc: t('services.items.gameDevelopment.desc') },
-    { id: 'xrDevelopment', name: t('services.items.xrDevelopment.name'), desc: t('services.items.xrDevelopment.desc') },
-    { id: 'gameEngineProgramming', name: t('services.items.gameEngineProgramming.name'), desc: t('services.items.gameEngineProgramming.desc') },
-    { id: '3dModelling', name: t('services.items.3dModelling.name'), desc: t('services.items.3dModelling.desc') },
-    { id: 'gameBackend', name: t('services.items.gameBackend.name'), desc: t('services.items.gameBackend.desc') },
-    { id: 'gameTesting', name: t('services.items.gameTesting.name'), desc: t('services.items.gameTesting.desc') }
-  ]
+  // Dynamically read services from i18n
+  const servicesData = t("services.items", { returnObjects: true }) as Record<string, { name: string; desc: string }>
+  const services = Object.entries(servicesData).map(([id, item]) => ({
+    id,
+    name: item.name,
+    desc: item.desc
+  }))
 
   return (
     <div style={container}  className='no-scrollbar'>

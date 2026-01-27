@@ -1,0 +1,32 @@
+{
+  "jobs": [
+    {
+      "id": "assethub",
+      "order": 1
+    },
+    {
+      "id": "nirvanaxr",
+      "order": 2
+    },
+    {
+      "id": "infiniteReality",
+      "order": 3
+    },
+    {
+      "id": "etherealEngine",
+      "order": 4
+    },
+    {
+      "id": "metawarp",
+      "order": 5
+    },
+    {
+      "id": "jioTesseract",
+      "order": 6
+    },
+    {
+      "id": "prodigalTech",
+      "order": 7
+    }
+  ]
+}

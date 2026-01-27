@@ -1,5 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
+import type { ExperienceJob, LeadershipItem } from '../../content/types'
+import { useResumeData, getSortedJobs } from '../../content/useContent'
 
 const container: CSSProperties = {
   width: '100%',
@@ -173,6 +175,7 @@ const LeadershipList = ({ items }: LeadershipListProps) => (
 
 export const ResumeSection = () => {
   const { t } = useTranslation()
+  const resumeData = useResumeData()
   
   // Data preparation
   const contactItems = [
@@ -181,54 +184,33 @@ export const ResumeSection = () => {
     { label: 'email', value: t("core.email"), isEmail: true }
   ]
 
-  const leadershipItems = [
-    {
-      text: t("resume.leadership.items.godotDojo"),
-      link: { url: "https://github.com/Godot-Dojo", label: "link" }
-    },
-    {
-      text: t("resume.leadership.items.gameClub"),
-      link: { url: "https://youtu.be/HeLcvAUvC6U", label: "video" }
-    },
-    { text: t("resume.leadership.items.codingChallenge") },
-    { text: t("resume.leadership.items.armyAward") },
-    {
-      text: t("resume.leadership.items.arProgram"),
-      link: { url: "https://drive.google.com/file/d/1H37C3t_RPoISL1FuQ4TYG1dktKXXzbNB/view?usp=sharing", label: "certificate" }
-    },
-    {
-      text: t("resume.leadership.items.googleCloud"),
-      link: { url: "https://www.cloudskillsboost.google/public_profiles/d7e0f762-b53d-4ce8-aa1c-06e9a37029a5", label: "profile" }
-    },
-    { text: t("resume.leadership.items.interests") }
-  ]
+  // Dynamically read leadership items from i18n
+  const leadershipData = t("resume.leadership.items", { returnObjects: true }) as Record<string, LeadershipItem>
+  const leadershipItems = Object.entries(leadershipData).map(([, item]) => ({
+    text: item.text,
+    link: item.link ? { url: item.link, label: item.linkLabel || 'link' } : undefined
+  }))
 
-  const experienceJobs = [
-    {
-      title: t("resume.experience.jobs.infiniteReality.title"),
-      period: t("resume.experience.jobs.infiniteReality.period"),
-      achievements: t("resume.experience.jobs.infiniteReality.achievements", { returnObjects: true }) as string[]
-    },
-    {
-      title: t("resume.experience.jobs.etherealEngine.title"),
-      period: t("resume.experience.jobs.etherealEngine.period"),
-      achievements: t("resume.experience.jobs.etherealEngine.achievements", { returnObjects: true }) as string[]
-    },
-    {
-      title: t("resume.experience.jobs.metawarp.title"),
-      period: t("resume.experience.jobs.metawarp.period"),
-      achievements: t("resume.experience.jobs.metawarp.achievements", { returnObjects: true }) as string[]
-    },
-    {
-      title: t("resume.experience.jobs.jioTesseract.title"),
-      period: t("resume.experience.jobs.jioTesseract.period"),
-      achievements: t("resume.experience.jobs.jioTesseract.achievements", { returnObjects: true }) as string[]
-    },
-    {
-      title: t("resume.experience.jobs.prodigalTech.title"),
-      period: t("resume.experience.jobs.prodigalTech.period"),
-      achievements: t("resume.experience.jobs.prodigalTech.achievements", { returnObjects: true }) as string[]
+  // Dynamically read jobs from i18n and sort by resume.json order
+  const jobsData = t("resume.experience.jobs", { returnObjects: true }) as Record<string, ExperienceJob>
+  const sortedJobs = getSortedJobs(resumeData)
+  const orderedJobIds = sortedJobs.map(j => j.id)
+  
+  // Create a map for quick lookup
+  const jobsMap = Object.entries(jobsData).reduce((acc, [key, job]) => {
+    acc[key] = {
+      key,
+      title: job.title,
+      period: job.period,
+      achievements: job.achievements || []
     }
+    return acc
+  }, {} as Record<string, { key: string; title: string; period: string; achievements: string[] }>)
+  
+  // Sort jobs according to resume.json order, then add any jobs not in the order list
+  const experienceJobs = [
+    ...orderedJobIds.filter(id => jobsMap[id]).map(id => jobsMap[id]),
+    ...Object.values(jobsMap).filter(job => !orderedJobIds.includes(job.key))
   ]
   
   return (
@@ -256,9 +238,9 @@ export const ResumeSection = () => {
 
       <SectionCard title={t("resume.experience.title")}>
         <div style={{ paddingTop: '0.25rem' }}>
-          {experienceJobs.map((job, index) => (
+          {experienceJobs.map((job) => (
             <ExperienceItem
-              key={index}
+              key={job.key}
               title={job.title}
               period={job.period}
               achievements={job.achievements}

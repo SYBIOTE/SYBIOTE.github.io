@@ -1,0 +1,78 @@
+{
+  "sections": {
+    "resume": "CV",
+    "portfolio": "Portfolio",
+    "services": "Services",
+    "contact": "Contact",
+    "chat": "Chat",
+    "controls": "Contrôles",
+    "settings": "Paramètres",
+    "audio": "Audio",
+    "language": "Langue",
+    "accessibility": "Accessibilité"
+  },
+  "labels": {
+    "email": "Email :",
+    "city": "Ville :",
+    "phone": "Téléphone :",
+    "website": "Site web :",
+    "freelance": "Freelance :"
+  },
+  "settings": {
+    "ariaLabel": "Ouvrir les paramètres",
+    "audio": {
+      "masterVolume": "Volume Principal",
+      "autoPlay": "Lecture Automatique Audio"
+    },
+    "language": {
+      "interfaceLanguage": "Langue de l'Interface"
+    },
+    "accessibility": {
+      "reduceMotion": "Réduire le Mouvement"
+    }
+  },
+  "contact": {
+    "form": {
+      "namePlaceholder": "Votre nom",
+      "emailPlaceholder": "Email",
+      "messagePlaceholder": "Message",
+      "sendButton": "Envoyer",
+      "messageSent": "Message envoyé",
+      "errorMessage": "Échec de l'envoi du message. Veuillez réessayer.",
+      "sendingButton": "Envoi en cours..."
+    }
+  },
+  "chat": {
+    "controls": {
+      "microphone": {
+        "enable": "Activer la Détection Vocale",
+        "vadListening": "VAD en Écoute - Parlez pour Démarrer STT",
+        "voiceDetected": "Voix Détectée - STT Actif"
+      },
+      "cloudMode": {
+        "switchToLocal": "Passer en Mode Local",
+        "switchToCloud": "Passer en Mode Cloud"
+      },
+      "bargeIn": {
+        "enable": "Activer l'Interruption",
+        "disable": "Désactiver l'Interruption"
+      },
+      "autoSubmit": {
+        "enable": "Activer l'Envoi Automatique",
+        "disable": "Désactiver l'Envoi Automatique"
+      },
+      "agent": {
+        "enable": "Activer le Mode Agent",
+        "disable": "Désactiver le Mode Agent"
+      },
+      "arMode": "Entrer en Mode AR"
+    },
+    "input": {
+      "placeholder": "Tapez votre message ici...",
+      "listening": "🎤 En écoute...",
+      "sttReady": "🎤 STT Prêt - Parlez maintenant",
+      "starting": "🎤 Démarrage..."
+    },
+    "controlsLabel": "Contrôles"
+  }
+}

@@ -1,0 +1,215 @@
+{
+  "items": [
+    {
+      "id": "nirvanaAnimate",
+      "image": "/assets/img/portfolio/animate/home.png",
+      "order": 1,
+      "videoId": "EbdERCpuk0w",
+      "videos": [
+        "D-xPP4cuy94"
+      ],
+      "gallery": [
+        "/assets/img/portfolio/animate/tools.png"
+      ],
+      "links": [
+        {
+          "type": "website",
+          "url": "https://animate.nirvanaxr.com/"
+        }
+      ]
+    },
+    {
+      "id": "etherealEngine",
+      "image": "/assets/img/portfolio/engine/IREnginelogo.png",
+      "order": 2,
+      "videoId": "NqCLg1R0odk",
+      "links": [
+        {
+          "type": "github",
+          "url": "https://github.com/ir-engine/ir-engine"
+        }
+      ]
+    },
+    {
+      "id": "assetHub",
+      "image": "/assets/img/portfolio/assethub/home.png",
+      "order": 3,
+      "gallery": [
+        "/assets/img/portfolio/assethub/workflow.png",
+        "/assets/img/portfolio/assethub/texturing.png",
+        "/assets/img/portfolio/assethub/inventory.png"
+      ],
+      "links": [
+        {
+          "type": "website",
+          "url": "https://app.assethub.io/"
+        }
+      ]
+    },
+    {
+      "id": "avatarAsWebsites",
+      "image": "/assets/img/portfolio/nirvanaXR.png",
+      "order": 4,
+      "links": [
+        {
+          "type": "website",
+          "url": "https://nirvanaxr.com/"
+        }
+      ]
+    },
+    {
+      "id": "godotProjects",
+      "order": 10,
+      "image": "/assets/img/portfolio/godot/godot.webp",
+      "type": "folder",
+      "children": [
+        "vrHorrorPrototype",
+        "meshSlicerGodot",
+        "godotOculusPlatform",
+        "threeDGestureRecognition",
+        "godotDojo",
+        "wizardVsRobot"
+      ]
+    },
+    {
+      "id": "otherProjects",
+      "image": "/assets/img/portfolio/other/raytracer.png",
+      "order": 11,
+      "type": "folder",
+      "children": [
+        "cppRaytracer",
+        "mrEarthViewer",
+        "narakashur"
+      ]
+    },
+    {
+      "id": "cppRaytracer",
+      "image": "/assets/img/portfolio/other/raytracer.png",
+      "videoId": "oMT4qSkk8t0",
+      "order": 100,
+      "links": [
+        {
+          "type": "github",
+          "url": "https://github.com/sybiote/cpp-raytracer"
+        },
+        {
+          "type": "youtube",
+          "url": "https://www.youtube.com/watch?v=oMT4qSkk8t0"
+        }
+      ]
+    },
+    {
+      "id": "vrHorrorPrototype",
+      "image": "/assets/img/portfolio/godot/horrorVRproject.jpeg",
+      "videoId": "2wMWHahEMK8",
+      "order": 101,
+      "links": [
+        {
+          "type": "youtube",
+          "url": "https://www.youtube.com/watch?v=2wMWHahEMK8"
+        }
+      ]
+    },
+    {
+      "id": "mrEarthViewer",
+      "image": "/assets/img/portfolio/other/earth.jpeg",
+      "videoId": "CneYyg4q_gE",
+      "order": 102,
+      "links": [
+        {
+          "type": "youtube",
+          "url": "https://www.youtube.com/watch?v=CneYyg4q_gE"
+        }
+      ]
+    },
+    {
+      "id": "narakashur",
+      "image": "/assets/img/portfolio/other/narakashur.png",
+      "order": 103,
+      "gallery": [
+        "/assets/img/portfolio/other/narakashur_page.jpg"
+      ],
+      "links": [
+        {
+          "type": "website",
+          "url": "https://jiotesseract.com/narakashur"
+        }
+      ]
+    },
+    {
+      "id": "meshSlicerGodot",
+      "image": "/assets/img/portfolio/godot/meshslicing.jpeg",
+      "videoId": "ynZVK_XyaRc",
+      "order": 104,
+      "links": [
+        {
+          "type": "github",
+          "url": "https://github.com/Godot-Dojo/mesh-slicer"
+        },
+        {
+          "type": "youtube",
+          "url": "https://www.youtube.com/watch?v=ynZVK_XyaRc"
+        }
+      ]
+    },
+    {
+      "id": "godotOculusPlatform",
+      "image": "/assets/img/portfolio/godot/GodotOculusPlugin.png",
+      "order": 105,
+      "links": [
+        {
+          "type": "github",
+          "url": "https://github.com/sybiote/godot-oculus-platform"
+        }
+      ]
+    },
+    {
+      "id": "threeDGestureRecognition",
+      "image": "/assets/img/portfolio/godot/elementbending.jpeg",
+      "videoId": "6Rnb6alUAG8",
+      "order": 106,
+      "links": [
+        {
+          "type": "github",
+          "url": "https://github.com/sybiote/3d-gesture-recognition"
+        },
+        {
+          "type": "youtube",
+          "url": "https://www.youtube.com/watch?v=6Rnb6alUAG8"
+        }
+      ]
+    },
+    {
+      "id": "godotDojo",
+      "image": "/assets/img/portfolio/godot/boids.jpeg",
+      "videoId": "5kpkPr0dcss",
+      "order": 107,
+      "links": [
+        {
+          "type": "github",
+          "url": "https://github.com/Godot-Dojo"
+        },
+        {
+          "type": "youtube",
+          "url": "https://www.youtube.com/watch?v=5kpkPr0dcss"
+        }
+      ]
+    },
+    {
+      "id": "wizardVsRobot",
+      "image": "https://img.itch.zone/aW1nLzczMDg1NTYuanBn/347x500/lco4FY.jpg",
+      "videoId": "BMQzoFrCdbk",
+      "order": 108,
+      "links": [
+        {
+          "type": "itch",
+          "url": "https://itch.io/wizardvsrobot"
+        },
+        {
+          "type": "youtube",
+          "url": "https://www.youtube.com/watch?v=BMQzoFrCdbk"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,222 @@
+{
+  "core": {
+    "name": "Rahul Ghosh",
+    "email": "ghoshr698@gmail.com",
+    "phone": "+91 9051186767",
+    "city": "Bengaluru, India",
+    "website": "https://rahulghosh.is-a.dev/",
+    "freelance": "利用可能",
+    "role": "Web 3Dエンジニア"
+  },
+  "profile": {
+    "about": {
+      "title": "について",
+      "summary": "3Dウェブのために出荷します。",
+      "quote": "出荷し、売り、スケールする"
+    }
+  },
+  "contact": {
+    "description": "Web向けの3Dソフトウェアを構築中で、トップのWeb 3Dエンジニアが必要ですか？メッセージをお送りください。"
+  },
+  "resume": {
+    "summary": {
+      "title": "概要",
+      "content": "私はユーザーを顧客に変換する、スケーラブルで高性能な空間システムを構築します。\n出荷し、売り、スケールするWebベースの3Dが必要な時にお声がけください。"
+    },
+    "education": {
+      "title": "教育",
+      "degree": "コンピュータ工学学士号および人工知能優等学位",
+      "institution": "Army Institute of Technology, Pune, India — CGPA 8.84",
+      "period": "2019 — 2023"
+    },
+    "leadership": {
+      "title": "リーダーシップと実績",
+      "items": {
+        "godotDojo": {
+          "text": "Godot Dojo創設メンバー",
+          "link": "https://github.com/Godot-Dojo",
+          "linkLabel": "link"
+        },
+        "gameClub": {
+          "text": "創設者、ゲーム開発・拡張現実クラブ",
+          "link": "https://youtu.be/HeLcvAUvC6U",
+          "linkLabel": "video"
+        },
+        "codingChallenge": {
+          "text": "Credit Suisse Global Coding Challenge 3.0 — 世界ランク102位"
+        },
+        "armyAward": {
+          "text": "インド陸軍技術優秀賞 — ハイブリッドAI/アルゴリズムベースの迷彩パターン生成ツールを開発、インド全土に展開"
+        },
+        "exit": {
+          "text": "7500万ドルのイグジットをナビゲート"
+        }
+      }
+    },
+    "experience": {
+      "title": "職歴",
+      "jobs": {
+        "infiniteReality": {
+          "title": "WebXRエンジニア — Infinite Reality",
+          "period": "2024年2月 — 2025年9月",
+          "achievements": [
+            "IRStudioでMonaco Editor統合を伴うクライアントサイドスクリプトシステムを主導",
+            "2D/3D UIコンポーネントを設計し、使いやすさを35%向上",
+            "高精度3Dギズモを構築し、編集速度を50%以上向上",
+            "エンジンリファクタリングと最適化: ビルドサイズ-20%、フレーム性能+15%"
+          ]
+        },
+        "etherealEngine": {
+          "title": "WebXRエンジニア — Ethereal Engine (Infinite Realityに買収)",
+          "period": "2023年2月 — 2024年2月",
+          "achievements": [
+            "バックエンドをExpressからKoaに移行、API応答時間-60%、スループット3倍",
+            "現代的なUX標準に合わせたUI刷新を主導",
+            "非プログラマー向けワークフローを可能にするビジュアルスクリプトシステムを設計"
+          ]
+        },
+        "metawarp": {
+          "title": "XRアプリケーション開発者 — Metawarp",
+          "period": "2022年12月 — 2023年2月",
+          "achievements": [
+            "XRおよびGISアプリケーションを開発",
+            "UnityでのMixed Reality分解/組み立てワークフロー",
+            "UnrealでのVRマップ可視化と3Dアノテーション",
+            "VR/MRアプリを72Hzで動作するよう最適化"
+          ]
+        },
+        "jioTesseract": {
+          "title": "XRアプリケーション開発者 — Jio Tesseract",
+          "period": "2022年4月 — 現在",
+          "achievements": [
+            "スタンドアロンウェーブサバイバルゲーム「Narakashur」をリリース",
+            "4つのユニークな敵をデザイン; ウェーブシステム、UI、グローバルリーダーボードを構築",
+            "デバイスハードウェアを活用したユニークなプレイヤーメカニクス"
+          ]
+        },
+        "prodigalTech": {
+          "title": "バックエンドエンジニア — Prodigal Tech (YC S18)",
+          "period": "2022年4月 — 2022年10月",
+          "achievements": [
+            "ETLパイプラインの開発・保守",
+            "技術運用の70%以上をカバーする自動化（パイプライン時間-20%）",
+            "データ品質改善: 20万以上の欠落オーディオファイルをバックフィル",
+            "5人のエンジニアチームでオンコール対応"
+          ]
+        },
+        "assethub": {
+          "title": "Web3Dエンジニア - AssetHub(Techstars '24)",
+          "period": "2025年9月 - 現在",
+          "achievements": [
+            "AIベースの3Dアセット開発のための高性能3D Webアプリを開発中"
+          ]
+        },
+        "nirvanaxr": {
+          "title": "創設者 — Nirvana XR",
+          "period": "2025年6月 — 現在",
+          "achievements": [
+            "インディー開発者とスタジオ向けのWebファースト3Dアニメーションスイート「Nirvana Animate」を開発中"
+          ]
+        }
+      }
+    }
+  },
+  "services": {
+    "items": {
+      "web3dDevelopment": {
+        "name": "Web3D開発",
+        "desc": "Three.js、React Three Fiber、Babylon.jsなどの最新フレームワークを使用した、没入型ブラウザベース体験のための高性能web3Dアプリケーション開発。"
+      },
+      "gameDevelopment": {
+        "name": "ゲーム開発",
+        "desc": "コンセプトからデプロイまで、ゲームプレイメカニクス、システム設計、最適化を含むフルスタックゲーム開発。"
+      },
+      "xrDevelopment": {
+        "name": "XR開発",
+        "desc": "没入型ユーザー体験を提供する仮想現実（VR）、拡張現実（AR）、複合現実（MR）アプリケーション。"
+      },
+      "gameEngineProgramming": {
+        "name": "ゲームエンジンプログラミング",
+        "desc": "カスタムゲームエンジン開発、エンジン改造、最適なパフォーマンスのための低レベルシステムプログラミング。"
+      },
+      "gameBackend": {
+        "name": "ゲームバックエンド",
+        "desc": "ゲーム用のサーバーサイドゲームロジック、マルチプレイヤーシステム、データベース設計、クラウドインフラストラクチャ。"
+      }
+    }
+  },
+  "portfolio": {
+    "items": {
+      "godotProjects": {
+        "title": "Godotプロジェクト",
+        "description": "Godotエンジンで構築されたXRおよびゲーム開発プロジェクトのコレクション。",
+        "extendedDescription": "Godotゲームエンジンを使用して構築されたプロジェクトのコレクションで、XR開発、VRゲーム、エンジンツールに焦点を当てています。"
+      },
+      "otherProjects": {
+        "title": "その他のプロジェクト",
+        "description": "グラフィックス、XR、ゲーム開発にまたがる様々なプロジェクト。"
+      },
+      "godotDojo": {
+        "title": "Godot Dojo",
+        "description": "Godot の XR 機能を強化する XR/VR デモのコア開発。",
+        "extendedDescription": "Godot DojoはGodotゲームエンジンでのXR開発を推進することに専念する組織です。"
+      },
+      "wizardVsRobot": {
+        "title": "Wizard vs Robot",
+        "description": "VR ロコモーション、6DoF の敵 AI、ジェスチャー移動。",
+        "extendedDescription": "Wizard vs Robotは、革新的なロコモーションメカニクスとインテリジェントな敵AIを備えたアクション満載のVRゲームです。"
+      },
+      "meshSlicerGodot": {
+        "title": "メッシュスライサー（Godot）",
+        "description": "断面テクスチャと力学を備えたランタイムスライシングプラグイン。",
+        "extendedDescription": "Godot用の強力なランタイムメッシュスライシングプラグイン。"
+      },
+      "cppRaytracer": {
+        "title": "C++ レイトレーサー",
+        "description": "Vulkan + ImGui のレイトレーサー（パストレーシングとマテリアル）。",
+        "extendedDescription": "Vulkanを使用してC++でゼロから構築された高性能レイトレーサー。"
+      },
+      "vrHorrorPrototype": {
+        "title": "VR ホラー プロトタイプ",
+        "description": "VR 基礎、アバター統合、武器とジェスチャー。",
+        "extendedDescription": "没入型の怖い体験のための必須メカニクスを探索するVRホラーゲームプロトタイプ。"
+      },
+      "threeDGestureRecognition": {
+        "title": "3D ジェスチャー認識",
+        "description": "$p アルゴリズムを 3D に適用。編集可能なテンプレートとランタイム。",
+        "extendedDescription": "3D空間認識に適応した$Pジェスチャー認識アルゴリズムの拡張。"
+      },
+      "godotOculusPlatform": {
+        "title": "Godot Oculus プラットフォーム",
+        "description": "OAuth、ルーム、リーダーボード等を公開する C++/GDNative プラグイン。",
+        "extendedDescription": "Oculus Platform SDKへのフルアクセスを提供するGodot用の包括的なGDNativeプラグイン。"
+      },
+      "mrEarthViewer": {
+        "title": "MR Earth Viewer",
+        "description": "Unity と Bing Maps SDK による MR 地球可視化。",
+        "extendedDescription": "衛星画像と3D地形データを物理空間にもたらすMixed Realityアプリケーション。"
+      },
+      "narakashur": {
+        "title": "Narakashur",
+        "description": "Jio Mixed Reality Glasses 向けのスタンドアロン ウェーブ サバイバル ゲーム。",
+        "extendedDescription": "NarakashurはJio Mixed Reality Glasses向けに開発されたウェーブサバイバルゲームです。"
+      },
+      "nirvanaAnimate": {
+        "title": "Nirvana Animate",
+        "description": "インディー開発者やスタジオがブラウザで直接リギング、リターゲット、アニメーション作成ができるWeb向け3Dアニメーションスイート。"
+      },
+      "etherealEngine": {
+        "title": "IR Engine",
+        "description": "マルチプレイヤー、アバター、ワールド編集、XRサポート、WebRTCネットワーキングを備えたソーシャル空間ウェブ向けオープンソース3Dツールキット。"
+      },
+      "assetHub": {
+        "title": "AssetHub",
+        "description": "コンセプトアートから製品レディの3Dモデルまで、AIメッシュ生成とテクスチャ改良による高速イテレーションを可能にするAIネイティブ3Dエディタ。"
+      },
+      "avatarAsWebsites": {
+        "title": "ウェブサイトとしてのアバター",
+        "description": "パーソナル3Dアバターを作成し、ウェブ上のインタラクティブなポートフォリオページに変換するシステム。"
+      }
+    }
+  }
+}
