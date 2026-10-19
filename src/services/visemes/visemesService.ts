@@ -102,7 +102,7 @@ export function visemesSequence(
 /**
  * Update viseme targets based on current time and sequence
  */
-export function visemesUpdate(volume: VisemeState, _delta: number, config: VisemeConfig = defaultVisemeConfig): void {
+export function visemesUpdate(volume: VisemeState, delta: number, config: VisemeConfig = defaultVisemeConfig): void {
   const startTime = performance.now()
 
   if (!volume || !volume.sequence) {
@@ -118,9 +118,11 @@ export function visemesUpdate(volume: VisemeState, _delta: number, config: Visem
   if (!volume.dirty) {
     volume.dirty = {}
   }
-  // Apply dampening
+  // Apply dampening; dampeningFactor is per 60fps frame, scaled by delta so the fade takes
+  // the same time at any frame rate
+  const dampening = Math.pow(config.intensity.dampeningFactor, Math.max(0, delta) * 60)
   Object.entries(volume.targets).forEach(([key, value]) => {
-    ;(volume.targets as any)[key] = value > 0.01 ? value * config.intensity.dampeningFactor : 0
+    ;(volume.targets as any)[key] = value > 0.01 ? value * dampening : 0
   })
 
   // Process active visemes

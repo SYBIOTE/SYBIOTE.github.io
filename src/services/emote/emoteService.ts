@@ -113,6 +113,16 @@ const applyEmotionInternal = (state: EmoteState, emotion: EmotionType): void => 
   const moodConfig = moodConfigurations[emotion.toLowerCase()]
   if (!moodConfig?.baseline) return
 
+  // Clear what other moods' baselines set and this one doesn't, so e.g. relaxing from happy to
+  // neutral drops the smile instead of freezing it wherever the relaxation left it
+  Object.values(moodConfigurations).forEach((mood) => {
+    Object.keys(mood.baseline ?? {}).forEach((key) => {
+      if (!(key in moodConfig.baseline) && key in state.targets) {
+        state.targets[key as keyof FacialTarget] = 0
+      }
+    })
+  })
+
   // Apply baseline expression values
   Object.entries(moodConfig.baseline).forEach(([key, value]) => {
     if (typeof value === 'number') {

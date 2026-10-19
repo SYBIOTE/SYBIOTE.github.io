@@ -26,7 +26,11 @@ export interface TTSConfig {
     speed: number
     pitch: number
     volume: number
-    mode: 'browser' | 'local' | 'remote' // browser = speechSynthesis API, local = vits-web worker, remote = API call
+    // browser = speechSynthesis API, local = vits-web worker, remote = OpenAI-style API from the browser,
+    // cloud = Rahul's cloned voice via our /api/tts function (falls back to browser if unavailable)
+    mode: 'browser' | 'local' | 'remote' | 'cloud'
+    /** Endpoint for cloud mode */
+    cloudUrl?: string
     apiKey?: string
     url?: string
     model?: string
@@ -41,7 +45,8 @@ export interface TTSConfig {
     speed: parseFloat(import.meta.env.VITE_TTS_SPEED) || 1.0,
     pitch: parseFloat(import.meta.env.VITE_TTS_PITCH) || 1.0,
     volume: parseFloat(import.meta.env.VITE_TTS_VOLUME) || 1.0,
-    mode: import.meta.env.VITE_TTS_MODE || 'browser', // 'browser', 'local' or 'remote'
+    mode: import.meta.env.VITE_TTS_MODE || 'cloud',
+    cloudUrl: import.meta.env.VITE_TTS_CLOUD_URL || '/api/tts',
     apiKey: import.meta.env.VITE_TTS_API_KEY,
     url: import.meta.env.VITE_TTS_URL || 'https://api.openai.com/v1/audio/speech',
     model: import.meta.env.VITE_TTS_MODEL || 'tts-1',

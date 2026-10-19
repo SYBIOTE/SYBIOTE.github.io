@@ -1,0 +1,7 @@
+# Built remotely; never upload local build output or dev-only files
+dist
+certs
+.notes
+coverage
+# ~146MB model, served from external hosting in production (VITE_A2E_MODEL_URL)
+public/models/audio2exp-*.onnx

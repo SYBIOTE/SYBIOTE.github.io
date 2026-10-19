@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 
 
+import { expressionTrackFor, type ExpressionTrack } from '../audio2expression/audio2expression'
+import { startSpeechFace, stopSpeechFace } from '../audio2expression/speechFace'
 import { cleanText } from './textUtils'
 import { approximateWhisperDataFromText } from './whisperDataGenerator'
 import { type TTSConfig, type WhisperData, defaultTTSConfig } from './ttsConfig'
@@ -36,6 +38,8 @@ interface TTSServiceOptions {
   config?: Partial<TTSConfig>
   onSpeechStart?: (text: string, whisperData: WhisperData) => void
   onSpeechEnd?: () => void
+  /** Called after each queued message finishes playing (onSpeechEnd only fires once the queue is empty) */
+  onUtteranceEnd?: () => void
 }
 
 interface QueuedMessage {
@@ -43,20 +47,45 @@ interface QueuedMessage {
   text: string
   status: 'pending' | 'generating' | 'ready' | 'playing' | 'completed' | 'error'
   audio?: ArrayBuffer
+  /** Cloud mode: decoded clip, and its audio-driven face frames (resolves null if unavailable) */
+  decoded?: AudioBuffer
+  track?: Promise<ExpressionTrack | null>
+  /** Cloud mode couldn't produce this clip: speak it with the browser voice instead */
+  useBrowser?: boolean
   whisperData?: WhisperData
   error?: string
 }
 
 let globalId = 0
 
+// How long a clip may wait for its face frames before playing with text-based lipsync. Only the
+// first clip of a reply usually waits (later ones are processed while earlier ones play), and a
+// reply already takes about a second to start, so a short extra wait buys audio-accurate lipsync.
+const TRACK_WAIT_MS = 1200
+
+// One AudioContext for all playback (creating one per clip leaks, and a single graph lets the
+// browser's echo cancellation see what the avatar is saying)
+let sharedAudioContext: AudioContext | null = null
+const getAudioContext = () => {
+  sharedAudioContext ??= new AudioContext()
+  if (sharedAudioContext.state === 'suspended') void sharedAudioContext.resume()
+  return sharedAudioContext
+}
+
+// Set once /api/tts reports it isn't configured: stop asking for the rest of the session
+let cloudUnavailable = false
+
 export const useTTSService = (options: TTSServiceOptions = {}) => {
-  const { config: configPartial = {}, onSpeechStart, onSpeechEnd } = options
+  const { config: configPartial = {}, onSpeechStart, onSpeechEnd, onUtteranceEnd } = options
   const config = useMemo(() => ({ ...defaultTTSConfig, ...configPartial }), [configPartial])
   const isProcessing = useRef(false)
   const messageQueue = useRef<QueuedMessage[]>([])
   const nextExpectedId = useRef(0)
   const workerRef = useRef<Worker | null>(null)
   const currentResolveRef = useRef<(() => void) | null>(null)
+  // Speed multiplier that makes the lipsync estimate match the browser voice; the text-based
+  // estimate runs slow for most voices, so start a little faster and refine after each sentence
+  const browserRateCalibration = useRef(1.25)
 
   // Initialize worker for local TTS
   const getOrCreateWorker = useCallback(() => {
@@ -66,36 +95,44 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
     return workerRef.current
   }, [])
 
-  const playAudioBuffer = useCallback(async (audioBuffer: ArrayBuffer): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      const audioContext = new AudioContext()
+  const currentSourceRef = useRef<AudioBufferSourceNode | null>(null)
 
-      audioContext
-        .decodeAudioData(audioBuffer.slice(0))
-        .then((decodedAudio) => {
-          const source = audioContext.createBufferSource()
-          const gainNode = audioContext.createGain()
-          
-          // Use global volume if available, otherwise use config volume
-          const volume = (window as Window & { globalTTSVolume?: number }).globalTTSVolume ?? config.volume
-          gainNode.gain.value = volume
-          
-          source.buffer = decodedAudio
-          source.connect(gainNode)
-          gainNode.connect(audioContext.destination)
+  /** Plays a decoded clip; onStart gets the performance.now() time playback began. */
+  const playDecoded = useCallback(
+    (decoded: AudioBuffer, onStart?: (startedAt: number) => void): Promise<void> =>
+      new Promise((resolve) => {
+        const audioContext = getAudioContext()
+        const source = audioContext.createBufferSource()
+        const gainNode = audioContext.createGain()
+        // Use global volume if available, otherwise use config volume
+        gainNode.gain.value = (window as Window & { globalTTSVolume?: number }).globalTTSVolume ?? config.volume
+        source.buffer = decoded
+        source.connect(gainNode)
+        gainNode.connect(audioContext.destination)
+        source.onended = () => {
+          if (currentSourceRef.current === source) currentSourceRef.current = null
+          currentResolveRef.current = null
+          resolve()
+        }
+        currentSourceRef.current = source
+        currentResolveRef.current = resolve
+        source.start(0)
+        onStart?.(performance.now() + audioContext.outputLatency * 1000)
+      }),
+    [config.volume]
+  )
 
-          source.onended = () => {
-            resolve()
-          }
-
-          source.start(0)
-        })
-        .catch((error) => {
-          logger.error('Audio decode error:', error)
-          reject(error)
-        })
-    })
-  }, [config.volume])
+  const playAudioBuffer = useCallback(
+    async (audioBuffer: ArrayBuffer): Promise<void> => {
+      try {
+        await playDecoded(await getAudioContext().decodeAudioData(audioBuffer.slice(0)))
+      } catch (error) {
+        logger.error('Audio decode error:', error)
+        throw error
+      }
+    },
+    [playDecoded]
+  )
 
   // Generate audio using browser speech synthesis
   const generateBrowserAudio = useCallback(async (_message: QueuedMessage) => {
@@ -185,6 +222,32 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
     [config.apiKey, config.url, config.model, config.voice, config.speed]
   )
 
+  // Generate audio with Rahul's cloned voice via /api/tts; any failure falls back to the browser voice
+  const generateCloudAudio = useCallback(
+    async (message: QueuedMessage) => {
+      if (cloudUnavailable) {
+        message.useBrowser = true
+        return
+      }
+      try {
+        const response = await fetch(config.cloudUrl || '/api/tts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: message.text })
+        })
+        if (response.status === 503) cloudUnavailable = true
+        if (!response.ok) throw new Error(`TTS ${response.status}`)
+        message.decoded = await getAudioContext().decodeAudioData(await response.arrayBuffer())
+        // Face frames are computed in the background while earlier clips play
+        message.track = expressionTrackFor(message.decoded)
+      } catch (error) {
+        logger.warn('Cloud TTS unavailable, using the browser voice:', error)
+        message.useBrowser = true
+      }
+    },
+    [config.cloudUrl]
+  )
+
   // Generate audio for a specific message
   const generateAudioForMessage = useCallback(
     async (message: QueuedMessage) => {
@@ -198,6 +261,8 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
           await generateBrowserAudio(message)
         } else if (config.mode === 'local') {
           await generateLocalAudio(message)
+        } else if (config.mode === 'cloud') {
+          await generateCloudAudio(message)
         }
         message.status = 'ready'
       } catch (error) {
@@ -206,7 +271,7 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
         message.error = error instanceof Error ? error.message : 'Unknown error'
       }
     },
-    [config.mode, generateRemoteAudio, generateBrowserAudio, generateLocalAudio]
+    [config.mode, generateRemoteAudio, generateBrowserAudio, generateLocalAudio, generateCloudAudio]
   )
 
   // Process the queue sequentially
@@ -236,8 +301,8 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
             nextExpectedId.current = nextMessage.id + 1
             continue
           } else if (nextMessage.status === 'generating') {
-            // For local mode, wait a bit for generation to complete
-            if (config.mode === 'local') {
+            // For prefetching modes, wait a bit for generation to complete
+            if (config.mode === 'local' || config.mode === 'cloud') {
               await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()))
               continue
             }
@@ -250,15 +315,46 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
         nextMessage.status = 'playing'
         logger.log(`Playing message ${nextMessage.id}`)
 
-        // Generate whisper data and notify speech start
-        const whisperData = approximateWhisperDataFromText(nextMessage.text, config.speed, 0)
-        if (onSpeechStart) {
-          onSpeechStart(nextMessage.text, whisperData)
+        // Generate whisper data and notify speech start (drives lipsync + subtitles).
+        // Browser voices can take hundreds of ms to start, so for them this waits for the
+        // utterance's own start event to keep the mouth in sync with the audio.
+        const speaksWithBrowser = config.mode === 'browser' || !!nextMessage.useBrowser
+        const playsCloudClip = config.mode === 'cloud' && !!nextMessage.decoded && !nextMessage.useBrowser
+        let speechStartedAt = 0
+        let estimatedDuration = 0
+        const notifySpeechStart = () => {
+          const rate = speaksWithBrowser ? config.speed * browserRateCalibration.current : config.speed
+          const whisperData = approximateWhisperDataFromText(nextMessage.text, rate, 0)
+          const { wtimes = [], wdurations = [] } = whisperData
+          const last = wtimes.length - 1
+          estimatedDuration = last >= 0 ? wtimes[last] + (wdurations[last] ?? 0) : 0
+          speechStartedAt = performance.now()
+          onSpeechStart?.(nextMessage.text, whisperData)
         }
+        // Cloud clips notify when playback actually starts (they may first wait for face frames)
+        if (!speaksWithBrowser && !playsCloudClip) notifySpeechStart()
 
         try {
           // Handle different TTS modes for playback
-          if (config.mode === 'browser') {
+          if (playsCloudClip) {
+            const decoded = nextMessage.decoded!
+            const trackPromise = nextMessage.track ?? Promise.resolve(null)
+            // Give the face frames a moment (usually already done while the previous clip played)
+            const track = await Promise.race([
+              trackPromise,
+              new Promise<null>((resolve) => setTimeout(() => resolve(null), TRACK_WAIT_MS))
+            ])
+            let playbackStart = 0
+            await playDecoded(decoded, (startedAt) => {
+              playbackStart = startedAt
+              notifySpeechStart()
+              if (track) startSpeechFace(track, startedAt)
+              // Frames that arrive after playback began still line up: they're indexed by time
+              else void trackPromise.then((late) => late && playbackStart === startedAt && startSpeechFace(late, startedAt))
+            })
+            playbackStart = -1
+            stopSpeechFace()
+          } else if (speaksWithBrowser) {
             await new Promise<void>((resolve, reject) => {
               // Store resolve function so we can call it when stopping
               currentResolveRef.current = resolve
@@ -346,8 +442,16 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
                 }
               }
               
+              utterance.onstart = notifySpeechStart
+
               utterance.onend = () => {
                 currentResolveRef.current = null
+                // Learn how fast this device's voice really speaks, so the next lipsync estimate matches it
+                const actual = performance.now() - speechStartedAt
+                if (speechStartedAt && estimatedDuration > 0 && actual > 300 && nextMessage.text.split(/\s+/).length >= 4) {
+                  const observed = browserRateCalibration.current * (estimatedDuration / actual)
+                  browserRateCalibration.current = Math.min(2.5, Math.max(0.5, 0.6 * browserRateCalibration.current + 0.4 * observed))
+                }
                 resolve()
               }
               
@@ -399,6 +503,8 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
           logger.error(`Error playing message ${nextMessage.id}:`, playbackError)
         }
 
+        onUtteranceEnd?.()
+
         // Mark as completed and remove from queue
         nextMessage.status = 'completed'
         messageQueue.current = messageQueue.current.filter((msg) => msg.id !== nextMessage.id)
@@ -417,7 +523,7 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
     } finally {
       isProcessing.current = false
     }
-  }, [onSpeechEnd, config.speed, config.mode, config.pitch, config.volume, config.voice, onSpeechStart, generateAudioForMessage, playAudioBuffer])
+  }, [onSpeechEnd, onUtteranceEnd, config.speed, config.mode, config.pitch, config.volume, config.voice, onSpeechStart, generateAudioForMessage, playAudioBuffer, playDecoded])
 
   // Add message to queue and assign ID
   const speak = useCallback(
@@ -439,8 +545,8 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
       messageQueue.current.push(queuedMessage)
       logger.log(`Queued message ${messageId}:`, cleanedText.substring(0, 50))
 
-      // For local mode, start generating all pending messages immediately
-      if (config.mode === 'local') {
+      // For local and cloud modes, start generating all pending messages immediately
+      if (config.mode === 'local' || config.mode === 'cloud') {
         const allPendingMessages = messageQueue.current.filter((msg) => msg.status === 'pending')
         allPendingMessages.forEach((message) => {
           generateAudioForMessage(message) // Don't await - let them generate in parallel
@@ -462,6 +568,15 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
     if ('speechSynthesis' in window) {
       speechSynthesis.cancel()
     }
+
+    // Stop a playing cloud clip and its face frames
+    try {
+      currentSourceRef.current?.stop()
+    } catch {
+      // already stopped
+    }
+    currentSourceRef.current = null
+    stopSpeechFace()
 
     // Resolve the current Promise to unblock processQueue
     if (currentResolveRef.current) {

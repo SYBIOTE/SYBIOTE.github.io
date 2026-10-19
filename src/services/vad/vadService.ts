@@ -64,6 +64,8 @@ export const useVADService = ({
         positiveSpeechThreshold: config.vadThreshold,
         minSpeechFrames: 5,
         preSpeechPadFrames: 10,
+        // ~0.38s of silence ends a segment (default ~0.77s); Smart Turn then decides if the turn is over
+        redemptionFrames: 12,
         model: 'v5',
         onFrameProcessed: (probs: VADProbs) => {
           if (probs.isSpeech && probs.isSpeech > config.vadThreshold) {

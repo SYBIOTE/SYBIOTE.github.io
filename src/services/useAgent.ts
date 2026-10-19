@@ -9,8 +9,12 @@ import { useEmoteService } from './emote/useEmoteService'
 import { useLLMService } from './llm/llmService'
 import type { LLMPerformRequest, LLMResponse, LLMStatusUpdate } from './llm/llmTypes'
 import { createReactionFromMessage } from '../integration/reactionIntegration'
+import { parseActions, runAvatarAction } from './actions/avatarActions'
+import portfolioData from '../content/data/portfolio.json'
 import { useSTTService } from './stt/sttService'
 import { useVADService } from './vad/vadService'
+import { endOfTurnProbability, preloadSmartTurn } from './smartTurn/smartTurn'
+import { TurnGate } from './smartTurn/turnGate'
 import { useTTSService } from './tts/ttsService'
 import { useVisemeService } from './visemes/useVisemeService'
 import type { GazeOptions } from './emote/configs/emoteConfig'
@@ -22,6 +26,8 @@ import { shouldTriggerBargeIn } from '../integration/emotionIntegration'
 import { logger } from '../utils/logger'
 import type { AnimationAction, AnimationMixer, Camera, Object3D } from 'three'
 import type { AnimationClip, AnimationPerformanceData, AnimationState } from './animation/animationTypes'
+
+const PROJECT_IDS: ReadonlySet<string> = new Set(portfolioData.items.map((item) => item.id))
 
 // STT service result interface (defined locally in sttService.ts)
 interface STTPerformResult {
@@ -254,8 +260,9 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
       callbacks.onLLMStatus?.(status)
     },
     onResponse: (response: LLMResponse) => {
-      const breath = response.breath
-      if (breath) {
+      // Strip inline action tags before speaking/displaying, then run the actions
+      const { text: breath, actions: avatarActions } = parseActions(response.breath, PROJECT_IDS)
+      if (breath.trim()) {
         tts.actions.speak(breath)
 
         // Analyze the response for emotional content and trigger appropriate emote
@@ -273,6 +280,13 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
         if (animation) animations.actions.performAction(animation)
       }
 
+      // After the automatic reaction, so an explicit [[emote:...]] wins
+      avatarActions.forEach((action) =>
+        runAvatarAction(action, {
+          performEmotion: (emotion) => emotes.actions.performAction({ emotion, relaxTime: 3000 })
+        })
+      )
+
       conversation.actions.streamMessage(breath, response.final)
       callbacks.onLLMResponse?.(response)
     }
@@ -289,6 +303,10 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
         return prev ? prev + ' ' + text : text
       })
     },
+    onUtteranceEnd: () => {
+      // The audio is done even if the estimated lipsync isn't: close the mouth
+      visemes.actions.stop()
+    },
     onSpeechEnd: () => {
       emotes.actions.reset()
       callbacks.onTTSSpeechEnd?.()
@@ -296,15 +314,44 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
     }
   })
 
-  // Initialize VAD service
+  // End-of-turn detection: hold spoken transcripts until Smart Turn says the visitor has finished
+  const commitTurnRef = useRef<(text: string) => void>(() => undefined)
+  const callbacksRef = useRef(callbacks)
+  callbacksRef.current = callbacks
+  const turnGateRef = useRef<TurnGate | null>(null)
+  if (!turnGateRef.current) {
+    turnGateRef.current = new TurnGate({
+      classify: endOfTurnProbability,
+      onCommit: (text) => commitTurnRef.current(text),
+      onPending: (text) => setCurrentInterimTranscript(text)
+    })
+  }
+  const turnGate = turnGateRef.current
+  const withHeld = (text: string) => [turnGate.pendingText, text].filter(Boolean).join(' ')
+
+  // Initialize VAD service (MicVAD keeps the callbacks it was created with, so go through refs)
   const vad = useVADService({
     config: vadConfig,
     onVADResult: (result) => {
       callbacks.onVADResult?.(result)
     },
-    onSpeechStart: callbacks.onSpeechStart,
-    onSpeechEnd: callbacks.onSpeechEnd
+    onSpeechStart: useCallback(() => {
+      turnGate.speechStart()
+      callbacksRef.current.onSpeechStart?.()
+    }, [turnGate]),
+    onSpeechEnd: useCallback(
+      (audio: ArrayBuffer) => {
+        void turnGate.speechEnd(new Float32Array(audio))
+        callbacksRef.current.onSpeechEnd?.(audio)
+      },
+      [turnGate]
+    )
   })
+
+  useEffect(() => {
+    if (vad.state.isListening) void preloadSmartTurn()
+    else turnGate.reset()
+  }, [vad.state.isListening, turnGate])
 
   // Initialize STT service
   const stt = useSTTService({
@@ -318,34 +365,40 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
           logger.log('STT: Stop command detected - barge-in activated')
         }
 
-        // Auto-submit or set interim transcript
-        if (appConfig.autoSubmitEnabled) {
-          conversation.actions.addMessage(result.text, true)
-          setCurrentInterimTranscript('')
-        } else {
-          setCurrentInterimTranscript(result.text)
-        }
-
-        interruptCounterRef.current = interrupt
-        llm.actions.processUserInput({
-          text: result.text,
-          human: true,
-          final: true,
-          bargein: appConfig.bargeInEnabled,
-          interrupt
-        })
+        // Sent once the visitor has finished their turn (see commitTurnRef)
+        turnGate.transcript(result.text)
       } else {
-        setCurrentInterimTranscript(result.text)
+        setCurrentInterimTranscript(withHeld(result.text))
       }
 
       logger.log('STT: result:', result)
       callbacks.onSTTResult?.(result)
     },
     onInterimTranscript: (text) => {
-      setCurrentInterimTranscript(text)
+      setCurrentInterimTranscript(withHeld(text))
       callbacks.onInterimTranscript?.(text)
     }
   })
+
+  commitTurnRef.current = (text: string) => {
+    // Auto-submit or set interim transcript
+    if (appConfig.autoSubmitEnabled) {
+      conversation.actions.addMessage(text, true)
+      setCurrentInterimTranscript('')
+    } else {
+      setCurrentInterimTranscript(text)
+    }
+
+    const interrupt = Date.now()
+    interruptCounterRef.current = interrupt
+    llm.actions.processUserInput({
+      text,
+      human: true,
+      final: true,
+      bargein: appConfig.bargeInEnabled,
+      interrupt
+    })
+  }
 
   // Service coordination effects
   useEffect(() => { 

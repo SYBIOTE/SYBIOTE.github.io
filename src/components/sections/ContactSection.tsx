@@ -1,7 +1,7 @@
 import type { CSSProperties, FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useState, useEffect } from 'react'
-import emailjs from '@emailjs/browser'
+import { sendContactMessage } from '../../services/contact/sendMessage'
 
 const container: CSSProperties = {
   width: '100%',
@@ -116,26 +116,9 @@ export const ContactSection = () => {
     setSubmitStatus('idle')
 
     try {
-      // Using EmailJS to send emails
-      // You'll need to set up your EmailJS account and get these credentials
-      const result = await emailjs.send(
-        'service_n1cikoc', // Replace with your EmailJS service ID
-        'template_aj5oot7', // Replace with your EmailJS template ID
-        {
-          name: formData.name,
-          email: formData.email,
-          message: formData.message,
-          to_email: 'ghoshr698@gmail.com', // Your email address
-        },
-        'jtyEaVhw3Qlskk8aL' // Replace with your EmailJS public key
-      )
-
-      if (result.status === 200) {
-        setSubmitStatus('success')
-        setFormData({ name: '', email: '', message: '' })
-      } else {
-        throw new Error('Failed to send email')
-      }
+      await sendContactMessage(formData)
+      setSubmitStatus('success')
+      setFormData({ name: '', email: '', message: '' })
     } catch (error) {
       logger.error('Error sending email:', error)
       setSubmitStatus('error')

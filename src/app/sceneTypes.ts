@@ -9,6 +9,10 @@ export interface SceneConfig {
   background?: number
   enableAxes?: boolean
   roomLighting?: boolean
+  /** 'gaussian' = LAM photoreal talking head, 'vrm' = full-body VRM avatar (also the fallback) */
+  avatarType: 'gaussian' | 'vrm'
+  /** LAM avatar .zip used when avatarType is 'gaussian' */
+  gaussianAvatarUrl: string
 }
 
 export interface AvatarConfig {
@@ -32,7 +36,9 @@ export const sceneConfig: SceneConfig = {
   cameraPosition: [0, 1.8, -2],
   cameraTarget: [0, 1.5, 0],
   background: 0x1a1a1a,
-  roomLighting: true
+  roomLighting: true,
+  avatarType: 'gaussian',
+  gaussianAvatarUrl: '/assets/avatars/lam/rahul_120013.zip'
 }
 
 export const defaultAvatarConfig: AvatarConfig = {

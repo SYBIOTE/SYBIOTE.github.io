@@ -2,8 +2,104 @@
   "triggers": [
     {
       "triggers": [
-        "hello", "hi", "hey", "hey there", "hiya", "yo",
-        "hi there", "greetings", "what's up", "sup"
+        "assethub",
+        "asset hub"
+      ],
+      "responses": [
+        {
+          "id": "assethub1",
+          "response": "AssetHub is an AI native 3D editor I work on, taking concept art all the way to production ready 3D models [[show_project:assetHub]].",
+          "emotion": "enthusiastic"
+        }
+      ]
+    },
+    {
+      "triggers": [
+        "nirvana animate",
+        "nirvana",
+        "animate",
+        "animation suite",
+        "rigging"
+      ],
+      "responses": [
+        {
+          "id": "animate1",
+          "response": "Nirvana Animate is my web first 3D animation suite, so indie devs and studios can rig, retarget and animate right in the browser [[show_project:nirvanaAnimate]].",
+          "emotion": "enthusiastic"
+        }
+      ]
+    },
+    {
+      "triggers": [
+        "ir engine",
+        "ethereal",
+        "engine"
+      ],
+      "responses": [
+        {
+          "id": "irengine1",
+          "response": "IR Engine is an open source toolkit for the social spatial web, with multiplayer, avatars, world editing and XR support [[show_project:etherealEngine]].",
+          "emotion": "confident"
+        }
+      ]
+    },
+    {
+      "triggers": [
+        "godot"
+      ],
+      "responses": [
+        {
+          "id": "godot1",
+          "response": "I've built a bunch of XR and game projects in Godot, from VR games to engine plugins [[show_project:godotProjects]].",
+          "emotion": "enthusiastic"
+        }
+      ]
+    },
+    {
+      "triggers": [
+        "resume",
+        "cv",
+        "experience",
+        "background",
+        "career",
+        "worked at",
+        "jobs"
+      ],
+      "responses": [
+        {
+          "id": "resume1",
+          "response": "Here's my experience, from Prodigal Tech and Ethereal Engine to Infinite Reality and AssetHub [[open:resume]].",
+          "emotion": "confident"
+        }
+      ]
+    },
+    {
+      "triggers": [
+        "services",
+        "what do you offer",
+        "what do you do",
+        "skills"
+      ],
+      "responses": [
+        {
+          "id": "services1",
+          "response": "I build web 3D apps, games, XR experiences and engine tech. Here's what I offer [[open:services]].",
+          "emotion": "helpful"
+        }
+      ]
+    },
+    {
+      "triggers": [
+        "hello",
+        "hi",
+        "hey",
+        "hey there",
+        "hiya",
+        "yo",
+        "hi there",
+        "greetings",
+        "what's up",
+        "sup"
       ],
       "responses": [
         {
@@ -50,8 +146,15 @@
     },
     {
       "triggers": [
-        "weather", "forecast", "rain", "sunny", "temperature",
-        "climate", "outside weather", "what's the weather", "weather like"
+        "weather",
+        "forecast",
+        "rain",
+        "sunny",
+        "temperature",
+        "climate",
+        "outside weather",
+        "what's the weather",
+        "weather like"
       ],
       "responses": [
         {
@@ -88,8 +191,16 @@
     },
     {
       "triggers": [
-        "help", "assist", "support", "can you help", "need help",
-        "help me", "i need help", "question", "can you", "how do i"
+        "help",
+        "assist",
+        "support",
+        "can you help",
+        "need help",
+        "help me",
+        "i need help",
+        "question",
+        "can you",
+        "how do i"
       ],
       "responses": [
         {
@@ -136,8 +247,13 @@
     },
     {
       "triggers": [
-        "name", "who are you", "your name", "what's your name",
-        "who is this", "who am i talking to", "who are ya"
+        "name",
+        "who are you",
+        "your name",
+        "what's your name",
+        "who is this",
+        "who am i talking to",
+        "who are ya"
       ],
       "responses": [
         {
@@ -174,8 +290,13 @@
     },
     {
       "triggers": [
-        "time", "what time", "current time", "tell time", "clock",
-        "date and time", "what's the time"
+        "time",
+        "what time",
+        "current time",
+        "tell time",
+        "clock",
+        "date and time",
+        "what's the time"
       ],
       "responses": [
         {
@@ -212,8 +333,13 @@
     },
     {
       "triggers": [
-        "thank", "thanks", "thank you", "thx", "much appreciated",
-        "appreciate it", "cheers"
+        "thank",
+        "thanks",
+        "thank you",
+        "thx",
+        "much appreciated",
+        "appreciate it",
+        "cheers"
       ],
       "responses": [
         {
@@ -260,8 +386,14 @@
     },
     {
       "triggers": [
-        "bye", "goodbye", "see you", "see ya", "later",
-        "farewell", "cya", "talk later"
+        "bye",
+        "goodbye",
+        "see you",
+        "see ya",
+        "later",
+        "farewell",
+        "cya",
+        "talk later"
       ],
       "responses": [
         {
@@ -308,8 +440,15 @@
     },
     {
       "triggers": [
-        "wait", "hold on", "one moment", "loading", "still loading",
-        "booting", "starting", "initializing", "not ready"
+        "wait",
+        "hold on",
+        "one moment",
+        "loading",
+        "still loading",
+        "booting",
+        "starting",
+        "initializing",
+        "not ready"
       ],
       "responses": [
         {
@@ -436,8 +575,12 @@
     },
     {
       "triggers": [
-        "how are you", "how's it going", "how are ya", "how you doing",
-        "how do you feel", "what's up"
+        "how are you",
+        "how's it going",
+        "how are ya",
+        "how you doing",
+        "how do you feel",
+        "what's up"
       ],
       "responses": [
         {
@@ -474,7 +617,10 @@
     },
     {
       "triggers": [
-        "good morning", "morning", "gm", "good mornin"
+        "good morning",
+        "morning",
+        "gm",
+        "good mornin"
       ],
       "responses": [
         {
@@ -506,7 +652,11 @@
     },
     {
       "triggers": [
-        "good night", "goodnight", "night", "gn", "sleep well"
+        "good night",
+        "goodnight",
+        "night",
+        "gn",
+        "sleep well"
       ],
       "responses": [
         {
@@ -538,8 +688,14 @@
     },
     {
       "triggers": [
-        "awesome", "great", "fantastic", "amazing", "excellent",
-        "wonderful", "brilliant", "nice"
+        "awesome",
+        "great",
+        "fantastic",
+        "amazing",
+        "excellent",
+        "wonderful",
+        "brilliant",
+        "nice"
       ],
       "responses": [
         {
@@ -571,7 +727,13 @@
     },
     {
       "triggers": [
-        "cool", "nice", "sweet", "dope", "sick", "neat", "rad"
+        "cool",
+        "nice",
+        "sweet",
+        "dope",
+        "sick",
+        "neat",
+        "rad"
       ],
       "responses": [
         {
@@ -645,14 +807,26 @@
     },
     {
       "triggers": [
-        "contact", "get in touch", "reach out", "email", "phone",
-        "call", "hire", "availability", "freelance", "location",
-        "city", "where are you", "website", "site", "link"
+        "contact",
+        "get in touch",
+        "reach out",
+        "email",
+        "phone",
+        "call",
+        "hire",
+        "availability",
+        "freelance",
+        "location",
+        "city",
+        "where are you",
+        "website",
+        "site",
+        "link"
       ],
       "responses": [
         {
           "id": "contact1",
-          "response": "You can email Rahul at ghoshr698@gmail.com or use the Contact section on this site.",
+          "response": "You can email Rahul at ghoshr698@gmail.com or use the Contact section on this site [[open:contact]].",
           "emotion": "helpful"
         },
         {
@@ -667,7 +841,7 @@
         },
         {
           "id": "contact4",
-          "response": "For quick replies, email ghoshr698@gmail.com. You can also open the Contact section to send a message.",
+          "response": "For quick replies, email ghoshr698@gmail.com. You can also send a message from the Contact section [[open:contact]].",
           "emotion": "professional"
         },
         {
@@ -679,7 +853,12 @@
     },
     {
       "triggers": [
-        "projects", "portfolio", "work", "showcase", "demos", "examples"
+        "projects",
+        "portfolio",
+        "work",
+        "showcase",
+        "demos",
+        "examples"
       ],
       "responses": [
         {
@@ -689,15 +868,15 @@
         },
         {
           "id": "projects2",
-          "response": "Ask about any project by name—e.g., Narakashur, Godot Dojo, Mesh Slicer, or MR Earth Viewer—and I’ll share details.",
+          "response": "Ask about any project by name, like Nirvana Animate, AssetHub or IR Engine, and I'll show you [[open:portfolio]].",
           "emotion": "helpful"
         },
         {
           "id": "projects3",
-          "response": "You can explore the Portfolio section for videos and descriptions of Rahul's work.",
+          "response": "You can explore the Portfolio section for videos and descriptions of Rahul's work [[open:portfolio]].",
           "emotion": "supportive"
         }
       ]
     }
   ]
-} 
+}

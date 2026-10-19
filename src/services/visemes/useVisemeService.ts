@@ -55,6 +55,12 @@ export const useVisemeService = (initialConfig?: Partial<VisemeConfig>) => {
     visemeStateRef.current = initializeVisemeState()
   }, [])
 
+  // End the current lipsync (e.g. the audio finished early) without losing the rig binding;
+  // targets then fade out through the normal dampening
+  const stop = useCallback(() => {
+    visemeStateRef.current.sequence = []
+  }, [])
+
   const updateConfig = useCallback((newConfig: Partial<VisemeConfig>) => {
     setConfig((prev) => ({ ...prev, ...newConfig }))
   }, [])
@@ -76,13 +82,14 @@ export const useVisemeService = (initialConfig?: Partial<VisemeConfig>) => {
     () => ({
       update,
       reset,
+      stop,
       generateSequence,
       setupForVRM,
       setupForMorphTargets,
       applyToRig,
       updateConfig  
     }),
-    [generateSequence, update, applyToRig, setupForVRM, setupForMorphTargets, reset, updateConfig]
+    [generateSequence, update, applyToRig, setupForVRM, setupForMorphTargets, reset, stop, updateConfig]
   )
 
   const state = useMemo(() => ({

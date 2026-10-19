@@ -13,11 +13,14 @@ import { useAgentState } from './avatar/AgentContext'
 interface Scene3DProps {
   sceneConfig: SceneConfig
   setXRStore?: (store: XRStore) => void
+  /** False when another renderer (the Gaussian head) shows the avatar; the canvas stays for XR */
+  showAvatar?: boolean
 }
 
 const SceneContent = ({
   sceneConfig,
-  store
+  store,
+  showAvatar = true
 }: Scene3DProps & { store: XRStore }) => {
   const controlsRef = useRef<any>(null)
   const { camera } = useThree()
@@ -44,6 +47,8 @@ const SceneContent = ({
     },
     [setCamTarget, setCamPos]
   )
+
+  if (!showAvatar) return <XR store={store} />
 
   return (
     <XR store={store}>
@@ -95,7 +100,7 @@ const SceneContent = ({
   )
 }
 
-const Scene3DComponent = ({ sceneConfig, setXRStore }: Scene3DProps) => {
+const Scene3DComponent = ({ sceneConfig, setXRStore, showAvatar = true }: Scene3DProps) => {
   const store = useMemo(() => createXRStore(), [])
   
 
@@ -117,6 +122,7 @@ const Scene3DComponent = ({ sceneConfig, setXRStore }: Scene3DProps) => {
         <SceneContent
           sceneConfig={sceneConfig}
           store={store}
+          showAvatar={showAvatar}
         />
       </Canvas>
     </div>

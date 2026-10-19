@@ -1,3 +1,4 @@
+import { useSimpleStore } from '@hexafield/simple-store/react'
 import { useState, type ReactNode } from 'react'
 import { getSectionIcon } from '../common/icons'
 import { SectionPanel } from '../common/SectionPanel'
@@ -8,6 +9,7 @@ import { ServicesSection } from './ServicesSection'
 import { ContactSection } from './ContactSection'
 import { useTranslation } from 'react-i18next'
 import type { ConversationMessage } from '../../services/conversation/conversationType'
+import { AvatarUIState } from '../../services/actions/avatarActions'
 
 export interface ButtonStyleConfig {
   collapsedSize: string
@@ -145,7 +147,10 @@ export const SectionNavRail = ({
       { id: 'chat', label: t("sections.chat"), content: <ChatPanel messages={messages} /> }
     ]
 
-  const [openSectionId, setOpenSectionId] = useState<string | null>(null)
+  // Shared store so the avatar can open sections too (see avatarActions)
+  const [{ openSectionId }, setUIState] = useSimpleStore(AvatarUIState)
+  const setOpenSectionId = (id: string | null) =>
+    setUIState((prev) => ({ ...prev, openSectionId: id, focusProjectId: id ? prev.focusProjectId : null }))
   const openSection = sections.find((s) => s.id === openSectionId) || null
 
   return (

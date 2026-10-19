@@ -1,8 +1,10 @@
-import { useState, useCallback, type CSSProperties } from 'react'
+import { useSimpleStore } from '@hexafield/simple-store/react'
+import { useState, useCallback, useEffect, type CSSProperties } from 'react'
 import { useTranslation } from 'react-i18next'
 import { usePortfolioContent, getSortedPortfolioItems } from '../../content/useContent'
 import type { PortfolioItem } from '../../content/types'
 import { PortfolioModal } from '../portfolio'
+import { AvatarUIState } from '../../services/actions/avatarActions'
 
 const container: CSSProperties = {
   width: '100%',
@@ -181,6 +183,14 @@ export const PortfolioSection = () => {
   const currentItem = currentItemId ? portfolioItems.find(item => item.id === currentItemId) : null
   const parentItemId = modalStack.length > 1 ? modalStack[modalStack.length - 2] : null
   const parentItem = parentItemId ? portfolioItems.find(item => item.id === parentItemId) : undefined
+
+  // Open a project when the avatar asks for one, then consume the request
+  const [{ focusProjectId }, setUIState] = useSimpleStore(AvatarUIState)
+  useEffect(() => {
+    if (!focusProjectId) return
+    if (portfolioItems.some((item) => item.id === focusProjectId)) setModalStack([focusProjectId])
+    setUIState((prev) => ({ ...prev, focusProjectId: null }))
+  }, [focusProjectId, portfolioItems, setUIState])
 
   const handleCardClick = useCallback((itemId: string) => {
     setModalStack([itemId])

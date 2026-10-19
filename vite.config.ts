@@ -1,13 +1,17 @@
 import fs from 'fs'
 import path from 'path'
 import react from '@vitejs/plugin-react-swc'
-import packageRoot from 'app-root-path'
 import dotenv from 'dotenv'
+import { fileURLToPath } from 'url'
 import { defineConfig, type PluginOption, type ViteDevServer } from 'vite'
 import type { IncomingMessage, ServerResponse } from 'http'
 
+// The folder this config lives in. (app-root-path guessed it from its own install location,
+// which breaks with package managers that keep packages in a global store.)
+const projectRoot = path.dirname(fileURLToPath(import.meta.url))
+
 dotenv.config({
-  path: packageRoot.path + '/.env.local'
+  path: path.join(projectRoot, '.env.local')
 })
 
 // Dev-only content API plugin
@@ -53,7 +57,7 @@ function contentApiPlugin(): PluginOption {
 
           if (contentPath === 'portfolio') {
             // Save portfolio.json
-            const filePath = path.join(packageRoot.path, 'src/content/data/portfolio.json')
+            const filePath = path.join(projectRoot, 'src/content/data/portfolio.json')
             fs.writeFileSync(filePath, JSON.stringify(data, null, 2))
             
             // Trigger HMR
@@ -63,7 +67,7 @@ function contentApiPlugin(): PluginOption {
             res.end(JSON.stringify({ success: true }))
           } else if (contentPath === 'resume') {
             // Save resume.json
-            const filePath = path.join(packageRoot.path, 'src/content/data/resume.json')
+            const filePath = path.join(projectRoot, 'src/content/data/resume.json')
             fs.writeFileSync(filePath, JSON.stringify(data, null, 2))
             
             // Trigger HMR
@@ -83,7 +87,7 @@ function contentApiPlugin(): PluginOption {
             }
 
             // Write to the content/ subfolder (not ui/)
-            const filePath = path.join(packageRoot.path, `src/i18n/locales/content/${locale}.json`)
+            const filePath = path.join(projectRoot, `src/i18n/locales/content/${locale}.json`)
             fs.writeFileSync(filePath, JSON.stringify(data, null, 2))
             
             // Trigger HMR
@@ -105,11 +109,55 @@ function contentApiPlugin(): PluginOption {
   }
 }
 
+// Dev-only: serve the Vercel Functions in api/ (chat, tts) from the Vite dev server
+function apiFunctionsPlugin(): PluginOption {
+  return {
+    name: 'api-functions',
+    configureServer(server: ViteDevServer) {
+      for (const name of ['chat', 'tts']) server.middlewares.use(`/api/${name}`, async (req: IncomingMessage, res: ServerResponse) => {
+        try {
+          const chunks: Buffer[] = []
+          for await (const chunk of req) chunks.push(chunk as Buffer)
+
+          const controller = new AbortController()
+          res.on('close', () => controller.abort())
+
+          const headers = new Headers()
+          for (const [key, value] of Object.entries(req.headers)) {
+            // Skip HTTP/2 pseudo-headers (:method, :path, ...)
+            if (typeof value === 'string' && !key.startsWith(':')) headers.set(key, value)
+          }
+          const request = new Request(`https://${req.headers.host}/api/${name}`, {
+            method: req.method,
+            headers,
+            body: req.method === 'POST' ? Buffer.concat(chunks) : undefined,
+            signal: controller.signal
+          })
+
+          const { default: handler } = await server.ssrLoadModule(`/api/${name}.ts`)
+          const response: Response = await handler.fetch(request)
+
+          res.statusCode = response.status
+          response.headers.forEach((value, key) => res.setHeader(key, value))
+          if (response.body) {
+            for await (const chunk of response.body) res.write(chunk)
+          }
+          res.end()
+        } catch (error) {
+          console.error(`API /${name} error:`, error)
+          if (!res.headersSent) res.statusCode = 500
+          res.end()
+        }
+      })
+    }
+  }
+}
+
 export default defineConfig(({ command }) => ({
   resolve: {
     dedupe: ['three'],
     alias: {
-      three: path.resolve(packageRoot.path, 'node_modules/three')
+      three: path.resolve(projectRoot, 'node_modules/three')
     }
   },
   optimizeDeps: {
@@ -120,11 +168,11 @@ export default defineConfig(({ command }) => ({
     ...(command === 'serve'
       ? {
           https: {
-            key: fs.readFileSync(path.join(packageRoot.path, process.env.KEY || 'certs/key.pem')),
-            cert: fs.readFileSync(path.join(packageRoot.path, process.env.CERT || 'certs/cert.pem'))
+            key: fs.readFileSync(path.join(projectRoot, process.env.KEY || 'certs/key.pem')),
+            cert: fs.readFileSync(path.join(projectRoot, process.env.CERT || 'certs/cert.pem'))
           }
         }
       : {})
   },
-  plugins: [react(), contentApiPlugin()]
+  plugins: [react(), contentApiPlugin(), apiFunctionsPlugin()]
 }))

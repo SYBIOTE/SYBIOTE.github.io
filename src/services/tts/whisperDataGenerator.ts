@@ -9,11 +9,13 @@ export function approximateWhisperDataFromText(
   speechRate: number = 1.0,
   startTime: number = 0
 ): WhisperData {
-  const words = text
+  // Keep the raw tokens so punctuation can still drive pauses after the words are cleaned
+  const tokens = text
     .toLowerCase()
-    .replace(/[^\w\s]/g, '')
     .split(/\s+/)
-    .filter((word) => word.length > 0)
+    .map((raw) => ({ raw, word: raw.replace(/[^\w]/g, '') }))
+    .filter((token) => token.word.length > 0)
+  const words = tokens.map((token) => token.word)
 
   if (words.length === 0) {
     return { words: [], wtimes: [], wdurations: [] }
@@ -46,9 +48,10 @@ export function approximateWhisperDataFromText(
     let pauseDuration = 50 + Math.random() * 50 // 50-100ms base pause
 
     // Add longer pauses for sentence boundaries (simulated)
-    if (word.endsWith('.') || word.endsWith('!') || word.endsWith('?')) {
+    const raw = tokens[i].raw
+    if (/[.!?]$/.test(raw)) {
       pauseDuration += 200 + Math.random() * 200
-    } else if (word.endsWith(',')) {
+    } else if (/[,;:]$/.test(raw)) {
       pauseDuration += 100 + Math.random() * 100
     }
 
