@@ -5,6 +5,8 @@
  * are working correctly. These can be run from the browser logger.
  */
 
+import { pickMaleVoice } from '../services/tts/browserVoice'
+
 // Test VAD Service
 export const testVAD = async () => {
   logger.log('Testing VAD Service...')
@@ -63,8 +65,16 @@ export const testTTS = async (text: string = 'Hello, this is a test of the text 
     return false
   }
 
+  // Only a voice known to be male: the app never speaks in a female voice (see services/tts/browserVoice.ts)
+  const voice = pickMaleVoice(speechSynthesis.getVoices())
+  if (!voice) {
+    logger.warn('No male browser voice on this device; not testing with the default voice')
+    return false
+  }
+
   return new Promise<boolean>((resolve) => {
     const utterance = new SpeechSynthesisUtterance(text)
+    utterance.voice = voice
 
     utterance.onstart = () => logger.log('🔊 TTS started')
     utterance.onend = () => {

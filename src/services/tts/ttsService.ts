@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react'
 
 import { expressionTrackFor, type ExpressionTrack } from '../audio2expression/audio2expression'
 import { startSpeechFace, stopSpeechFace } from '../audio2expression/speechFace'
+import { pickMaleVoice } from './browserVoice'
 import { cleanText } from './textUtils'
 import { approximateWhisperDataFromText } from './whisperDataGenerator'
 import { type TTSConfig, type WhisperData, defaultTTSConfig } from './ttsConfig'
@@ -14,8 +15,7 @@ import * as tts from 'https://cdn.jsdelivr.net/npm/@diffusionstudio/vits-web@1.0
 self.addEventListener('message', async (e) => {
   const id = e.data.id
   const text = e.data.text || 'please supply some text'
-  const voiceId = e.data.voice || 'en_GB-hfc_male-medium'
-  logger.log('TTS Worker received message:', { id, text, voiceId })
+  const voiceId = e.data.voice
   tts.predict({text, voiceId}).then(audio => {
     new Promise((resolve, reject) => {
       const reader = new FileReader()
@@ -25,9 +25,10 @@ self.addEventListener('message', async (e) => {
     }).then(audio => {
       self.postMessage({ audio, id })
     }).catch(error => {
-      logger.error('TTS Worker Error:', error)
       self.postMessage({ error: error.message, id })
     })
+  }).catch(error => {
+    self.postMessage({ error: String(error && error.message || error), id })
   })
 })
 `
@@ -50,8 +51,11 @@ interface QueuedMessage {
   /** Cloud mode: decoded clip, and its audio-driven face frames (resolves null if unavailable) */
   decoded?: AudioBuffer
   track?: Promise<ExpressionTrack | null>
-  /** Cloud mode couldn't produce this clip: speak it with the browser voice instead */
+  /** No cloned voice for this clip: speak it with this (male) browser voice instead */
   useBrowser?: boolean
+  browserVoice?: SpeechSynthesisVoice
+  /** No male voice available at all: show the subtitle for as long as it would take to say */
+  silent?: boolean
   whisperData?: WhisperData
   error?: string
 }
@@ -74,6 +78,34 @@ const getAudioContext = () => {
 
 // Set once /api/tts reports it isn't configured: stop asking for the rest of the session
 let cloudUnavailable = false
+
+// Rahul's voice is male, always. Without the cloned voice he speaks with a browser voice known to be
+// male (browserVoice.ts), else with a male voice that runs in the browser (Piper, via vits-web), else
+// not at all, with subtitles only. A browser's default voice is never used: it's often female
+const LOCAL_MALE_VOICE = 'en_US-hfc_male-medium'
+// How long to wait for the browser to list its voices
+const VOICES_WAIT_MS = 1500
+let maleBrowserVoice: Promise<SpeechSynthesisVoice | null> | null = null
+let localVoiceFailed = false
+
+const getMaleBrowserVoice = (preferred: string): Promise<SpeechSynthesisVoice | null> => {
+  if (!('speechSynthesis' in window)) return Promise.resolve(null)
+  maleBrowserVoice ??= new Promise((resolve) => {
+    const pick = () => pickMaleVoice(speechSynthesis.getVoices(), preferred) ?? null
+    if (speechSynthesis.getVoices().length) return resolve(pick())
+    const onChange = () => {
+      if (!speechSynthesis.getVoices().length) return
+      speechSynthesis.removeEventListener('voiceschanged', onChange)
+      resolve(pick())
+    }
+    speechSynthesis.addEventListener('voiceschanged', onChange)
+    setTimeout(() => {
+      speechSynthesis.removeEventListener('voiceschanged', onChange)
+      resolve(pick())
+    }, VOICES_WAIT_MS)
+  })
+  return maleBrowserVoice
+}
 
 export const useTTSService = (options: TTSServiceOptions = {}) => {
   const { config: configPartial = {}, onSpeechStart, onSpeechEnd, onUtteranceEnd } = options
@@ -183,11 +215,38 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
         worker.postMessage({
           id: message.id,
           text: message.text,
-          voice: config.voice
+          voice: LOCAL_MALE_VOICE
         })
       })
     },
-    [getOrCreateWorker, config.voice]
+    [getOrCreateWorker]
+  )
+
+  // Without the cloned voice: a male browser voice, else the in-browser male voice, else subtitles only
+  const fallbackVoice = useCallback(
+    async (message: QueuedMessage) => {
+      const voice = await getMaleBrowserVoice(config.voice)
+      if (voice) {
+        message.useBrowser = true
+        message.browserVoice = voice
+        return
+      }
+      if (!localVoiceFailed) {
+        try {
+          await generateLocalAudio(message)
+          if (message.audio?.byteLength) {
+            message.decoded = await getAudioContext().decodeAudioData(message.audio.slice(0))
+            message.track = expressionTrackFor(message.decoded)
+            return
+          }
+        } catch (error) {
+          logger.warn('In-browser male voice unavailable:', error)
+          localVoiceFailed = true
+        }
+      }
+      message.silent = true
+    },
+    [config.voice, generateLocalAudio]
   )
 
   // Generate audio using remote API
@@ -232,7 +291,7 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
   const generateCloudAudio = useCallback(
     async (message: QueuedMessage) => {
       if (cloudUnavailable) {
-        message.useBrowser = true
+        await fallbackVoice(message)
         return
       }
       try {
@@ -247,11 +306,11 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
         // Face frames are computed in the background while earlier clips play
         message.track = expressionTrackFor(message.decoded)
       } catch (error) {
-        logger.warn('Cloud TTS unavailable, using the browser voice:', error)
-        message.useBrowser = true
+        logger.warn('Cloud TTS unavailable, using a fallback voice:', error)
+        await fallbackVoice(message)
       }
     },
-    [config.cloudUrl]
+    [config.cloudUrl, fallbackVoice]
   )
 
   // Generate audio for a specific message
@@ -265,6 +324,7 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
           await generateRemoteAudio(message)
         } else if (config.mode === 'browser') {
           await generateBrowserAudio(message)
+          await fallbackVoice(message)
         } else if (config.mode === 'local') {
           await generateLocalAudio(message)
         } else if (config.mode === 'cloud') {
@@ -277,7 +337,7 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
         message.error = error instanceof Error ? error.message : 'Unknown error'
       }
     },
-    [config.mode, generateRemoteAudio, generateBrowserAudio, generateLocalAudio, generateCloudAudio]
+    [config.mode, generateRemoteAudio, generateBrowserAudio, generateLocalAudio, generateCloudAudio, fallbackVoice]
   )
 
   // Process the queue sequentially
@@ -324,8 +384,9 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
         // Generate whisper data and notify speech start (drives lipsync + subtitles).
         // Browser voices can take hundreds of ms to start, so for them this waits for the
         // utterance's own start event to keep the mouth in sync with the audio.
-        const speaksWithBrowser = config.mode === 'browser' || !!nextMessage.useBrowser
-        const playsCloudClip = config.mode === 'cloud' && !!nextMessage.decoded && !nextMessage.useBrowser
+        const speaksWithBrowser = !!nextMessage.useBrowser && !!nextMessage.browserVoice
+        // The cloned voice, or the in-browser male voice: decoded clips with audio-driven face frames
+        const playsCloudClip = !!nextMessage.decoded && !speaksWithBrowser
         let speechStartedAt = 0
         let estimatedDuration = 0
         const notifySpeechStart = () => {
@@ -371,83 +432,12 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
               // Use global volume if available, otherwise fall back to config volume
               utterance.volume = (window as Window & { globalTTSVolume?: number }).globalTTSVolume ?? config.volume
 
-              const selectBrowserVoice = (voices: SpeechSynthesisVoice[]) => {
-                const desired = (config.voice || '').trim().toLowerCase()
+              // Only ever the male voice picked for this clip (see fallbackVoice)
+              const voice = nextMessage.browserVoice!
+              utterance.voice = voice
+              // Match the voice's own language, or some engines read the text with another accent's rules
+              utterance.lang = voice.lang.replace('_', '-')
 
-                const looksFemale = (voice: SpeechSynthesisVoice) => {
-                  const name = voice.name.toLowerCase()
-                  // A small heuristic set that catches common female voices across platforms.
-                  return (
-                    name.includes('female') ||
-                    name.includes('zira') || // "Microsoft Zira" (female)
-                    name.includes('veena') ||
-                    name.includes('alice') ||
-                    name.includes('neerja')
-                  )
-                }
-
-                const maleHintScore = (voice: SpeechSynthesisVoice) => {
-                  const name = voice.name.toLowerCase()
-                  // Positive hints for commonly-male voice names across platforms.
-                  if (name.includes('male')) return 3
-                  if (name.includes('david')) return 3 // "Microsoft David"
-                  if (name.includes('rishi')) return 3
-                  if (name.includes('mark')) return 2
-                  if (name.includes('daniel')) return 2
-                  return 0
-                }
-
-                const scoreMaleVoice = (voice: SpeechSynthesisVoice) => {
-                  if (looksFemale(voice)) return -100
-                  // Prefer local/offline voices when available.
-                  const localBoost = voice.localService ? 0.5 : 0
-                  return 1 + maleHintScore(voice) + localBoost
-                }
-
-                const pickBestMale = (candidates: SpeechSynthesisVoice[]) => {
-                  if (candidates.length === 0) return undefined
-                  let best = candidates[0]
-                  let bestScore = scoreMaleVoice(best)
-                  for (let i = 1; i < candidates.length; i++) {
-                    const v = candidates[i]
-                    const s = scoreMaleVoice(v)
-                    if (s > bestScore) {
-                      best = v
-                      bestScore = s
-                    }
-                  }
-                  return bestScore > -100 ? best : undefined
-                }
-
-                // If user provided an actual browser voice name, we only accept it if it doesn't
-                // look female (requirement: always male).
-                if (desired) {
-                  const exact = voices.find((v) => v.name.toLowerCase() === desired)
-                  if (exact && !looksFemale(exact)) {
-                    utterance.voice = exact
-                    logger.log('TTS: Using exact browser voice match (male):', exact.name, exact.lang)
-                    return
-                  }
-                }
-
-                // Always attempt a male voice, regardless of config.voice.
-                // Priority: Indian English -> UK English -> US English -> any English -> anything
-                const byLang = (lang: string) => voices.filter((v) => v.lang === lang)
-                const isEnglish = (v: SpeechSynthesisVoice) => v.lang.toLowerCase().startsWith('en')
-
-                const maleVoice =
-                  pickBestMale(byLang('en-IN')) ||
-                  pickBestMale(byLang('en-GB')) ||
-                  pickBestMale(byLang('en-US')) ||
-                  pickBestMale(voices.filter(isEnglish)) ||
-                  pickBestMale(voices)
-
-                if (maleVoice) {
-                  utterance.voice = maleVoice
-                  logger.log('TTS: Using male voice:', maleVoice.name, maleVoice.lang)
-                }
-              }
-              
               utterance.onstart = notifySpeechStart
 
               utterance.onend = () => {
@@ -466,42 +456,15 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
                 reject(new Error(`Browser TTS Error: ${event.error}`))
               }
 
-              // Many browsers populate voices asynchronously. If not ready, wait for `voiceschanged`
-              // (no timeouts) and fall back to speaking on the next frame.
-              let didSpeak = false
-              const onVoicesChanged = () => {
-                if (didSpeak) return
-                didSpeak = true
-                speechSynthesis.removeEventListener('voiceschanged', onVoicesChanged)
-                const voices = speechSynthesis.getVoices()
-                if (voices.length > 0) selectBrowserVoice(voices)
-                speechSynthesis.speak(utterance)
-              }
-
-              const initialVoices = speechSynthesis.getVoices()
-              if (initialVoices.length > 0) {
-                didSpeak = true
-                selectBrowserVoice(initialVoices)
-
-                speechSynthesis.speak(utterance)
-              } else {
-                speechSynthesis.addEventListener('voiceschanged', onVoicesChanged)
-                speechSynthesis.getVoices() // kick voice loading in some browsers
-                requestAnimationFrame(() => {
-                  if (didSpeak) return
-                  const voices = speechSynthesis.getVoices()
-                  if (voices.length > 0) {
-                    onVoicesChanged()
-                  } else {
-                    // Fall back to default voice if voices never populate.
-                    didSpeak = true
-                    speechSynthesis.removeEventListener('voiceschanged', onVoicesChanged)
-
-                    speechSynthesis.speak(utterance)
-                  }
-                })
-              }
+              speechSynthesis.speak(utterance)
             })
+          } else if (nextMessage.silent) {
+            // No male voice on this device: let the subtitle stay up for as long as it would take to say
+            await new Promise<void>((resolve) => {
+              currentResolveRef.current = resolve
+              setTimeout(resolve, Math.max(1200, estimatedDuration))
+            })
+            currentResolveRef.current = null
           } else if (nextMessage.audio && nextMessage.audio.byteLength > 0) {
             await playAudioBuffer(nextMessage.audio)
           }
@@ -529,7 +492,7 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
     } finally {
       isProcessing.current = false
     }
-  }, [onSpeechEnd, onUtteranceEnd, config.speed, config.mode, config.pitch, config.volume, config.voice, onSpeechStart, generateAudioForMessage, playAudioBuffer, playDecoded])
+  }, [onSpeechEnd, onUtteranceEnd, config.speed, config.mode, config.pitch, config.volume, onSpeechStart, generateAudioForMessage, playAudioBuffer, playDecoded])
 
   // Add message to queue and assign ID
   const speak = useCallback(

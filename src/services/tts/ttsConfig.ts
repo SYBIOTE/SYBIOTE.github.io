@@ -41,7 +41,8 @@ export interface TTSConfig {
   }
   
   export const defaultTTSConfig: TTSConfig = {
-    voice: import.meta.env.VITE_TTS_VOICE || 'en_GB-hfc_male-medium',
+    // A browser voice name to prefer, used only if it's known to be male (see browserVoice.ts)
+    voice: import.meta.env.VITE_TTS_VOICE || '',
     speed: parseFloat(import.meta.env.VITE_TTS_SPEED) || 1.0,
     pitch: parseFloat(import.meta.env.VITE_TTS_PITCH) || 1.0,
     volume: parseFloat(import.meta.env.VITE_TTS_VOLUME) || 1.0,
