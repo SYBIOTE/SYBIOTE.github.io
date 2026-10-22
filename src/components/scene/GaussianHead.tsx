@@ -13,10 +13,15 @@ import type { ChatState, GaussianSplatRenderer } from 'gaussian-splat-renderer-f
 import { Vector3 } from 'three'
 
 import { createVirtualRig, rigToArkit, type ArkitBlendshape, type ArkitMappingOptions } from './avatar/arkitMapping'
+import { createBlendshapeOpacity } from './avatar/blendshapeOpacity'
+import { createBlendshapeSort } from './avatar/blendshapeSort'
+import { attachGlasses } from './avatar/glasses'
 import { createEyeMotion, gazeToArkit, updateEyeMotion } from './avatar/eyeMotion'
 import { A2E_CHANNELS } from '../../services/audio2expression/postprocess'
 import { sampleSpeechFace } from '../../services/audio2expression/speechFace'
 import { useAgentActions, useAgentState } from './avatar/AgentContext'
+
+const GLASSES_URL = '/assets/glasses-compressed.glb'
 
 const WELCOME_LINE = "Oh hey there! Welcome to my website! I'm Rahul, ask me anything about my work and projects!"
 
@@ -234,6 +239,12 @@ const GaussianHeadComponent = ({
     if (!container || rendererPromise) return
 
     let lastFrame = performance.now()
+    // Depth sort and splat opacity that follow the eyelids; set up once the splats have finished loading
+    let loaded = false
+    let loadedAt = 0
+    let sortTarget: GaussianSplatRenderer | null = null
+    let updateSort: ReturnType<typeof createBlendshapeSort> | undefined
+    let updateOpacity: ReturnType<typeof createBlendshapeOpacity> | undefined
 
     const getExpressionData = () => {
       const now = performance.now()
@@ -254,12 +265,25 @@ const GaussianHeadComponent = ({
         // text-estimated visemes; emotions from the rig still layer on top
         const speech = sampleSpeechFace(now)
         if (speech) for (const [name, i] of SPEECH_FACE_CHANNELS) extra[name] = (extra[name] ?? 0) + speech[i]
-        return rigToArkit(rig, {
+        const frame = rigToArkit(rig, {
           shapeGains: DEFAULT_SHAPE_GAINS,
           ...mappingRef.current,
           ...(speech ? { visemeGain: 0 } : {}),
           extra
         })
+        // Wait a moment after loading: the renderer can still refresh its splat data just after it reports 100%
+        if (updateSort === undefined && loaded && sortTarget && now - loadedAt > 2000) {
+          updateSort = createBlendshapeSort(sortTarget)
+          updateOpacity = createBlendshapeOpacity(sortTarget)
+          // Dev-only: lets test harnesses that hold fixed poses keep these in step
+          if (import.meta.env.DEV) {
+            const handle = (window as unknown as Record<string, Record<string, unknown>>).__gaussianHead
+            if (handle) Object.assign(handle, { updateSort, updateOpacity })
+          }
+        }
+        updateSort?.(frame)
+        updateOpacity?.(frame)
+        return frame
       } catch (error) {
         logger.warn('GaussianHead: expression update failed', error)
         return {}
@@ -283,7 +307,11 @@ const GaussianHeadComponent = ({
         downloadProgress: (p) => setProgress(p * 0.8),
         loadProgress: (p) => {
           setProgress(0.8 + p * 0.2)
-          if (p >= 1) setReady(true)
+          if (p >= 1) {
+            if (!loaded) loadedAt = performance.now()
+            loaded = true
+            setReady(true)
+          }
         }
       })
     )
@@ -291,6 +319,7 @@ const GaussianHeadComponent = ({
     rendererPromise
       .then((renderer) => {
         if (!renderer) throw new Error('Gaussian head failed to load')
+        sortTarget = renderer
         // Re-frame whenever the tile changes shape (sharing, transcript, rotation)
         const reframe = () => {
           const { width, height } = container.getBoundingClientRect()
@@ -298,6 +327,7 @@ const GaussianHeadComponent = ({
         }
         reframe()
         new ResizeObserver(reframe).observe(container)
+        attachGlasses(renderer, GLASSES_URL).catch((error) => logger.warn('GaussianHead: glasses failed to load', error))
         container.querySelector('canvas')?.addEventListener('webglcontextlost', () => {
           logger.warn('GaussianHead: WebGL context lost')
           setFailed(true)
