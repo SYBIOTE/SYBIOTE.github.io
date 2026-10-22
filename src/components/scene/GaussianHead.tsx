@@ -18,14 +18,15 @@ import { createBlendshapeSort } from './avatar/blendshapeSort'
 import { createBlinkBalance } from './avatar/blinkBalance'
 import { createMouthInterior } from './avatar/mouthInterior'
 import { attachGlasses } from './avatar/glasses'
-import { createEyeMotion, gazeToArkit, updateEyeMotion } from './avatar/eyeMotion'
+import { attachHeadMotion } from './avatar/headMotion'
+import { createPresence, updatePresence } from './avatar/presence'
 import { A2E_CHANNELS } from '../../services/audio2expression/postprocess'
-import { sampleSpeechFace } from '../../services/audio2expression/speechFace'
+import { sampleSpeechFace, speechCuesBetween } from '../../services/audio2expression/speechFace'
 import { useAgentActions, useAgentState } from './avatar/AgentContext'
+import { buildGreeting } from '../../call/greeting'
+import i18n from '../../i18n/i18n'
 
 const GLASSES_URL = '/assets/glasses-compressed.glb'
-
-const WELCOME_LINE = "Oh hey there! Welcome to my website! I'm Rahul, ask me anything about my work and projects!"
 
 // The renderer is a singleton bound to one canvas, so load it once per page.
 let rendererPromise: Promise<GaussianSplatRenderer | undefined> | null = null
@@ -50,6 +51,10 @@ const DEFAULT_SHAPE_GAINS: Partial<Record<ArkitBlendshape, number>> = {
 const SPEECH_FACE_CHANNELS = A2E_CHANNELS.map((name, i) => [name, i] as const).filter(
   ([name]) => !name.startsWith('eyeBlink') && !name.startsWith('eyeLook')
 )
+
+// Eyelids follow the eyes: looking down lowers the upper lid (no white above the iris), looking up lifts it
+const LID_FOLLOW_DOWN = 0.35
+const LID_FOLLOW_UP = 0.2
 
 // Framing: the frame runs from just above the hair down to where the bust's splats end, so the
 // reconstruction's cut-off sits exactly on the tile's bottom edge and nothing looks chopped off
@@ -167,7 +172,7 @@ interface GaussianHeadProps {
   onError?: () => void
   /** Say the welcome line once loaded. Hold it until the visitor has interacted, or the browser blocks the audio */
   greet?: boolean
-  /** Line spoken when greeting (defaults to a generic welcome) */
+  /** Line spoken when greeting (defaults to the call's greeting, see call/greeting.ts) */
   greeting?: string
   /** Render captions over the head (off when the surrounding layout shows its own) */
   showSubtitle?: boolean
@@ -182,7 +187,7 @@ const GaussianHeadComponent = ({
   mapping,
   onError,
   greet = true,
-  greeting = WELCOME_LINE,
+  greeting,
   showSubtitle = true,
   showLoading = true,
   onReady
@@ -203,7 +208,9 @@ const GaussianHeadComponent = ({
   mappingRef.current = mapping
 
   const rigRef = useRef(createVirtualRig())
-  const eyesRef = useRef(createEyeMotion())
+  // Gaze, blinks, nods and the face's small motion (see presence.ts)
+  const presenceRef = useRef(createPresence())
+  const headPoseRef = useRef({ pitch: 0, yaw: 0, roll: 0 })
   const [failed, setFailed] = useState(false)
   const onErrorRef = useRef(onError)
   const onReadyRef = useRef(onReady)
@@ -224,7 +231,8 @@ const GaussianHeadComponent = ({
       set: (name: string, value: number) => {
         rig.morphs[0].morphTargetInfluences[rig.dictionary[name][0]] = value
       },
-      frame: () => rigToArkit(rig, mappingRef.current)
+      frame: () => rigToArkit(rig, mappingRef.current),
+      presence: presenceRef.current
     }
   }, [])
 
@@ -252,6 +260,7 @@ const GaussianHeadComponent = ({
 
     const getExpressionData = () => {
       const now = performance.now()
+      const previous = lastFrame
       const delta = Math.min((now - lastFrame) / 1000, 0.25)
       lastFrame = now
 
@@ -263,11 +272,21 @@ const GaussianHeadComponent = ({
         a.applyVisemesToRig(delta)
         a.updateEmotes(delta)
         a.applyEmotesToMorphTargets(rig.morphs, rig.dictionary)
-        updateEyeMotion(eyesRef.current, getChatState(), now, delta)
-        const extra = gazeToArkit(eyesRef.current)
+        const mode = getChatState()
         // When the voice's own face frames cover this moment they drive the mouth, replacing the
         // text-estimated visemes; emotions from the rig still layer on top
         const speech = sampleSpeechFace(now)
+        const presence = updatePresence(presenceRef.current, {
+          mode,
+          now,
+          delta,
+          speaking: !!stateRef.current?.ttsIsSpeaking,
+          voiceDrivesFace: !!speech,
+          visitorTalking: !!stateRef.current?.vadIsDetecting,
+          cues: speechCuesBetween(previous, now)
+        })
+        headPoseRef.current = presence.head
+        const extra = presence.extra
         if (speech) for (const [name, i] of SPEECH_FACE_CHANNELS) extra[name] = (extra[name] ?? 0) + speech[i]
         const frame = rigToArkit(rig, {
           shapeGains: DEFAULT_SHAPE_GAINS,
@@ -275,6 +294,12 @@ const GaussianHeadComponent = ({
           ...(speech ? { visemeGain: 0 } : {}),
           extra
         })
+        // The head blinks on its own (replacing the emote service's timer blink), with the lids following the gaze
+        for (const side of ['Left', 'Right'] as const) {
+          const lid = LID_FOLLOW_DOWN * frame[`eyeLookDown${side}`]
+          frame[`eyeBlink${side}`] = lid + (1 - lid) * presence.blink
+          frame[`eyeWide${side}`] = Math.min(1, frame[`eyeWide${side}`] + LID_FOLLOW_UP * frame[`eyeLookUp${side}`])
+        }
         // Wait a moment after loading: the renderer can still refresh its splat data just after it reports 100%
         if (updateSort === undefined && loaded && sortTarget && now - loadedAt > 2000) {
           // First, since it reshapes the jaw blendshape the depth sort reads
@@ -282,6 +307,7 @@ const GaussianHeadComponent = ({
           updateSort = createBlendshapeSort(sortTarget)
           updateOpacity = createBlendshapeOpacity(sortTarget)
           balanceBlink = createBlinkBalance(sortTarget)
+          if (!attachHeadMotion(sortTarget, () => headPoseRef.current)) logger.warn('GaussianHead: head gestures unavailable')
           // Dev-only: lets test harnesses that hold fixed poses keep these in step
           if (import.meta.env.DEV) {
             const handle = (window as unknown as Record<string, Record<string, unknown>>).__gaussianHead
@@ -363,7 +389,7 @@ const GaussianHeadComponent = ({
     if (!ready || !greet || greetedRef.current) return
     greetedRef.current = true
     actionsRef.current.performEmotionAction({ emotion: 'happy', relaxTime: 3000 })
-    actionsRef.current.speak(greeting)
+    actionsRef.current.speak(greeting ?? buildGreeting({ locale: i18n.language }))
     // greeting is read once, when the greet fires
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready, greet])

@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import type { ExperienceJob, LeadershipItem } from '../../content/types'
+import type { ExperienceJob, LeadershipItem, SkillGroup } from '../../content/types'
 import { useResumeData, getSortedJobs } from '../../content/useContent'
 
 const container: CSSProperties = {
@@ -155,6 +155,17 @@ interface LeadershipListProps {
   items: Array<{ text: string; link?: { url: string; label: string } }>
 }
 
+const SkillsList = ({ groups }: { groups: SkillGroup[] }) => (
+  <div style={{ paddingTop: '0.25rem' }}>
+    {groups.map((group, index) => (
+      <div key={group.name} style={{ ...item, ...(index === 0 ? { borderTop: 'none' } : {}), fontSize: '0.9rem' }}>
+        <span style={{ color: 'rgba(255, 255, 255, 0.95)', fontWeight: 600 }}>{group.name}: </span>
+        <span style={{ color: 'rgba(220, 230, 255, 0.85)' }}>{group.items}</span>
+      </div>
+    ))}
+  </div>
+)
+
 const LeadershipList = ({ items }: LeadershipListProps) => (
   <ul style={{ marginTop: '0.25rem', paddingLeft: '1.25rem', color: 'rgba(240, 245, 255, 0.85)' }}>
     {items.map((item, index) => (
@@ -191,6 +202,9 @@ export const ResumeSection = () => {
     link: item.link ? { url: item.link, label: item.linkLabel || 'link' } : undefined
   }))
 
+  const skillGroups = Object.values((t("resume.skills.groups", { returnObjects: true }) as Record<string, SkillGroup> | string) || {})
+    .filter((group): group is SkillGroup => typeof group === 'object')
+
   // Dynamically read jobs from i18n and sort by resume.json order
   const jobsData = t("resume.experience.jobs", { returnObjects: true }) as Record<string, ExperienceJob>
   const sortedJobs = getSortedJobs(resumeData)
@@ -224,18 +238,6 @@ export const ResumeSection = () => {
         <ContactList items={contactItems} />
       </SectionCard>
 
-      <SectionCard title={t("resume.education.title")}>
-        <EducationItem
-          degree={t("resume.education.degree")}
-          institution={t("resume.education.institution")}
-          period={t("resume.education.period")}
-        />
-      </SectionCard>
-
-      <SectionCard title={t("resume.leadership.title")}>
-        <LeadershipList items={leadershipItems} />
-      </SectionCard>
-
       <SectionCard title={t("resume.experience.title")}>
         <div style={{ paddingTop: '0.25rem' }}>
           {experienceJobs.map((job) => (
@@ -247,6 +249,24 @@ export const ResumeSection = () => {
             />
           ))}
         </div>
+      </SectionCard>
+
+      {skillGroups.length > 0 && (
+        <SectionCard title={t("resume.skills.title")}>
+          <SkillsList groups={skillGroups} />
+        </SectionCard>
+      )}
+
+      <SectionCard title={t("resume.leadership.title")}>
+        <LeadershipList items={leadershipItems} />
+      </SectionCard>
+
+      <SectionCard title={t("resume.education.title")}>
+        <EducationItem
+          degree={t("resume.education.degree")}
+          institution={t("resume.education.institution")}
+          period={t("resume.education.period")}
+        />
       </SectionCard>
     </div>
   )

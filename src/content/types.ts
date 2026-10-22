@@ -64,6 +64,17 @@ export interface ResumeLeadership {
   items: Record<string, LeadershipItem>
 }
 
+// A line of skills, e.g. { name: 'Frontend', items: 'React, Next.js, Vite' }
+export interface SkillGroup {
+  name: string
+  items: string
+}
+
+export interface ResumeSkills {
+  title: string
+  groups: Record<string, SkillGroup>
+}
+
 export interface ResumeSummary {
   title: string
   content: string
@@ -73,6 +84,7 @@ export interface ResumeContent {
   summary: ResumeSummary
   education: ResumeEducation
   leadership: ResumeLeadership
+  skills?: ResumeSkills
   experience: ResumeExperience
 }
 

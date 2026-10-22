@@ -9,11 +9,11 @@
  *
  * Key behaviors:
  * - Breaks responses into natural speech chunks for TTS
- * - Supports interrupt timestamps for barge-in
- * - Maintains conversation history
+ * - Supports interrupt timestamps for barge-in: a newer turn or a barge-in stops the old reply
+ * - Maintains conversation history, with interrupted replies cut to what was actually said
  */
 
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 
 import { defaultLLMConfig, type LLMConfig } from './config/llmConfig'
 import type { LLMPerformRequest, LLMResponse, LLMState, LLMStatusUpdate } from './llmTypes'
@@ -26,6 +26,9 @@ type LLMServiceProps = {
   onResponse?: (response: LLMResponse) => void
 }
 
+/** An interrupted reply as the model sees it next turn: what was said, ending in a dash (see api/chat.ts) */
+const cutOff = (spoken: string) => `${spoken.trim()}—`
+
 export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse }: LLMServiceProps) => {
   const config = useMemo(() => ({ ...defaultLLMConfig, ...configPartial }), [configPartial])
   const [state, setState] = useState<LLMState>({
@@ -35,6 +38,10 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
     loading: false,
     _latest_interrupt: 0
   })
+  // Read live by in-flight requests (state would be the value from when they started)
+  const latestInterruptRef = useRef(0)
+  // Replies the visitor cut off, by turn: what was actually spoken before they did
+  const cutOffsRef = useRef(new Map<number, string>())
 
   const processThinkBlocks = useCallback((input: string) => {
     const thinkBlocks: string[] = []
@@ -54,21 +61,24 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
       const text = request.text?.trim()
       if (!text || !text.length) return
 
+      latestInterruptRef.current = Math.max(latestInterruptRef.current, request.interrupt)
       setState((prev) => ({ ...prev, _latest_interrupt: request.interrupt }))
+      const interrupt = request.interrupt
 
       const baseParams = {
         userMessage: text,
         interrupt: request.interrupt,
         messages: state.messages,
-        latestInterrupt: state._latest_interrupt,
+        isStale: () => latestInterruptRef.current > interrupt,
         responseCallback: onResponse,
         updateMessages: (userMsg: string, assistantMsg: string) => {
+          const spoken = cutOffsRef.current.get(interrupt)
           setState((prev) => ({
             ...prev,
             messages: [
               ...prev.messages,
-              { role: 'user', content: userMsg },
-              { role: 'assistant', content: assistantMsg }
+              { role: 'user', content: userMsg, interrupt },
+              { role: 'assistant', content: spoken === undefined ? assistantMsg : cutOff(spoken), interrupt }
             ]
           }))
         },
@@ -109,8 +119,27 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
         }
       }
     },
-    [state.messages, state._latest_interrupt, onResponse, onStatus, processThinkBlocks, config.llm_provider, config.api_url]
+    [state.messages, onResponse, onStatus, processThinkBlocks, config.llm_provider, config.api_url]
   )
+
+  /** Stops the in-flight reply (the visitor took the turn), without starting a new one */
+  const supersede = useCallback((interrupt: number) => {
+    latestInterruptRef.current = Math.max(latestInterruptRef.current, interrupt)
+  }, [])
+
+  /**
+   * The visitor cut off the reply to turn `interrupt` after `spoken` had been said: remember only that,
+   * whether the reply is already in the history or still streaming in
+   */
+  const markCutOff = useCallback((interrupt: number, spoken: string) => {
+    cutOffsRef.current.set(interrupt, spoken)
+    setState((prev) => ({
+      ...prev,
+      messages: prev.messages.map((m) =>
+        m.role === 'assistant' && m.interrupt === interrupt ? { ...m, content: cutOff(spoken) } : m
+      )
+    }))
+  }, [])
 
   const clearHistory = useCallback(() => {
     setState((prev) => ({
@@ -126,9 +155,11 @@ export const useLLMService = ({ config: configPartial = {}, onStatus, onResponse
     () => ({
       load,
       processUserInput,
+      supersede,
+      markCutOff,
       clearHistory
     }),
-    [load, processUserInput, clearHistory]
+    [load, processUserInput, supersede, markCutOff, clearHistory]
   )
 
   return useMemo(

@@ -5,7 +5,7 @@
 
 import { useTranslation } from 'react-i18next'
 
-import type { ExperienceJob, LeadershipItem } from '../../content/types'
+import type { ExperienceJob, LeadershipItem, SkillGroup } from '../../content/types'
 import { getSortedJobs, useResumeData } from '../../content/useContent'
 import { BackIcon } from '../callIcons'
 
@@ -26,6 +26,9 @@ export const ResumePage = ({ onBack, onContact }: Props) => {
     (id) => ({ id, ...jobs[id] })
   )
   const leadership = Object.values(t('resume.leadership.items', { returnObjects: true }) as Record<string, LeadershipItem>)
+  const skills = Object.values((t('resume.skills.groups', { returnObjects: true }) as Record<string, SkillGroup> | string) || {}).filter(
+    (group): group is SkillGroup => typeof group === 'object'
+  )
   const services = Object.values(t('services.items', { returnObjects: true }) as Record<string, { name: string }>)
   const website = t('core.website')
 
@@ -81,6 +84,19 @@ export const ResumePage = ({ onBack, onContact }: Props) => {
             ))}
           </ol>
         </section>
+
+        {skills.length > 0 && (
+          <section>
+            <h2>{t('resume.skills.title')}</h2>
+            <ul className="plain">
+              {skills.map((group) => (
+                <li key={group.name}>
+                  <strong>{group.name}:</strong> {group.items}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         <div className="resume-columns">
           <section>

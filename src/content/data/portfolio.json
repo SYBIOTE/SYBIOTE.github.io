@@ -1,10 +1,10 @@
 {
   "items": [
     {
-      "id": "nirvanaAnimate",
+      "id": "niraAnimates",
       "image": "/assets/img/portfolio/animate/home.png",
       "order": 1,
-      "videoId": "EbdERCpuk0w",
+      "videoId": "Esz4OVHdZT8",
       "videos": [
         "D-xPP4cuy94"
       ],
@@ -14,7 +14,7 @@
       "links": [
         {
           "type": "website",
-          "url": "https://animate.nirvanaxr.com/"
+          "url": "https://niraanimates.com/"
         }
       ]
     },
@@ -54,6 +54,20 @@
         {
           "type": "website",
           "url": "https://nirvanaxr.com/"
+        }
+      ]
+    },
+    {
+      "id": "augury",
+      "image": "/assets/img/portfolio/augury/cover.jpg",
+      "order": 5,
+      "gallery": [
+        "/assets/img/portfolio/augury/title.jpg"
+      ],
+      "links": [
+        {
+          "type": "itch",
+          "url": "https://sybiote.itch.io/augury-duel"
         }
       ]
     },

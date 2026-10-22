@@ -23,6 +23,7 @@ import { defaultTTSConfig, type TTSConfig, type WhisperData } from './tts/ttsCon
 import { defaultSTTConfig, type STTConfig } from './stt/sttConfig'
 import { defaultLLMConfig, type LLMConfig } from './llm/config/llmConfig'
 import { shouldTriggerBargeIn } from '../integration/emotionIntegration'
+import { BargeIn } from './bargeIn'
 import { logger } from '../utils/logger'
 import type { AnimationAction, AnimationMixer, Camera, Object3D } from 'three'
 import type { AnimationClip, AnimationPerformanceData, AnimationState } from './animation/animationTypes'
@@ -244,6 +245,11 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
   const [currentInterimTranscript, setCurrentInterimTranscript] = useState('')
   const [currentSubtitleText, setCurrentSubtitleText] = useState('')
   const interruptCounterRef = useRef(performance.now())
+  // The reply being spoken: which turn it answers, and what's been said of it so far
+  const replyInterruptRef = useRef(0)
+  const spokenRef = useRef('')
+  // Whether the reply is still streaming in (read from callbacks, so through a ref)
+  const llmThinkingRef = useRef(false)
 
   // Initialize conversation service
   const conversation = useConversationService()
@@ -292,10 +298,13 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
     }
   })
 
+  llmThinkingRef.current = llm.state.thinking
+
   // Initialize TTS service
   const tts = useTTSService({
     config: ttsConfig,
     onSpeechStart: (text: string, whisperData: WhisperData) => {
+      spokenRef.current = spokenRef.current ? `${spokenRef.current} ${text}` : text
       visemes.actions.generateSequence(whisperData)
       callbacks.onTTSSpeechStart?.(text, whisperData)
       setCurrentSubtitleText(prev => {
@@ -319,6 +328,7 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
   const callbacksRef = useRef(callbacks)
   callbacksRef.current = callbacks
   const turnGateRef = useRef<TurnGate | null>(null)
+  const bargeInRef = useRef<BargeIn | null>(null)
   if (!turnGateRef.current) {
     turnGateRef.current = new TurnGate({
       classify: endOfTurnProbability,
@@ -337,10 +347,12 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
     },
     onSpeechStart: useCallback(() => {
       turnGate.speechStart()
+      bargeInRef.current?.speechStart()
       callbacksRef.current.onSpeechStart?.()
     }, [turnGate]),
     onSpeechEnd: useCallback(
       (audio: ArrayBuffer) => {
+        bargeInRef.current?.speechEnd()
         void turnGate.speechEnd(new Float32Array(audio))
         callbacksRef.current.onSpeechEnd?.(audio)
       },
@@ -365,9 +377,11 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
           logger.log('STT: Stop command detected - barge-in activated')
         }
 
+        bargeInRef.current?.transcript(result.text, true)
         // Sent once the visitor has finished their turn (see commitTurnRef)
         turnGate.transcript(result.text)
       } else {
+        bargeInRef.current?.transcript(result.text, false)
         setCurrentInterimTranscript(withHeld(result.text))
       }
 
@@ -375,6 +389,7 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
       callbacks.onSTTResult?.(result)
     },
     onInterimTranscript: (text) => {
+      bargeInRef.current?.transcript(text, false)
       setCurrentInterimTranscript(withHeld(text))
       callbacks.onInterimTranscript?.(text)
     }
@@ -389,15 +404,7 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
       setCurrentInterimTranscript(text)
     }
 
-    const interrupt = Date.now()
-    interruptCounterRef.current = interrupt
-    llm.actions.processUserInput({
-      text,
-      human: true,
-      final: true,
-      bargein: appConfig.bargeInEnabled,
-      interrupt
-    })
+    startReply(text)
   }
 
   // Service coordination effects
@@ -421,24 +428,11 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
         const userMessage = message.trim()
 
         conversation.actions.addMessage(userMessage, true)
-
-        const interrupt = Date.now()
-        interruptCounterRef.current = interrupt
-
-        if(tts.state.isSpeaking && appConfig.bargeInEnabled) {
-          tts.actions.stopSpeaking()
-        }
-
-        llm.actions.processUserInput({
-          text: userMessage,
-          human: true,
-          final: true,
-          bargein: appConfig.bargeInEnabled,
-          interrupt
-        })
+        startReply(userMessage)
       }
     },
-    [conversation.actions, tts.state.isSpeaking, tts.actions, llm.actions, appConfig.bargeInEnabled]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [conversation.actions, llm.actions, tts.actions, appConfig.bargeInEnabled]
   )
 
   const toggleMicrophone = useCallback(
@@ -453,13 +447,46 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
     const interrupt = Date.now()
     interruptCounterRef.current = interrupt
 
-    if (tts.state.isSpeaking) {
+    // Stop the reply mid-stream too, and remember only what had been said of it
+    const replying = tts.actions.isSpeakingNow() || llmThinkingRef.current
+    llm.actions.supersede(interrupt)
+    if (replying && replyInterruptRef.current) llm.actions.markCutOff(replyInterruptRef.current, spokenRef.current)
+    replyInterruptRef.current = 0
+    if (tts.actions.isSpeakingNow()) {
       tts.actions.stopSpeaking()
     }
 
     emotes.actions.onBargeIn()
     animations.actions.onBargeIn()
-  }, [tts.state.isSpeaking, tts.actions, emotes, animations.actions])
+  }, [tts.actions, llm.actions, emotes, animations.actions])
+
+  // A new turn from the visitor (spoken or typed): whatever Rahul was still saying is cut off there
+  const startReply = (text: string) => {
+    if (appConfig.bargeInEnabled && (tts.actions.isSpeakingNow() || llmThinkingRef.current)) triggerBargein()
+    const interrupt = Date.now()
+    interruptCounterRef.current = interrupt
+    replyInterruptRef.current = interrupt
+    spokenRef.current = ''
+    llm.actions.processUserInput({
+      text,
+      human: true,
+      final: true,
+      bargein: appConfig.bargeInEnabled,
+      interrupt
+    })
+  }
+
+  // Talking over Rahul: his voice dips, and he stops once they've said something real (see bargeIn.ts)
+  const bargeInActionsRef = useRef({ triggerBargein, tts: tts.actions })
+  bargeInActionsRef.current = { triggerBargein, tts: tts.actions }
+  if (!bargeInRef.current && appConfig.bargeInEnabled) {
+    bargeInRef.current = new BargeIn({
+      isSpeaking: () => bargeInActionsRef.current.tts.isSpeakingNow(),
+      duck: (amount) => bargeInActionsRef.current.tts.duck(amount),
+      interrupt: () => bargeInActionsRef.current.triggerBargein(),
+      spokenText: () => spokenRef.current
+    })
+  }
 
   // Memoize the services object to prevent unnecessary re-renders
   const services = useMemo(

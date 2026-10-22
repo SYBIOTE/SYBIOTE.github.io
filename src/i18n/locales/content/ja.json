@@ -2,11 +2,11 @@
   "core": {
     "name": "Rahul Ghosh",
     "email": "ghoshr698@gmail.com",
-    "phone": "+91 9051186767",
+    "phone": "+91 90511 86767",
     "city": "Bengaluru, India",
     "website": "https://rahulghosh.is-a.dev/",
     "freelance": "利用可能",
-    "role": "Web 3Dエンジニア"
+    "role": "フルスタック & Web 3Dエンジニア"
   },
   "profile": {
     "about": {
@@ -21,17 +21,104 @@
   "resume": {
     "summary": {
       "title": "概要",
-      "content": "私はユーザーを顧客に変換する、スケーラブルで高性能な空間システムを構築します。\n出荷し、売り、スケールするWebベースの3Dが必要な時にお声がけください。"
+      "content": "開発者向けプロダクト、社内ツール、AIを活用したWebアプリの開発に4年以上携わるフルスタックエンジニア。その多くは3Dです。React、TypeScript、Node.js、クラウドネイティブなシステムで、スタートアップのプロダクトをゼロから立ち上げてきました。\n出荷し、売れて、スケールに耐えるWebベースの3Dが必要な時にお声がけください。"
     },
-    "education": {
-      "title": "教育",
-      "degree": "コンピュータ工学学士号および人工知能優等学位",
-      "institution": "Army Institute of Technology, Pune, India — CGPA 8.84",
-      "period": "2019 — 2023"
+    "experience": {
+      "title": "職歴",
+      "jobs": {
+        "niraAnimates": {
+          "title": "技術アドバイザー — Nira Animates",
+          "period": "2025年6月 — 現在",
+          "achievements": [
+            "ブラウザ上で3Dキャラクターのリギング・リターゲット・アニメーションを行うSaaS「Nira Animates」に技術面で助言。React、TypeScript、Node.js、Supabase、最新のAIサービスで構築",
+            "AIパイプラインの実行を監視し信頼性を高める社内ツールとオブザーバビリティの構築を支援",
+            "初期顧客と直接やり取りし、フィードバックをもとに機能と開発者体験を方向付け"
+          ]
+        },
+        "assethub": {
+          "title": "フルスタックエンジニア — AssetHub (Techstars '24)",
+          "period": "2025年9月 — 2026年9月",
+          "achievements": [
+            "AIによる3Dアセット生成・処理のための顧客向けワークフローと社内ツールを構築",
+            "中核となる3DエディタのReact/TypeScriptインターフェースとバックエンドサービスを開発",
+            "迅速なプロダクト改善により、8か月でユーザー11,000人超・MRR 5,000ドルへの成長に貢献"
+          ]
+        },
+        "infiniteReality": {
+          "title": "フルスタックエンジニア (WebXR) — Infinite Reality",
+          "period": "2024年2月 — 2025年8月",
+          "achievements": [
+            "IR StudioでMonaco Editorを用いたブラウザ上のスクリプトワークフローなど、開発者向けツールを設計",
+            "大規模Webアプリ向けの再利用可能な2D/3D UIシステムと状態管理パターンを構築し、ユーザビリティを35%向上",
+            "高精度な3Dギズモを構築し、編集速度を50%以上向上",
+            "エンジン全体のリファクタリングと最適化: ビルドサイズ20%削減、フレーム性能15%向上"
+          ]
+        },
+        "etherealEngine": {
+          "title": "フルスタックエンジニア (WebXR) — Ethereal Engine (Infinite Realityに買収)",
+          "period": "2023年2月 — 2024年2月",
+          "achievements": [
+            "プラットフォームのサービスをExpressからKoaへ移行を主導: APIレスポンス時間60%短縮、スループット3倍",
+            "プログラマー以外も使えるビジュアルスクリプティングシステムを設計",
+            "最新のUX基準に沿ったUI刷新を主導",
+            "Infinite RealityによるEthereal Engineの7,500万ドルでの買収につながった中核機能に貢献"
+          ]
+        },
+        "jioTesseract": {
+          "title": "XRアプリケーション開発者 — Jio Tesseract",
+          "period": "2022年4月 — 2022年11月",
+          "achievements": [
+            "スタンドアロンウェーブサバイバルゲーム「Narakashur」をリリース",
+            "4つのユニークな敵をデザイン; ウェーブシステム、UI、グローバルリーダーボードを構築",
+            "デバイスハードウェアを活用したユニークなプレイヤーメカニクス"
+          ]
+        },
+        "prodigalTech": {
+          "title": "バックエンドエンジニア — Prodigal Tech (YC S18)",
+          "period": "2022年4月 — 2023年2月",
+          "achievements": [
+            "大規模な音声分析向けに、顧客別のバックエンドサービスとAIデータパイプラインを構築",
+            "顧客導入の70%以上でデータ取り込み・処理・デプロイを自動化",
+            "データ品質の改善: 欠落していた20万件以上の音声ファイルを補完",
+            "5人チームでオンコールを担当"
+          ]
+        }
+      }
+    },
+    "skills": {
+      "title": "スキル",
+      "groups": {
+        "languages": {
+          "name": "言語",
+          "items": "TypeScript, JavaScript, Python, C++, C#, SQL, Bash"
+        },
+        "frontend": {
+          "name": "フロントエンド",
+          "items": "React, Next.js, Tailwind CSS, React Query, Zustand, Vite"
+        },
+        "web3d": {
+          "name": "3D・XR",
+          "items": "Three.js, React Three Fiber, Babylon.js, WebXR, Godot, Unity, Unreal, Vulkan"
+        },
+        "backend": {
+          "name": "バックエンド",
+          "items": "Node.js, Express, Koa, PostgreSQL, REST APIs, Supabase"
+        },
+        "infra": {
+          "name": "インフラ・ツール",
+          "items": "AWS, GCP, Docker, Kubernetes, GitHub Actions, Git, Claude Code, Cursor"
+        }
+      }
     },
     "leadership": {
       "title": "リーダーシップと実績",
       "items": {
+        "bytedance": {
+          "text": "ByteDance Web2Spatial Challenge — ベストゲーム賞"
+        },
+        "tokyoAiHackathon": {
+          "text": "Tokyo AI Hackathon — 2位"
+        },
         "godotDojo": {
           "text": "Godot Dojo創設メンバー",
           "link": "https://github.com/Godot-Dojo",
@@ -49,76 +136,15 @@
           "text": "インド陸軍技術優秀賞 — ハイブリッドAI/アルゴリズムベースの迷彩パターン生成ツールを開発、インド全土に展開"
         },
         "exit": {
-          "text": "7500万ドルのイグジットをナビゲート"
+          "text": "Infinite RealityによるEthereal Engineの7,500万ドル買収を支えたチームの一員"
         }
       }
     },
-    "experience": {
-      "title": "職歴",
-      "jobs": {
-        "infiniteReality": {
-          "title": "WebXRエンジニア — Infinite Reality",
-          "period": "2024年2月 — 2025年9月",
-          "achievements": [
-            "IRStudioでMonaco Editor統合を伴うクライアントサイドスクリプトシステムを主導",
-            "2D/3D UIコンポーネントを設計し、使いやすさを35%向上",
-            "高精度3Dギズモを構築し、編集速度を50%以上向上",
-            "エンジンリファクタリングと最適化: ビルドサイズ-20%、フレーム性能+15%"
-          ]
-        },
-        "etherealEngine": {
-          "title": "WebXRエンジニア — Ethereal Engine (Infinite Realityに買収)",
-          "period": "2023年2月 — 2024年2月",
-          "achievements": [
-            "バックエンドをExpressからKoaに移行、API応答時間-60%、スループット3倍",
-            "現代的なUX標準に合わせたUI刷新を主導",
-            "非プログラマー向けワークフローを可能にするビジュアルスクリプトシステムを設計"
-          ]
-        },
-        "metawarp": {
-          "title": "XRアプリケーション開発者 — Metawarp",
-          "period": "2022年12月 — 2023年2月",
-          "achievements": [
-            "XRおよびGISアプリケーションを開発",
-            "UnityでのMixed Reality分解/組み立てワークフロー",
-            "UnrealでのVRマップ可視化と3Dアノテーション",
-            "VR/MRアプリを72Hzで動作するよう最適化"
-          ]
-        },
-        "jioTesseract": {
-          "title": "XRアプリケーション開発者 — Jio Tesseract",
-          "period": "2022年4月 — 現在",
-          "achievements": [
-            "スタンドアロンウェーブサバイバルゲーム「Narakashur」をリリース",
-            "4つのユニークな敵をデザイン; ウェーブシステム、UI、グローバルリーダーボードを構築",
-            "デバイスハードウェアを活用したユニークなプレイヤーメカニクス"
-          ]
-        },
-        "prodigalTech": {
-          "title": "バックエンドエンジニア — Prodigal Tech (YC S18)",
-          "period": "2022年4月 — 2022年10月",
-          "achievements": [
-            "ETLパイプラインの開発・保守",
-            "技術運用の70%以上をカバーする自動化（パイプライン時間-20%）",
-            "データ品質改善: 20万以上の欠落オーディオファイルをバックフィル",
-            "5人のエンジニアチームでオンコール対応"
-          ]
-        },
-        "assethub": {
-          "title": "Web3Dエンジニア - AssetHub(Techstars '24)",
-          "period": "2025年9月 - 現在",
-          "achievements": [
-            "AIベースの3Dアセット開発のための高性能3D Webアプリを開発中"
-          ]
-        },
-        "nirvanaxr": {
-          "title": "創設者 — Nirvana XR",
-          "period": "2025年6月 — 現在",
-          "achievements": [
-            "インディー開発者とスタジオ向けのWebファースト3Dアニメーションスイート「Nirvana Animate」を開発中"
-          ]
-        }
-      }
+    "education": {
+      "title": "教育",
+      "degree": "コンピュータ工学学士号および人工知能優等学位",
+      "institution": "Army Institute of Technology, Pune, India — CGPA 8.84",
+      "period": "2019 — 2023"
     }
   },
   "services": {
@@ -147,6 +173,10 @@
   },
   "portfolio": {
     "items": {
+      "niraAnimates": {
+        "title": "Nira Animates",
+        "description": "インディー開発者やスタジオがブラウザで直接リギング、リターゲット、アニメーション作成ができるWeb向け3Dアニメーションスイート。"
+      },
       "godotProjects": {
         "title": "Godotプロジェクト",
         "description": "Godotエンジンで構築されたXRおよびゲーム開発プロジェクトのコレクション。",
@@ -201,10 +231,6 @@
         "description": "Jio Mixed Reality Glasses 向けのスタンドアロン ウェーブ サバイバル ゲーム。",
         "extendedDescription": "NarakashurはJio Mixed Reality Glasses向けに開発されたウェーブサバイバルゲームです。"
       },
-      "nirvanaAnimate": {
-        "title": "Nirvana Animate",
-        "description": "インディー開発者やスタジオがブラウザで直接リギング、リターゲット、アニメーション作成ができるWeb向け3Dアニメーションスイート。"
-      },
       "etherealEngine": {
         "title": "IR Engine",
         "description": "マルチプレイヤー、アバター、ワールド編集、XRサポート、WebRTCネットワーキングを備えたソーシャル空間ウェブ向けオープンソース3Dツールキット。"
@@ -216,6 +242,11 @@
       "avatarAsWebsites": {
         "title": "ウェブサイトとしてのアバター",
         "description": "パーソナル3Dアバターを作成し、ウェブ上のインタラクティブなポートフォリオページに変換するシステム。"
+      },
+      "augury": {
+        "title": "AUGURY: Duel of the Gods",
+        "description": "神話の神々が戦う、読み合いのターン制対戦格闘ゲーム。両者が同時に行動を選ぶので、勝敗を分けるのは反応速度ではなく相手を読む力です。",
+        "extendedDescription": "DreamLayer Jamのために制作した、Your Only Move Is HUSTLEの流れをくむ読み合いのターン制対戦格闘ゲーム。アヌビスや雷神など、さまざまな神話の神々が2Dのアリーナで戦います。両プレイヤーが同時に行動を選び、攻防はフリーズフレームのポーズで再生されます。アリーナは危険を事前に予告し、神々は「ドメイン」でアリーナを書き換えられ、相手の行動を読み当てると神性とカウンターヒットを得られます。キャラクターのアートはDreamLayerで生成・反復編集しており、どのポーズでも神々の姿が一貫しています。"
       }
     }
   }

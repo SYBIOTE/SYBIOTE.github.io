@@ -22,7 +22,7 @@ const run = async (chunks: string[]) => {
   const result = await llmApi({
     userMessage: 'hi',
     interrupt: 1,
-    latestInterrupt: 0,
+    isStale: () => false,
     messages: [{ role: 'system', content: 'old prompt' }],
     llmUrl: '/api/chat',
     responseCallback: (r) => responses.push(r),
@@ -51,6 +51,24 @@ describe('llmApi', () => {
     expect(responses).toHaveLength(1)
   })
 
+  it('stops speaking once a newer turn supersedes the request mid-stream', async () => {
+    let stale = false
+    vi.stubGlobal('fetch', vi.fn(async () => streamOf(['First sentence here. ', 'Second sentence here. ', 'Third one.'])))
+    const responses: LLMResponse[] = []
+    await llmApi({
+      userMessage: 'hi',
+      interrupt: 1,
+      isStale: () => stale,
+      messages: [],
+      llmUrl: '/api/chat',
+      responseCallback: (r) => {
+        responses.push(r)
+        stale = true
+      }
+    })
+    expect(responses.map((r) => r.breath)).toEqual(['First sentence here.'])
+  })
+
   it('does not send the client system message', async () => {
     await run(['Ok.'])
     const body = JSON.parse((vi.mocked(fetch).mock.calls[0][1] as RequestInit).body as string)
@@ -60,7 +78,7 @@ describe('llmApi', () => {
 
   it('reports failure on non-200 so the caller can fall back', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => new Response('nope', { status: 503 })))
-    const result = await llmApi({ userMessage: 'hi', interrupt: 1, latestInterrupt: 0, messages: [], llmUrl: '/api/chat' })
+    const result = await llmApi({ userMessage: 'hi', interrupt: 1, isStale: () => false, messages: [], llmUrl: '/api/chat' })
     expect(result.success).toBe(false)
   })
 })

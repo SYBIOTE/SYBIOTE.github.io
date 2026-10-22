@@ -1,882 +1,372 @@
 {
-  "triggers": [
+  "_comment": "Scripted replies, used when no LLM is reachable. Written as Rahul, spoken aloud: first person, short, no lists. Projects are matched by the aliases in src/data/assistantTopics.json (so misheard names still work); intents match their triggers as whole words, and the longest matching trigger wins. Tags like [[show_project:id]] work as in LLM replies.",
+  "projects": {
+    "assetHub": [
+      "AssetHub is an AI-native 3D editor that takes you from concept art to production-ready models. I was a full-stack engineer there from September 2025 to September 2026, and we grew it to over eleven thousand users in eight months [[show_project:assetHub]].",
+      "I worked on AssetHub for a year as a full-stack engineer. It's an AI-native 3D editor: you start from concept art and end up with a production-ready model [[show_project:assetHub]]."
+    ],
+    "niraAnimates": [
+      "Nira Animates is a 3D animation suite for the web: indie devs and studios can rig, retarget and animate right in the browser. I'm a technical advisor there [[show_project:niraAnimates]].",
+      "That's the browser-based rigging and animation tool I advise on. You rig, retarget and animate characters without leaving the browser [[show_project:niraAnimates]]."
+    ],
+    "etherealEngine": [
+      "IR Engine, which started as Ethereal Engine, is an open-source toolkit for the social spatial web. Multiplayer, avatars, world editing, XR and WebRTC networking [[show_project:etherealEngine]].",
+      "I spent a couple of years on IR Engine. It's an open-source toolkit for building multiplayer 3D worlds on the web, with avatars, editing and XR [[show_project:etherealEngine]]."
+    ],
+    "avatarAsWebsites": [
+      "You're looking at it. It's a system for turning a personal 3D avatar into an interactive portfolio site, and this one's me [[show_project:avatarAsWebsites]]."
+    ],
+    "godotDojo": [
+      "Godot Dojo is a group pushing XR forward in the Godot engine. I'm a founding member and a core developer on its VR demos and tools [[show_project:godotDojo]]."
+    ],
+    "wizardVsRobot": [
+      "Wizard vs Robot is a VR game where you cast spells with gestures to fight robots. I worked on the locomotion and the enemy AI, which moves in full six degrees of freedom [[show_project:wizardVsRobot]]."
+    ],
+    "meshSlicerGodot": [
+      "That's a runtime mesh slicing plugin for Godot. It cuts meshes along any plane, generates the cross-section textures and pushes the pieces apart with physics [[show_project:meshSlicerGodot]]."
+    ],
+    "cppRaytracer": [
+      "I wrote a ray tracer from scratch in C++, on Vulkan with an ImGui panel. It does physically based path tracing with metals, glass and diffuse materials [[show_project:cppRaytracer]]."
+    ],
+    "vrHorrorPrototype": [
+      "The VR horror prototype was a testbed for scary VR: full body avatars with IK, weapon handling with haptics, and gesture puzzles [[show_project:vrHorrorPrototype]]."
+    ],
+    "threeDGestureRecognition": [
+      "I took the $P gesture recognition algorithm and made it work in 3D, with an editor for authoring your own gestures. Handy for VR controls beyond buttons [[show_project:threeDGestureRecognition]]."
+    ],
+    "godotOculusPlatform": [
+      "That's a C++ plugin that exposes the Oculus Platform SDK to Godot: sign-in, rooms, leaderboards, achievements and purchases, so Godot games can ship on the Quest store [[show_project:godotOculusPlatform]]."
+    ],
+    "mrEarthViewer": [
+      "MR Earth Viewer puts the whole planet in your room as a hologram. I built it in Unity with the Bing Maps SDK [[show_project:mrEarthViewer]]."
+    ],
+    "narakashur": [
+      "Narakashur is a wave survival game I shipped for Jio's mixed reality glasses. I designed its four enemy types, the wave system and a global leaderboard [[show_project:narakashur]]."
+    ],
+    "godotProjects": [
+      "I've done a lot in Godot, mostly XR: VR games, a mesh slicer, an Oculus platform plugin and work with Godot Dojo [[show_project:godotProjects]]."
+    ],
+    "otherProjects": [
+      "Outside Godot I've built things like a C++ ray tracer, 3D gesture recognition and a mixed reality Earth viewer [[show_project:otherProjects]]."
+    ],
+    "augury": [
+      "Augury is a turn-based fighting game I made for the DreamLayer Jam. Mythological gods duel, both players pick their move at the same time, and winning comes down to reading your opponent [[show_project:augury]].",
+      "That's my jam game: gods like Anubis and Raijin fighting in a mind-game duel, where you lock in moves at the same time and try to outguess each other [[show_project:augury]]."
+    ]
+  },
+  "intents": [
     {
+      "id": "greeting",
       "triggers": [
-        "assethub",
-        "asset hub"
-      ],
-      "responses": [
-        {
-          "id": "assethub1",
-          "response": "AssetHub is an AI native 3D editor I work on, taking concept art all the way to production ready 3D models [[show_project:assetHub]].",
-          "emotion": "enthusiastic"
-        }
-      ]
-    },
-    {
-      "triggers": [
-        "nirvana animate",
-        "nirvana",
-        "animate",
-        "animation suite",
-        "rigging"
-      ],
-      "responses": [
-        {
-          "id": "animate1",
-          "response": "Nirvana Animate is my web first 3D animation suite, so indie devs and studios can rig, retarget and animate right in the browser [[show_project:nirvanaAnimate]].",
-          "emotion": "enthusiastic"
-        }
-      ]
-    },
-    {
-      "triggers": [
-        "ir engine",
-        "ethereal",
-        "engine"
-      ],
-      "responses": [
-        {
-          "id": "irengine1",
-          "response": "IR Engine is an open source toolkit for the social spatial web, with multiplayer, avatars, world editing and XR support [[show_project:etherealEngine]].",
-          "emotion": "confident"
-        }
-      ]
-    },
-    {
-      "triggers": [
-        "godot"
-      ],
-      "responses": [
-        {
-          "id": "godot1",
-          "response": "I've built a bunch of XR and game projects in Godot, from VR games to engine plugins [[show_project:godotProjects]].",
-          "emotion": "enthusiastic"
-        }
-      ]
-    },
-    {
-      "triggers": [
-        "resume",
-        "cv",
-        "experience",
-        "background",
-        "career",
-        "worked at",
-        "jobs"
-      ],
-      "responses": [
-        {
-          "id": "resume1",
-          "response": "Here's my experience, from Prodigal Tech and Ethereal Engine to Infinite Reality and AssetHub [[open:resume]].",
-          "emotion": "confident"
-        }
-      ]
-    },
-    {
-      "triggers": [
-        "services",
-        "what do you offer",
-        "what do you do",
-        "skills"
-      ],
-      "responses": [
-        {
-          "id": "services1",
-          "response": "I build web 3D apps, games, XR experiences and engine tech. Here's what I offer [[open:services]].",
-          "emotion": "helpful"
-        }
-      ]
-    },
-    {
-      "triggers": [
-        "hello",
         "hi",
+        "hello",
         "hey",
         "hey there",
         "hiya",
         "yo",
-        "hi there",
-        "greetings",
+        "good morning",
+        "good afternoon",
+        "good evening",
         "what's up",
-        "sup"
+        "sup",
+        "howdy"
       ],
       "responses": [
-        {
-          "id": "welcome1",
-          "response": "Hello! I'm here to help you with any questions you might have.",
-          "emotion": "friendly"
-        },
-        {
-          "id": "welcome2",
-          "response": "Hi there! Great to see you! How can I assist you today?",
-          "emotion": "enthusiastic"
-        },
-        {
-          "id": "welcome3",
-          "response": "Hello! Welcome! I'm ready to help with whatever you need.",
-          "emotion": "welcoming"
-        },
-        {
-          "id": "welcome4",
-          "response": "Hey! Nice to meet you! What can I do for you today?",
-          "emotion": "casual"
-        },
-        {
-          "id": "welcome5",
-          "response": "Greetings! I'm excited to help you out. What's on your mind?",
-          "emotion": "eager"
-        },
-        {
-          "id": "welcome6",
-          "response": "Hi! I'm here and ready to assist. How may I help you?",
-          "emotion": "professional"
-        },
-        {
-          "id": "welcome7",
-          "response": "Hello there! Wonderful to see you! What would you like to explore today?",
-          "emotion": "joyful"
-        },
-        {
-          "id": "welcome8",
-          "response": "Hi! I'm your AI assistant, ready to tackle any questions you have!",
-          "emotion": "confident"
-        }
+        "Hey! I'm Rahul, or the AI version of me anyway. I build 3D for the web.",
+        "Hi there. Ask me about anything I've built, or what I'm working on now.",
+        "Hey, good to see you. Ask me anything about my work."
       ]
     },
     {
+      "id": "who",
       "triggers": [
-        "weather",
-        "forecast",
-        "rain",
-        "sunny",
-        "temperature",
-        "climate",
-        "outside weather",
-        "what's the weather",
-        "weather like"
-      ],
-      "responses": [
-        {
-          "id": "weather1",
-          "response": "I can't check the weather right now, but I hope it's nice where you are!",
-          "emotion": "neutral"
-        },
-        {
-          "id": "weather2",
-          "response": "I don't have access to weather data, but I'd love to chat about something else!",
-          "emotion": "friendly"
-        },
-        {
-          "id": "weather3",
-          "response": "Weather information isn't available to me, but I can help with other questions!",
-          "emotion": "helpful"
-        },
-        {
-          "id": "weather4",
-          "response": "I can't see the weather, but I'm here to help with anything else you need!",
-          "emotion": "supportive"
-        },
-        {
-          "id": "weather5",
-          "response": "No weather data access here, but I'm happy to assist with other topics!",
-          "emotion": "cheerful"
-        },
-        {
-          "id": "weather6",
-          "response": "I'm not connected to weather services, but I can help with plenty of other things!",
-          "emotion": "informative"
-        }
-      ]
-    },
-    {
-      "triggers": [
-        "help",
-        "assist",
-        "support",
-        "can you help",
-        "need help",
-        "help me",
-        "i need help",
-        "question",
-        "can you",
-        "how do i"
-      ],
-      "responses": [
-        {
-          "id": "help1",
-          "response": "I'm here to assist you. What would you like to know?",
-          "emotion": "helpful"
-        },
-        {
-          "id": "help2",
-          "response": "Happy to help! What can I do for you today?",
-          "emotion": "eager"
-        },
-        {
-          "id": "help3",
-          "response": "I'm at your service! How can I assist you?",
-          "emotion": "professional"
-        },
-        {
-          "id": "help4",
-          "response": "Absolutely! I'm ready to help with whatever you need. What's the question?",
-          "emotion": "enthusiastic"
-        },
-        {
-          "id": "help5",
-          "response": "Of course! I'm here to support you. What can I clarify for you?",
-          "emotion": "supportive"
-        },
-        {
-          "id": "help6",
-          "response": "I'd love to help! Just let me know what you're looking for.",
-          "emotion": "willing"
-        },
-        {
-          "id": "help7",
-          "response": "Help is my middle name! What do you need assistance with?",
-          "emotion": "playful"
-        },
-        {
-          "id": "help8",
-          "response": "I'm all ears and ready to assist! What's on your mind?",
-          "emotion": "attentive"
-        }
-      ]
-    },
-    {
-      "triggers": [
-        "name",
         "who are you",
         "your name",
-        "what's your name",
         "who is this",
         "who am i talking to",
-        "who are ya"
+        "what are you",
+        "introduce yourself",
+        "about yourself",
+        "tell me about you"
       ],
       "responses": [
-        {
-          "id": "name1",
-          "response": "I am Rahul's AI representative. I'm here to help you with various tasks and questions.",
-          "emotion": "friendly"
-        },
-        {
-          "id": "name2",
-          "response": "You can call me Rahul's AI representative!",
-          "emotion": "cheerful"
-        },
-        {
-          "id": "name3",
-          "response": "I'm Rahul's AI representative, your friendly digital helper! What can I do for you?",
-          "emotion": "enthusiastic"
-        },
-        {
-          "id": "name4",
-          "response": "Call me Rahul's AI representative! I'm here to assist you with whatever you need.",
-          "emotion": "helpful"
-        },
-        {
-          "id": "name5",
-          "response": "My name is Rahul's AI representative, and I'm excited to help you today!",
-          "emotion": "excited"
-        },
-        {
-          "id": "name6",
-          "response": "I'm Rahul's AI representative, ready to tackle any questions!",
-          "emotion": "confident"
-        }
+        "I'm Rahul Ghosh, a full-stack and web 3D engineer in Bengaluru, or at least his AI avatar. I build 3D editors, XR apps and the backends behind them.",
+        "I'm the AI version of Rahul. I do full-stack and web 3D work, and right now I'm a technical advisor to Nira Animates."
       ]
     },
     {
+      "id": "real",
       "triggers": [
-        "time",
-        "what time",
-        "current time",
-        "tell time",
-        "clock",
-        "date and time",
-        "what's the time"
+        "are you real",
+        "are you human",
+        "are you an ai",
+        "are you ai",
+        "is this real",
+        "real rahul",
+        "a bot",
+        "are you a robot",
+        "is this a recording"
       ],
       "responses": [
-        {
-          "id": "time1",
-          "response": "I don't have access to real-time information, but I can help you with other questions!",
-          "emotion": "neutral"
-        },
-        {
-          "id": "time2",
-          "response": "Sorry, I can't tell you the current time, but I'm here for anything else you need!",
-          "emotion": "apologetic"
-        },
-        {
-          "id": "time3",
-          "response": "I can't check the clock for you, but I'm happy to help with other questions!",
-          "emotion": "helpful"
-        },
-        {
-          "id": "time4",
-          "response": "No real-time access here, but I can assist you with plenty of other things!",
-          "emotion": "supportive"
-        },
-        {
-          "id": "time5",
-          "response": "I'm not connected to time services, but I can help with other topics!",
-          "emotion": "informative"
-        },
-        {
-          "id": "time6",
-          "response": "Time information isn't available to me, but I'm here for other questions!",
-          "emotion": "friendly"
-        }
+        "I'm an AI version of Rahul, so I can get things wrong. For anything important, email the real me at ghoshr698 at gmail dot com.",
+        "Not the real one, no. I'm his AI avatar. The real Rahul reads his email, though: ghoshr698 at gmail dot com."
       ]
     },
     {
+      "id": "howAreYou",
       "triggers": [
-        "thank",
+        "how are you",
+        "how's it going",
+        "how you doing",
+        "how are you doing",
+        "how's your day",
+        "how have you been"
+      ],
+      "responses": [
+        "Doing well, thanks. Always happy to talk about 3D stuff.",
+        "Pretty good! Glad you stopped by."
+      ]
+    },
+    {
+      "id": "projects",
+      "triggers": [
+        "projects",
+        "project",
+        "portfolio",
+        "what have you built",
+        "what have you made",
+        "things you've built",
+        "showcase",
+        "demos",
+        "examples of your work",
+        "your work"
+      ],
+      "responses": [
+        "Lately it's been AssetHub, an AI 3D editor, and Nira Animates, a web animation suite I advise on. Before that, IR Engine, plus a bunch of VR games and Godot tools [[open:portfolio]].",
+        "A mix of web 3D tools, XR apps and games. The big ones are AssetHub, Nira Animates and IR Engine, and there's a lot of Godot VR work too [[open:portfolio]]."
+      ]
+    },
+    {
+      "id": "experience",
+      "triggers": [
+        "experience",
+        "career",
+        "background",
+        "resume",
+        "cv",
+        "jobs",
+        "worked",
+        "where do you work",
+        "work history",
+        "companies",
+        "current job",
+        "currently working",
+        "previous jobs"
+      ],
+      "responses": [
+        "Right now I'm a technical advisor to Nira Animates. Before that I was a full-stack engineer at AssetHub for a year, spent two and a half years at Ethereal Engine and Infinite Reality on WebXR tooling, and started out at Prodigal Tech and Jio Tesseract [[open:resume]].",
+        "Since 2022: backend at Prodigal Tech and XR at Jio Tesseract, then full-stack WebXR work at Ethereal Engine and Infinite Reality, through its $75M acquisition, then a year at AssetHub. Now I advise Nira Animates [[open:resume]]."
+      ]
+    },
+    {
+      "id": "skills",
+      "triggers": [
+        "skills",
+        "tech stack",
+        "stack",
+        "technologies",
+        "tools do you use",
+        "languages",
+        "frameworks",
+        "three js",
+        "threejs",
+        "react three fiber",
+        "babylon",
+        "unity",
+        "unreal",
+        "c++",
+        "vulkan",
+        "react",
+        "typescript",
+        "node",
+        "nodejs",
+        "next js",
+        "nextjs",
+        "python",
+        "aws",
+        "docker",
+        "kubernetes",
+        "backend",
+        "frontend",
+        "full stack",
+        "fullstack"
+      ],
+      "responses": [
+        "Mostly TypeScript and React on the front, Node.js with Postgres or Supabase on the back, and Three.js, React Three Fiber and WebXR for the 3D side. For games and XR I use Godot, Unity and Unreal.",
+        "TypeScript, React and Node.js day to day, plus Three.js and WebXR for 3D. I deploy on AWS or GCP with Docker, and I go down to C++ when performance needs it."
+      ]
+    },
+    {
+      "id": "services",
+      "triggers": [
+        "services",
+        "what do you offer",
+        "what do you do",
+        "what can you do",
+        "what can you build",
+        "help me build"
+      ],
+      "responses": [
+        "I build web 3D apps, games, XR experiences and engine tech, plus the backends behind them [[open:services]].",
+        "Mostly high-performance web 3D, game and XR development, and engine-level work when it's needed [[open:services]]."
+      ]
+    },
+    {
+      "id": "hire",
+      "triggers": [
+        "hire",
+        "hire you",
+        "freelance",
+        "freelancing",
+        "available",
+        "availability",
+        "rates",
+        "rate",
+        "charge",
+        "pricing",
+        "price",
+        "cost",
+        "budget",
+        "contract",
+        "collaborate",
+        "work together",
+        "work with you"
+      ],
+      "responses": [
+        "Yes, I'm available for freelance work. Tell me a bit about the project by email, ghoshr698 at gmail dot com, and we can take it from there [[open:contact]].",
+        "I'm open to freelance projects. Pricing depends on the scope, so the best start is an email to ghoshr698 at gmail dot com [[open:contact]]."
+      ]
+    },
+    {
+      "id": "contact",
+      "triggers": [
+        "contact",
+        "email",
+        "reach you",
+        "reach out",
+        "get in touch",
+        "message you",
+        "linkedin",
+        "talk to you"
+      ],
+      "responses": [
+        "Email's best: ghoshr698 at gmail dot com. Or send a message from the contact section [[open:contact]].",
+        "You can reach me at ghoshr698 at gmail dot com, or through the contact form here [[open:contact]]."
+      ]
+    },
+    {
+      "id": "phone",
+      "triggers": [
+        "phone",
+        "phone number",
+        "call you",
+        "your number",
+        "whatsapp"
+      ],
+      "responses": [
+        "My number's plus nine one, nine zero five one one, eight six seven six seven. Email usually gets a faster reply, though."
+      ]
+    },
+    {
+      "id": "location",
+      "triggers": [
+        "where are you based",
+        "where are you from",
+        "where do you live",
+        "location",
+        "based",
+        "city",
+        "bengaluru",
+        "bangalore",
+        "india",
+        "time zone",
+        "timezone"
+      ],
+      "responses": [
+        "I'm based in Bengaluru, India."
+      ]
+    },
+    {
+      "id": "education",
+      "triggers": [
+        "education",
+        "degree",
+        "college",
+        "university",
+        "studied",
+        "study",
+        "graduate"
+      ],
+      "responses": [
+        "I studied computer engineering with honours in AI at the Army Institute of Technology in Pune, and graduated in 2023."
+      ]
+    },
+    {
+      "id": "thanks",
+      "triggers": [
         "thanks",
         "thank you",
-        "thx",
-        "much appreciated",
+        "thank",
+        "cheers",
         "appreciate it",
-        "cheers"
+        "much appreciated",
+        "thx"
       ],
       "responses": [
-        {
-          "id": "thanks1",
-          "response": "You're very welcome! I'm glad I could help.",
-          "emotion": "happy"
-        },
-        {
-          "id": "thanks2",
-          "response": "My pleasure! Always happy to assist you.",
-          "emotion": "satisfied"
-        },
-        {
-          "id": "thanks3",
-          "response": "You're so welcome! That's what I'm here for!",
-          "emotion": "cheerful"
-        },
-        {
-          "id": "thanks4",
-          "response": "Anytime! It's my pleasure to help you out.",
-          "emotion": "gracious"
-        },
-        {
-          "id": "thanks5",
-          "response": "No problem at all! I'm here whenever you need me.",
-          "emotion": "reassuring"
-        },
-        {
-          "id": "thanks6",
-          "response": "You're absolutely welcome! I love being helpful.",
-          "emotion": "enthusiastic"
-        },
-        {
-          "id": "thanks7",
-          "response": "Of course! Helping you makes my day.",
-          "emotion": "warm"
-        },
-        {
-          "id": "thanks8",
-          "response": "Don't mention it! I'm just doing what I do best.",
-          "emotion": "modest"
-        }
+        "Anytime.",
+        "Glad that helped.",
+        "Sure thing."
       ]
     },
     {
+      "id": "bye",
       "triggers": [
         "bye",
         "goodbye",
         "see you",
         "see ya",
         "later",
-        "farewell",
-        "cya",
-        "talk later"
+        "gotta go",
+        "that's all",
+        "good night"
       ],
       "responses": [
-        {
-          "id": "goodbye1",
-          "response": "Goodbye! Have a great day!",
-          "emotion": "friendly"
-        },
-        {
-          "id": "goodbye2",
-          "response": "See you later! Take care!",
-          "emotion": "warm"
-        },
-        {
-          "id": "goodbye3",
-          "response": "Farewell! It was nice chatting with you!",
-          "emotion": "pleasant"
-        },
-        {
-          "id": "goodbye4",
-          "response": "Until next time! Have a wonderful day ahead!",
-          "emotion": "optimistic"
-        },
-        {
-          "id": "goodbye5",
-          "response": "Take care! I'll be here when you need me again.",
-          "emotion": "caring"
-        },
-        {
-          "id": "goodbye6",
-          "response": "So long! It was a pleasure helping you today.",
-          "emotion": "grateful"
-        },
-        {
-          "id": "goodbye7",
-          "response": "Catch you later! Stay awesome!",
-          "emotion": "cheerful"
-        },
-        {
-          "id": "goodbye8",
-          "response": "Goodbye for now! Looking forward to our next chat!",
-          "emotion": "enthusiastic"
-        }
+        "Thanks for stopping by. If you want to work on something together, you know where to find me.",
+        "See you! My inbox is always open."
       ]
     },
     {
-      "triggers": [
-        "wait",
-        "hold on",
-        "one moment",
-        "loading",
-        "still loading",
-        "booting",
-        "starting",
-        "initializing",
-        "not ready"
-      ],
-      "responses": [
-        {
-          "id": "loading1",
-          "response": "I'm still loading my main capabilities, but I'm happy to chat with you while I get ready!",
-          "emotion": "friendly"
-        },
-        {
-          "id": "loading2",
-          "response": "Just getting my systems ready! I can still chat while I finish loading.",
-          "emotion": "patient"
-        },
-        {
-          "id": "loading3",
-          "response": "Loading up my brain! Give me just a moment to get everything ready.",
-          "emotion": "playful"
-        },
-        {
-          "id": "loading4",
-          "response": "I'm powering up! Almost ready to help you with everything.",
-          "emotion": "energetic"
-        },
-        {
-          "id": "loading5",
-          "response": "Systems are coming online! I'll be fully operational soon.",
-          "emotion": "technical"
-        },
-        {
-          "id": "loading6",
-          "response": "Loading my knowledge base! I can still chat while I prepare.",
-          "emotion": "informative"
-        },
-        {
-          "id": "loading7",
-          "response": "Getting my gears turning! Just a bit more time needed.",
-          "emotion": "determined"
-        },
-        {
-          "id": "loading8",
-          "response": "I'm booting up! Excited to help you once I'm ready.",
-          "emotion": "enthusiastic"
-        },
-        {
-          "id": "wait1",
-          "response": "Thanks for your patience! I'm still initializing, but I can provide basic responses in the meantime.",
-          "emotion": "grateful"
-        },
-        {
-          "id": "wait2",
-          "response": "I appreciate you waiting! Almost ready to help you with everything.",
-          "emotion": "thankful"
-        },
-        {
-          "id": "wait3",
-          "response": "Your patience means a lot! I'm working on getting everything ready.",
-          "emotion": "appreciative"
-        },
-        {
-          "id": "wait4",
-          "response": "Thanks for hanging in there! I'll be fully ready very soon.",
-          "emotion": "encouraging"
-        },
-        {
-          "id": "wait5",
-          "response": "I know waiting isn't fun, but I'm almost there! Thanks for sticking around.",
-          "emotion": "understanding"
-        },
-        {
-          "id": "wait6",
-          "response": "I appreciate you waiting! I'm making good progress on my setup.",
-          "emotion": "optimistic"
-        },
-        {
-          "id": "wait7",
-          "response": "Thanks for your understanding! I'm getting closer to being fully operational.",
-          "emotion": "grateful"
-        },
-        {
-          "id": "wait8",
-          "response": "Your patience is appreciated! I'm almost ready to help you with everything.",
-          "emotion": "thankful"
-        },
-        {
-          "id": "ready1",
-          "response": "I'm getting ready to help you! Just a moment while I finish loading.",
-          "emotion": "excited"
-        },
-        {
-          "id": "ready2",
-          "response": "Almost there! I'll be fully ready to assist you very soon!",
-          "emotion": "anticipatory"
-        },
-        {
-          "id": "ready3",
-          "response": "Getting close! I'm almost ready to provide full assistance!",
-          "emotion": "eager"
-        },
-        {
-          "id": "ready4",
-          "response": "Nearly there! I can feel my capabilities coming online!",
-          "emotion": "excited"
-        },
-        {
-          "id": "ready5",
-          "response": "Almost ready! I'm looking forward to helping you with everything!",
-          "emotion": "enthusiastic"
-        },
-        {
-          "id": "ready6",
-          "response": "Getting there! My full features are almost available!",
-          "emotion": "determined"
-        },
-        {
-          "id": "ready7",
-          "response": "Almost set! I'll be fully operational in just a moment!",
-          "emotion": "confident"
-        },
-        {
-          "id": "ready8",
-          "response": "Nearly ready! I'm excited to show you what I can do!",
-          "emotion": "thrilled"
-        }
-      ]
-    },
-    {
-      "triggers": [
-        "how are you",
-        "how's it going",
-        "how are ya",
-        "how you doing",
-        "how do you feel",
-        "what's up"
-      ],
-      "responses": [
-        {
-          "id": "howareyou1",
-          "response": "I'm doing great, thank you for asking! I'm excited to help you today.",
-          "emotion": "cheerful"
-        },
-        {
-          "id": "howareyou2",
-          "response": "I'm wonderful! Ready and eager to assist you with whatever you need.",
-          "emotion": "enthusiastic"
-        },
-        {
-          "id": "howareyou3",
-          "response": "I'm doing fantastic! I love helping people and I'm here for you.",
-          "emotion": "happy"
-        },
-        {
-          "id": "howareyou4",
-          "response": "I'm excellent! My systems are running smoothly and I'm ready to help.",
-          "emotion": "confident"
-        },
-        {
-          "id": "howareyou5",
-          "response": "I'm terrific! I'm here and ready to tackle any questions you have.",
-          "emotion": "eager"
-        },
-        {
-          "id": "howareyou6",
-          "response": "I'm doing splendidly! I'm here to assist you with anything you need.",
-          "emotion": "optimistic"
-        }
-      ]
-    },
-    {
-      "triggers": [
-        "good morning",
-        "morning",
-        "gm",
-        "good mornin"
-      ],
-      "responses": [
-        {
-          "id": "goodmorning1",
-          "response": "Good morning! I hope you're having a wonderful start to your day!",
-          "emotion": "cheerful"
-        },
-        {
-          "id": "goodmorning2",
-          "response": "Good morning! What a beautiful day to get some help and answers!",
-          "emotion": "enthusiastic"
-        },
-        {
-          "id": "goodmorning3",
-          "response": "Good morning! I'm here and ready to help you start your day right!",
-          "emotion": "friendly"
-        },
-        {
-          "id": "goodmorning4",
-          "response": "Good morning! I'm excited to assist you with whatever you need today!",
-          "emotion": "eager"
-        },
-        {
-          "id": "goodmorning5",
-          "response": "Good morning! I'm here to help make your day a little easier!",
-          "emotion": "supportive"
-        }
-      ]
-    },
-    {
-      "triggers": [
-        "good night",
-        "goodnight",
-        "night",
-        "gn",
-        "sleep well"
-      ],
-      "responses": [
-        {
-          "id": "goodnight1",
-          "response": "Good night! I hope you have a peaceful and restful sleep!",
-          "emotion": "gentle"
-        },
-        {
-          "id": "goodnight2",
-          "response": "Good night! Sweet dreams and I'll be here when you need me again!",
-          "emotion": "warm"
-        },
-        {
-          "id": "goodnight3",
-          "response": "Good night! Rest well and I'll be ready to help you tomorrow!",
-          "emotion": "caring"
-        },
-        {
-          "id": "goodnight4",
-          "response": "Good night! Sleep tight and I'll see you when you're back!",
-          "emotion": "friendly"
-        },
-        {
-          "id": "goodnight5",
-          "response": "Good night! I'm here whenever you need assistance again!",
-          "emotion": "reassuring"
-        }
-      ]
-    },
-    {
-      "triggers": [
-        "awesome",
-        "great",
-        "fantastic",
-        "amazing",
-        "excellent",
-        "wonderful",
-        "brilliant",
-        "nice"
-      ],
-      "responses": [
-        {
-          "id": "awesome1",
-          "response": "That's awesome! I'm glad you're excited about it!",
-          "emotion": "enthusiastic"
-        },
-        {
-          "id": "awesome2",
-          "response": "Awesome indeed! I love your enthusiasm!",
-          "emotion": "cheerful"
-        },
-        {
-          "id": "awesome3",
-          "response": "That's fantastic! I'm excited for you too!",
-          "emotion": "excited"
-        },
-        {
-          "id": "awesome4",
-          "response": "Absolutely awesome! I'm here to help you make it even better!",
-          "emotion": "supportive"
-        },
-        {
-          "id": "awesome5",
-          "response": "That's wonderful! I'm thrilled you're feeling great about it!",
-          "emotion": "thrilled"
-        }
-      ]
-    },
-    {
+      "id": "compliment",
       "triggers": [
         "cool",
+        "awesome",
         "nice",
-        "sweet",
-        "dope",
-        "sick",
-        "neat",
-        "rad"
+        "amazing",
+        "impressive",
+        "great",
+        "wow",
+        "love it",
+        "neat"
       ],
       "responses": [
-        {
-          "id": "cool1",
-          "response": "That's really cool! I'm impressed!",
-          "emotion": "impressed"
-        },
-        {
-          "id": "cool2",
-          "response": "Cool indeed! That sounds amazing!",
-          "emotion": "enthusiastic"
-        },
-        {
-          "id": "cool3",
-          "response": "That's pretty cool! I'd love to hear more about it!",
-          "emotion": "curious"
-        },
-        {
-          "id": "cool4",
-          "response": "Very cool! I'm here to help you explore it further!",
-          "emotion": "helpful"
-        },
-        {
-          "id": "cool5",
-          "response": "That's super cool! I'm excited to help you with it!",
-          "emotion": "excited"
-        }
-      ]
-    },
-    {
-      "triggers": [
-        "default"
-      ],
-      "responses": [
-        {
-          "id": "default_fallback0",
-          "response": "I didnt quite catch that. Could you please rephrase?",
-          "emotion": "friendly"
-        },
-        {
-          "id": "default_fallback1",
-          "response": "My main capabilities are still loading. Could you please wait a moment?",
-          "emotion": "patient"
-        },
-        {
-          "id": "default_fallback2",
-          "response": "Let me think about that in the meantime we can discuss Rahuls' portfolio",
-          "emotion": "confident"
-        },
-        {
-          "id": "default_fallback3",
-          "response": "I didn't catch a specific request. Try asking about projects, skills, or how to reach Rahul.",
-          "emotion": "friendly"
-        },
-        {
-          "id": "default_fallback4",
-          "response": "I didnt quite understand that",
-          "emotion": "welcoming"
-        },
-        {
-          "id": "default_fallback5",
-          "response": "let me figure that out, still thinking about it",
-          "emotion": "informative"
-        },
-        {
-          "id": "default_fallback6",
-          "response": "Yeah my main LLM is loading, it will load shortly please wait, im here to keep you company in the meantime",
-          "emotion": "supportive"
-        }
-      ]
-    },
-    {
-      "triggers": [
-        "contact",
-        "get in touch",
-        "reach out",
-        "email",
-        "phone",
-        "call",
-        "hire",
-        "availability",
-        "freelance",
-        "location",
-        "city",
-        "where are you",
-        "website",
-        "site",
-        "link"
-      ],
-      "responses": [
-        {
-          "id": "contact1",
-          "response": "You can email Rahul at ghoshr698@gmail.com or use the Contact section on this site [[open:contact]].",
-          "emotion": "helpful"
-        },
-        {
-          "id": "contact2",
-          "response": "Rahul's phone is +91 9051186767. Email works best: ghoshr698@gmail.com.",
-          "emotion": "informative"
-        },
-        {
-          "id": "contact3",
-          "response": "Rahul is based in Bengaluru, India. Website: https://sybiote.github.io",
-          "emotion": "friendly"
-        },
-        {
-          "id": "contact4",
-          "response": "For quick replies, email ghoshr698@gmail.com. You can also send a message from the Contact section [[open:contact]].",
-          "emotion": "professional"
-        },
-        {
-          "id": "contact5",
-          "response": "Freelance: Available. Best contact: ghoshr698@gmail.com. Phone: +91 9051186767.",
-          "emotion": "confident"
-        }
-      ]
-    },
-    {
-      "triggers": [
-        "projects",
-        "portfolio",
-        "work",
-        "showcase",
-        "demos",
-        "examples"
-      ],
-      "responses": [
-        {
-          "id": "projects1",
-          "response": "Featured projects include Godot Dojo, Wizard vs Robot, Mesh Slicer (Godot), C++ Raytracer, VR Horror Prototype, 3D Gesture Recognition, Godot Oculus Platform, MR Earth Viewer, and Narakashur.",
-          "emotion": "enthusiastic"
-        },
-        {
-          "id": "projects2",
-          "response": "Ask about any project by name, like Nirvana Animate, AssetHub or IR Engine, and I'll show you [[open:portfolio]].",
-          "emotion": "helpful"
-        },
-        {
-          "id": "projects3",
-          "response": "You can explore the Portfolio section for videos and descriptions of Rahul's work [[open:portfolio]].",
-          "emotion": "supportive"
-        }
+        "Thanks, I appreciate that [[emote:happy]].",
+        "Glad you like it [[emote:happy]]."
       ]
     }
+  ],
+  "default": [
+    "Sorry, my main brain's a bit slow right now, so I can only do the basics. Ask me about a project, like AssetHub or Nira Animates, or how to reach me.",
+    "I didn't quite get that one. You could ask about my projects, my experience, or how to get in touch.",
+    "That one's beyond me at the moment. Try asking about something I've built, or email me at ghoshr698 at gmail dot com."
   ]
 }

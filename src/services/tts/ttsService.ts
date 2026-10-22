@@ -96,6 +96,9 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
   }, [])
 
   const currentSourceRef = useRef<AudioBufferSourceNode | null>(null)
+  // The playing clip's volume control and its normal level, for ducking when the visitor talks over it
+  const currentGainRef = useRef<{ node: GainNode; level: number } | null>(null)
+  const duckRef = useRef(1)
 
   /** Plays a decoded clip; onStart gets the performance.now() time playback began. */
   const playDecoded = useCallback(
@@ -105,16 +108,19 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
         const source = audioContext.createBufferSource()
         const gainNode = audioContext.createGain()
         // Use global volume if available, otherwise use config volume
-        gainNode.gain.value = (window as Window & { globalTTSVolume?: number }).globalTTSVolume ?? config.volume
+        const level = (window as Window & { globalTTSVolume?: number }).globalTTSVolume ?? config.volume
+        gainNode.gain.value = level * duckRef.current
         source.buffer = decoded
         source.connect(gainNode)
         gainNode.connect(audioContext.destination)
         source.onended = () => {
           if (currentSourceRef.current === source) currentSourceRef.current = null
+          if (currentGainRef.current?.node === gainNode) currentGainRef.current = null
           currentResolveRef.current = null
           resolve()
         }
         currentSourceRef.current = source
+        currentGainRef.current = { node: gainNode, level }
         currentResolveRef.current = resolve
         source.start(0)
         onStart?.(performance.now() + audioContext.outputLatency * 1000)
@@ -569,13 +575,17 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
       speechSynthesis.cancel()
     }
 
-    // Stop a playing cloud clip and its face frames
+    // Stop a playing cloud clip and its face frames, fading out over a few tens of ms so it doesn't click
     try {
-      currentSourceRef.current?.stop()
+      const context = getAudioContext()
+      currentGainRef.current?.node.gain.setTargetAtTime(0, context.currentTime, 0.015)
+      currentSourceRef.current?.stop(context.currentTime + 0.08)
     } catch {
       // already stopped
     }
     currentSourceRef.current = null
+    currentGainRef.current = null
+    duckRef.current = 1
     stopSpeechFace()
 
     // Resolve the current Promise to unblock processQueue
@@ -602,6 +612,16 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
       onSpeechEnd()
     }
   }, [onSpeechEnd])
+
+  /** Lowers (or restores, with 1) the voice's volume, e.g. while the visitor starts talking over it */
+  const duck = useCallback((amount: number) => {
+    duckRef.current = amount
+    const current = currentGainRef.current
+    if (current) current.node.gain.setTargetAtTime(current.level * amount, getAudioContext().currentTime, 0.04)
+  }, [])
+
+  /** Whether anything is queued or playing right now (state.isSpeaking can lag a render behind) */
+  const isSpeakingNow = useCallback(() => isProcessing.current, [])
 
   // Cleanup worker on unmount
   useEffect(() => {
@@ -636,10 +656,12 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
     () => ({
       speak,
       stopSpeaking,
+      duck,
+      isSpeakingNow,
       playAudioBuffer,
       getQueueStatus
     }),
-    [speak, stopSpeaking, playAudioBuffer, getQueueStatus]
+    [speak, stopSpeaking, duck, isSpeakingNow, playAudioBuffer, getQueueStatus]
   )
 
   return useMemo(

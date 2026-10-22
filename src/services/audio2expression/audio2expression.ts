@@ -6,6 +6,7 @@
  * devices, slow connections, or any failure it returns null and the text-based lipsync is used.
  */
 
+import type { SpeechCues } from './coSpeech'
 import { A2E_FPS, A2E_SAMPLE_RATE, CHANNELS } from './postprocess'
 
 export interface ExpressionTrack {
@@ -13,6 +14,8 @@ export interface ExpressionTrack {
   frames: Float32Array
   frameCount: number
   fps: number
+  /** Pauses, phrase starts and stressed moments, for the gaze, blinks and head to follow the voice */
+  cues: SpeechCues
 }
 
 const MODEL_URL = import.meta.env.VITE_A2E_MODEL_URL || '/models/audio2exp-int8-matmul.onnx'
@@ -30,7 +33,8 @@ export const deviceCanRunAudio2Expression = (): boolean => {
 let worker: Worker | null = null
 let ready: Promise<boolean> | null = null
 let nextId = 1
-const pending = new Map<number, (frames: Float32Array | null) => void>()
+type Result = { frames: Float32Array; cues: SpeechCues } | null
+const pending = new Map<number, (result: Result) => void>()
 
 /** Starts downloading and initialising the model (no-op if unsupported or already started). */
 export const preloadAudio2Expression = (): Promise<boolean> => {
@@ -49,7 +53,7 @@ export const preloadAudio2Expression = (): Promise<boolean> => {
       const message = event.data
       if (message.type === 'loaded') resolve(true)
       else if (message.type === 'result') {
-        pending.get(message.id)?.(message.frames)
+        pending.get(message.id)?.({ frames: message.frames, cues: message.cues })
         pending.delete(message.id)
       } else if (message.type === 'error') {
         logger.warn('Audio2Expression:', message.error)
@@ -89,11 +93,11 @@ export const expressionTrackFor = async (buffer: AudioBuffer): Promise<Expressio
   try {
     const audio = await toModelAudio(buffer)
     const id = nextId++
-    const frames = await new Promise<Float32Array | null>((resolve) => {
+    const result = await new Promise<Result>((resolve) => {
       pending.set(id, resolve)
       worker!.postMessage({ type: 'run', id, audio }, [audio.buffer])
     })
-    return frames ? { frames, frameCount: frames.length / CHANNELS, fps: A2E_FPS } : null
+    return result ? { ...result, frameCount: result.frames.length / CHANNELS, fps: A2E_FPS } : null
   } catch (error) {
     logger.warn('Audio2Expression: inference failed', error)
     return null

@@ -4,6 +4,7 @@
  * Runs the exported LAM Audio2Expression ONNX model window by window, then post-processes.
  */
 import { fetchModel, ort } from '../onnx/ort'
+import { addBrowRaises, findCues, type SpeechCues } from './coSpeech'
 import { CHANNELS, frameVolume, postprocess } from './postprocess'
 import { streamWindows, WINDOW_FRAMES, WINDOW_SAMPLES } from './windows'
 
@@ -14,7 +15,7 @@ let session: ort.InferenceSession | null = null
 const post = (message: unknown, transfer: Transferable[] = []) =>
   (self as unknown as DedicatedWorkerGlobalScope).postMessage(message, transfer)
 
-const run = async (audio: Float32Array): Promise<Float32Array> => {
+const run = async (audio: Float32Array): Promise<{ frames: Float32Array; cues: SpeechCues }> => {
   if (!session) throw new Error('Model not loaded')
   const chunks: Float32Array[] = []
   for (const window of streamWindows(audio)) {
@@ -29,7 +30,8 @@ const run = async (audio: Float32Array): Promise<Float32Array> => {
     raw.set(c, offset)
     offset += c.length
   }
-  return postprocess(raw, frameVolume(audio, undefined, raw.length / CHANNELS))
+  const volume = frameVolume(audio, undefined, raw.length / CHANNELS)
+  return { frames: addBrowRaises(postprocess(raw, volume), volume), cues: findCues(volume) }
 }
 
 self.onmessage = async (event: MessageEvent<Request>) => {
@@ -39,8 +41,8 @@ self.onmessage = async (event: MessageEvent<Request>) => {
       if (!session) session = await ort.InferenceSession.create(await fetchModel(message.url), { executionProviders: ['wasm'] })
       post({ type: 'loaded' })
     } else {
-      const frames = await run(message.audio)
-      post({ type: 'result', id: message.id, frames }, [frames.buffer])
+      const { frames, cues } = await run(message.audio)
+      post({ type: 'result', id: message.id, frames, cues }, [frames.buffer])
     }
   } catch (error) {
     post({ type: 'error', id: message.type === 'run' ? message.id : undefined, error: String(error) })

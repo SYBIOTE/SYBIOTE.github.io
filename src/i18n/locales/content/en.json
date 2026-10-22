@@ -2,11 +2,11 @@
   "core": {
     "name": "Rahul Ghosh",
     "email": "ghoshr698@gmail.com",
-    "phone": "+91 9051186767",
+    "phone": "+91 90511 86767",
     "city": "Bengaluru, India",
     "website": "https://rahulghosh.is-a.dev/",
     "freelance": "Available",
-    "role": "Web 3D Engineer"
+    "role": "Full-Stack & Web 3D Engineer"
   },
   "profile": {
     "about": {
@@ -21,17 +21,104 @@
   "resume": {
     "summary": {
       "title": "Summary",
-      "content": "I build scalable, high-performance spatial systems that convert users into customers.\nApproach me when you need web-based 3D that ships, sells, and holds up at scale."
+      "content": "Full-stack engineer with 4+ years of building developer-facing products, internal tooling and AI-powered web apps, most of them in 3D. I ship zero-to-one in startups with React, TypeScript, Node.js and cloud-native systems.\nApproach me when you need web-based 3D that ships, sells, and holds up at scale."
     },
-    "education": {
-      "title": "Education",
-      "degree": "Bachelors in Computer Engineering & Honours in Artificial Intelligence",
-      "institution": "Army Institute of Technology, Pune, India — CGPA 8.84",
-      "period": "2019 — 2023"
+    "experience": {
+      "title": "Professional Experience",
+      "jobs": {
+        "niraAnimates": {
+          "title": "Technical Advisor — Nira Animates",
+          "period": "Jun 2025 — Present",
+          "achievements": [
+            "Advising on Nira Animates, a production SaaS for rigging, retargeting and animating 3D characters in the browser, built on React, TypeScript, Node.js, Supabase and modern AI services",
+            "Helped build internal tooling and observability for monitoring AI pipeline runs and improving reliability",
+            "Work directly with early customers, shaping features and developer experience from their feedback"
+          ]
+        },
+        "assethub": {
+          "title": "Full-Stack Engineer — AssetHub (Techstars '24)",
+          "period": "Sep 2025 — Sep 2026",
+          "achievements": [
+            "Built customer-facing workflows and internal tooling for AI-powered 3D asset generation and processing",
+            "Developed React/TypeScript interfaces and backend services powering the core 3D editor experience",
+            "Helped scale the platform to 11,000+ users and $5K MRR within 8 months through rapid product iteration"
+          ]
+        },
+        "infiniteReality": {
+          "title": "Full-Stack Engineer (WebXR) — Infinite Reality",
+          "period": "Feb 2024 — Aug 2025",
+          "achievements": [
+            "Designed developer-facing tooling, including browser-based scripting workflows in IR Studio powered by Monaco Editor",
+            "Built reusable 2D/3D UI systems and state-management patterns for large-scale web apps, improving usability by 35%",
+            "Built high-precision 3D gizmos, increasing editing speed by 50%+",
+            "Engine-wide refactors and optimizations: -20% build size, +15% frame performance"
+          ]
+        },
+        "etherealEngine": {
+          "title": "Full-Stack Engineer (WebXR) — Ethereal Engine (acq. by Infinite Reality)",
+          "period": "Feb 2023 — Feb 2024",
+          "achievements": [
+            "Led the migration of platform services from Express to Koa: -60% API response times, 3× throughput",
+            "Architected a visual scripting system enabling non-programmer workflows",
+            "Led a UI overhaul aligned with modern UX standards",
+            "Contributed core product capabilities that led to Infinite Reality's $75M acquisition of Ethereal Engine"
+          ]
+        },
+        "jioTesseract": {
+          "title": "XR Application Developer — Jio Tesseract",
+          "period": "Apr 2022 — Nov 2022",
+          "achievements": [
+            "Shipped a standalone wave survival game \"Narakashur\"",
+            "Designed 4 unique enemies; built wave system, UI, global leaderboard",
+            "Leveraged device hardware for unique player mechanics"
+          ]
+        },
+        "prodigalTech": {
+          "title": "Backend Engineer — Prodigal Tech (YC S18)",
+          "period": "Apr 2022 — Feb 2023",
+          "achievements": [
+            "Built customer-specific backend services and AI data pipelines for large-scale voice analytics",
+            "Automated ingestion, processing and deployment for 70%+ of customer implementations",
+            "Data quality improvements: backfilled 200k+ missed audio files",
+            "On-call in a team of five"
+          ]
+        }
+      }
+    },
+    "skills": {
+      "title": "Skills",
+      "groups": {
+        "languages": {
+          "name": "Languages",
+          "items": "TypeScript, JavaScript, Python, C++, C#, SQL, Bash"
+        },
+        "frontend": {
+          "name": "Frontend",
+          "items": "React, Next.js, Tailwind CSS, React Query, Zustand, Vite"
+        },
+        "web3d": {
+          "name": "3D & XR",
+          "items": "Three.js, React Three Fiber, Babylon.js, WebXR, Godot, Unity, Unreal, Vulkan"
+        },
+        "backend": {
+          "name": "Backend",
+          "items": "Node.js, Express, Koa, PostgreSQL, REST APIs, Supabase"
+        },
+        "infra": {
+          "name": "Infrastructure & Tools",
+          "items": "AWS, GCP, Docker, Kubernetes, GitHub Actions, Git, Claude Code, Cursor"
+        }
+      }
     },
     "leadership": {
       "title": "Leadership and Achievements",
       "items": {
+        "bytedance": {
+          "text": "ByteDance Web2Spatial Challenge — Best Game Award"
+        },
+        "tokyoAiHackathon": {
+          "text": "Tokyo AI Hackathon — 2nd place"
+        },
         "godotDojo": {
           "text": "Founding Member of Godot Dojo",
           "link": "https://github.com/Godot-Dojo",
@@ -49,76 +136,15 @@
           "text": "Indian Army Tech Excellence Award — Developed a hybrid AI/algorithm-based camouflage pattern generation tool, deployed across India"
         },
         "exit": {
-          "text": "navigated a 75M$ exit "
+          "text": "Part of the team behind Infinite Reality's $75M acquisition of Ethereal Engine"
         }
       }
     },
-    "experience": {
-      "title": "Professional Experience",
-      "jobs": {
-        "infiniteReality": {
-          "title": "WebXR Engineer — Infinite Reality",
-          "period": "Feb 2024 — Sep 2025",
-          "achievements": [
-            "Led client-side scripting system with Monaco Editor integration in IRStudio",
-            "Designed 2D/3D UI components, improving usability by 35%",
-            "Built high-precision 3D gizmos, increasing editing speed by 50%+",
-            "Engine refactors and optimizations: -20% build size, +15% frame performance"
-          ]
-        },
-        "etherealEngine": {
-          "title": "WebXR Engineer — Ethereal Engine (acq. by Infinite Reality)",
-          "period": "Feb 2023 — Feb 2024",
-          "achievements": [
-            "Migrated backend from Express to Koa, -60% API response times, 3× throughput",
-            "Led UI overhaul aligning with modern UX standards",
-            "Architected visual scripting system enabling non-programmer workflows"
-          ]
-        },
-        "metawarp": {
-          "title": "XR Application Developer — Metawarp",
-          "period": "Dec 2022 — Feb 2023",
-          "achievements": [
-            "Developed XR and GIS applications",
-            "Mixed Reality disassembly/assembly workflows in Unity",
-            "VR map visualization and 3D annotations in Unreal",
-            "Optimized VR/MR apps to run at 72Hz"
-          ]
-        },
-        "jioTesseract": {
-          "title": "XR Application Developer — Jio Tesseract",
-          "period": "Apr 2022 — Present",
-          "achievements": [
-            "Shipped a standalone wave survival game \"Narakashur\"",
-            "Designed 4 unique enemies; built wave system, UI, global leaderboard",
-            "Leveraged device hardware for unique player mechanics"
-          ]
-        },
-        "prodigalTech": {
-          "title": "Backend Engineer — Prodigal Tech (YC S18)",
-          "period": "Apr 2022 — Oct 2022",
-          "achievements": [
-            "Developed and maintained ETL pipelines",
-            "Automations covering 70%+ of technical operations (−20% pipeline time)",
-            "Data quality improvements: backfilled 200k+ missed audio files",
-            "worked On-call in a team of 5 "
-          ]
-        },
-        "assethub": {
-          "title": "Web3D engineer - AssetHub(Techstars '24)",
-          "period": "Sep 2025 - Present",
-          "achievements": [
-            "developing high performance 3D web app for AI based 3D asset development"
-          ]
-        },
-        "nirvanaxr": {
-          "title": "Founder — Nirvana XR",
-          "period": "Jun 2025 — Present",
-          "achievements": [
-            "developing nirvana animate , a web first 3D animation suite for indie devs and studios"
-          ]
-        }
-      }
+    "education": {
+      "title": "Education",
+      "degree": "Bachelors in Computer Engineering & Honours in Artificial Intelligence",
+      "institution": "Army Institute of Technology, Pune, India — CGPA 8.84",
+      "period": "2019 — 2023"
     }
   },
   "services": {
@@ -147,6 +173,10 @@
   },
   "portfolio": {
     "items": {
+      "niraAnimates": {
+        "title": "Nira Animates",
+        "description": "3D animation suite for the web allowing indie devs and studios to rig, retarget and create animations directly in the browser."
+      },
       "godotProjects": {
         "title": "Godot Projects",
         "description": "Collection of XR and game development projects built with the Godot engine.",
@@ -201,10 +231,6 @@
         "description": "Standalone wave survival game for Jio Mixed Reality Glasses.",
         "extendedDescription": "Narakashur is a wave survival game developed for Jio Mixed Reality Glasses, featuring 4 unique enemy types with distinct behaviors and attack patterns. Players defend against increasingly difficult waves using the device's unique control scheme. Includes a global leaderboard for competitive play, progressive difficulty scaling, and extensive polish for a commercial release on the Jio platform."
       },
-      "nirvanaAnimate": {
-        "title": "Nirvana Animate",
-        "description": "3D animation suite for the web allowing indie devs and studios to rig, retarget and create animations directly in the browser."
-      },
       "etherealEngine": {
         "title": "IR Engine",
         "description": "Open-source 3D toolkit for the social spatial web with multiplayer, avatars, world editing, XR support, and WebRTC networking."
@@ -216,6 +242,11 @@
       "avatarAsWebsites": {
         "title": "Avatar as Websites",
         "description": "System to create personal 3D avatars and transform them into interactive portfolio pages on the web."
+      },
+      "augury": {
+        "title": "AUGURY: Duel of the Gods",
+        "description": "Turn-based mind-game fighter where mythological gods duel. Both players lock in a move at once, so winning is about reading your opponent, not reaction speed.",
+        "extendedDescription": "A turn-based mind-game fighter made for the DreamLayer Jam, in the spirit of Your Only Move Is HUSTLE. Gods from different pantheons, like Anubis and Raijin, duel in a 2D arena: both players pick their moves at the same time, and each exchange plays out as freeze-frame poses. Arenas announce their hazards ahead of time, gods can rewrite the arena with their Domains, and correctly calling your opponent's move earns Divinity and a counter-hit. The character art was generated and iteratively edited with DreamLayer, so each god stays consistent across all their poses."
       }
     }
   }

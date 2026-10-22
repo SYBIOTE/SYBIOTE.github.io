@@ -1,0 +1,152 @@
+{
+  "_comment": "What visitors call each project and job, for finding which details the avatar needs (api/chat.ts) and for the scripted fallback (llmDirected.ts). Lowercase; matched as whole words, tolerating small speech-recognition slips.",
+  "projects": {
+    "assetHub": [
+      "assethub",
+      "asset hub"
+    ],
+    "niraAnimates": [
+      "nira animates",
+      "nira animate",
+      "nira",
+      "nirvana animate",
+      "animation suite",
+      "web animation",
+      "rigging",
+      "retargeting"
+    ],
+    "etherealEngine": [
+      "ir engine",
+      "ethereal engine",
+      "ethereal",
+      "infinite reality engine",
+      "ir studio",
+      "irstudio"
+    ],
+    "avatarAsWebsites": [
+      "avatar as websites",
+      "avatar as a website",
+      "avatar website",
+      "this avatar",
+      "this website",
+      "talking avatar",
+      "gaussian avatar"
+    ],
+    "godotDojo": [
+      "godot dojo",
+      "dojo"
+    ],
+    "wizardVsRobot": [
+      "wizard vs robot",
+      "wizard versus robot",
+      "wizard and robot",
+      "wizard"
+    ],
+    "meshSlicerGodot": [
+      "mesh slicer",
+      "mesh slicing",
+      "slicer",
+      "slicing"
+    ],
+    "cppRaytracer": [
+      "raytracer",
+      "ray tracer",
+      "ray tracing",
+      "path tracer",
+      "path tracing"
+    ],
+    "vrHorrorPrototype": [
+      "vr horror",
+      "horror game",
+      "horror"
+    ],
+    "threeDGestureRecognition": [
+      "gesture recognition",
+      "3d gestures",
+      "gestures",
+      "gesture"
+    ],
+    "godotOculusPlatform": [
+      "oculus platform",
+      "oculus plugin",
+      "oculus",
+      "quest store"
+    ],
+    "mrEarthViewer": [
+      "earth viewer",
+      "mr earth",
+      "bing maps",
+      "holographic globe"
+    ],
+    "narakashur": [
+      "narakashur",
+      "naraka",
+      "wave survival"
+    ],
+    "godotProjects": [
+      "godot projects",
+      "godot"
+    ],
+    "otherProjects": [
+      "other projects"
+    ],
+    "augury": [
+      "augury",
+      "duel of the gods",
+      "fighting game",
+      "fighter",
+      "mind game",
+      "dreamlayer",
+      "dreamlayer jam",
+      "game jam"
+    ]
+  },
+  "jobs": {
+    "infiniteReality": [
+      "infinite reality",
+      "ir studio"
+    ],
+    "etherealEngine": [
+      "ethereal engine",
+      "ethereal"
+    ],
+    "jioTesseract": [
+      "jio tesseract",
+      "tesseract",
+      "jio"
+    ],
+    "prodigalTech": [
+      "prodigal tech",
+      "prodigal"
+    ],
+    "assethub": [
+      "assethub",
+      "asset hub"
+    ],
+    "niraAnimates": [
+      "nira animates",
+      "nira animate",
+      "nira",
+      "nirvana animate",
+      "nirvana xr",
+      "nirvana"
+    ]
+  },
+  "experience": [
+    "experience",
+    "career",
+    "background",
+    "resume",
+    "cv",
+    "jobs",
+    "job",
+    "worked",
+    "work history",
+    "companies",
+    "employer",
+    "currently working",
+    "where do you work",
+    "previous role",
+    "achievements"
+  ]
+}

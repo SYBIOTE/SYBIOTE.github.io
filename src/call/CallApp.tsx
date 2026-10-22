@@ -22,6 +22,7 @@ import { ChatPanel } from '../components/chat/ChatPanel'
 import { useAgentActions, useAgentState } from '../components/scene/avatar/AgentContext'
 import { Viewport3D } from '../components/scene/Viewport3D'
 import i18n from '../i18n/i18n'
+import { buildGreeting, markVisit } from './greeting'
 import { preloadIfVoiceConfigured } from '../services/audio2expression/audio2expression'
 import { AvatarUIState } from '../services/actions/avatarActions'
 import './call.css'
@@ -174,16 +175,14 @@ const CallAppComponent = () => {
 
   // Greet once in the call: right away if the head is ready, otherwise after a short wait
   const greetedRef = useRef(false)
+  // Joined a call here before (checked when they click join)
+  const returningRef = useRef(false)
   const greet = useCallback(() => {
     if (greetedRef.current) return
     greetedRef.current = true
     actions.performEmotionAction({ emotion: 'happy', relaxTime: 3000 })
-    actions.speak(
-      myName
-        ? t('call.greetingNamed', "Hey {{guest}}! Thanks for joining. I'm Rahul, ask me anything about my work and projects.", { guest: myName })
-        : t('call.greeting', "Oh hey there! Welcome to my website! I'm Rahul, ask me anything about my work and projects!")
-    )
-  }, [actions, myName, t])
+    actions.speak(buildGreeting({ name: myName, locale: i18n.language, returning: returningRef.current }))
+  }, [actions, myName])
   useEffect(() => {
     if (phase !== 'call' || greetedRef.current) return
     if (rahulCameraOn) return greet()
@@ -223,6 +222,7 @@ const CallAppComponent = () => {
       } catch {
         // speech synthesis unavailable
       }
+      returningRef.current = markVisit()
       try {
         localStorage.setItem(NAME_KEY, guestName.trim())
       } catch {

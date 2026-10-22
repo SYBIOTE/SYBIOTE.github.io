@@ -1,6 +1,8 @@
 export interface LLMMessage {
   role: 'user' | 'assistant' | 'system'
   content: string
+  /** The turn this message belongs to (its request's interrupt timestamp) */
+  interrupt?: number
 }
 
 
@@ -39,7 +41,8 @@ export interface LLMParams {
   userMessage: string
   interrupt: number
   messages: LLMMessage[]
-  latestInterrupt: number
+  /** True once a newer turn (or a barge-in) has superseded this request: stop streaming and speaking */
+  isStale: () => boolean
   responseCallback?: (response: LLMResponse) => void
   updateMessages?: (userMessage: string, assistantMessage: string) => void
   setThinking?: (thinking: boolean) => void

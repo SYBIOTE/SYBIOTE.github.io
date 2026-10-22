@@ -2,11 +2,11 @@
   "core": {
     "name": "Rahul Ghosh",
     "email": "ghoshr698@gmail.com",
-    "phone": "+91 9051186767",
+    "phone": "+91 90511 86767",
     "city": "Bengaluru, India",
     "website": "https://rahulghosh.is-a.dev/",
     "freelance": "Verfügbar",
-    "role": "Web 3D Ingenieur"
+    "role": "Full-Stack- & Web-3D-Ingenieur"
   },
   "profile": {
     "about": {
@@ -21,17 +21,104 @@
   "resume": {
     "summary": {
       "title": "Zusammenfassung",
-      "content": "Ich entwickle skalierbare, leistungsstarke räumliche Systeme, die Nutzer in Kunden verwandeln.\nKontaktieren Sie mich, wenn Sie webbasiertes 3D benötigen, das liefert, verkauft und skaliert."
+      "content": "Full-Stack-Ingenieur mit über 4 Jahren Erfahrung in entwicklerorientierten Produkten, internen Tools und KI-gestützten Web-Apps, die meisten davon in 3D. Ich bringe Produkte in Startups von null auf eins, mit React, TypeScript, Node.js und Cloud-nativen Systemen.\nKontaktieren Sie mich, wenn Sie webbasiertes 3D brauchen, das ausgeliefert wird, sich verkauft und skaliert."
     },
-    "education": {
-      "title": "Bildung",
-      "degree": "Bachelor in Computertechnik und Auszeichnung in Künstlicher Intelligenz",
-      "institution": "Army Institute of Technology, Pune, India — CGPA 8.84",
-      "period": "2019 — 2023"
+    "experience": {
+      "title": "Berufserfahrung",
+      "jobs": {
+        "niraAnimates": {
+          "title": "Technischer Berater — Nira Animates",
+          "period": "Jun 2025 — Gegenwart",
+          "achievements": [
+            "Berate Nira Animates, ein produktives SaaS zum Riggen, Retargeten und Animieren von 3D-Charakteren im Browser, gebaut mit React, TypeScript, Node.js, Supabase und modernen KI-Diensten",
+            "Interne Tools und Observability zur Überwachung von KI-Pipelines und für mehr Zuverlässigkeit mitentwickelt",
+            "Arbeite direkt mit frühen Kunden und gestalte Funktionen und Developer Experience nach ihrem Feedback"
+          ]
+        },
+        "assethub": {
+          "title": "Full-Stack-Ingenieur — AssetHub (Techstars '24)",
+          "period": "Sep 2025 — Sep 2026",
+          "achievements": [
+            "Kundenorientierte Workflows und interne Tools für KI-gestützte 3D-Asset-Generierung und -Verarbeitung entwickelt",
+            "React/TypeScript-Oberflächen und Backend-Dienste für das zentrale 3D-Editor-Erlebnis entwickelt",
+            "Die Plattform durch schnelle Produktiteration in 8 Monaten auf über 11.000 Nutzer und 5.000 $ MRR skaliert"
+          ]
+        },
+        "infiniteReality": {
+          "title": "Full-Stack-Ingenieur (WebXR) — Infinite Reality",
+          "period": "Feb 2024 — Aug 2025",
+          "achievements": [
+            "Entwicklerorientierte Tools gestaltet, darunter browserbasierte Scripting-Workflows in IR Studio mit Monaco Editor",
+            "Wiederverwendbare 2D/3D-UI-Systeme und State-Management-Muster für große Web-Apps gebaut, Benutzerfreundlichkeit um 35 % verbessert",
+            "Hochpräzise 3D-Gizmos gebaut, Bearbeitungsgeschwindigkeit um über 50 % erhöht",
+            "Engine-weite Refactorings und Optimierungen: -20 % Build-Größe, +15 % Frame-Performance"
+          ]
+        },
+        "etherealEngine": {
+          "title": "Full-Stack-Ingenieur (WebXR) — Ethereal Engine (übernommen von Infinite Reality)",
+          "period": "Feb 2023 — Feb 2024",
+          "achievements": [
+            "Migration der Plattformdienste von Express zu Koa geleitet: -60 % API-Antwortzeiten, 3× Durchsatz",
+            "Ein visuelles Scripting-System für Workflows ohne Programmierkenntnisse entworfen",
+            "Eine UI-Überarbeitung nach modernen UX-Standards geleitet",
+            "Kernfunktionen beigetragen, die zur Übernahme von Ethereal Engine durch Infinite Reality für 75 Mio. $ führten"
+          ]
+        },
+        "jioTesseract": {
+          "title": "XR-Anwendungsentwickler — Jio Tesseract",
+          "period": "Apr 2022 — Nov 2022",
+          "achievements": [
+            "Veröffentlichung eines eigenständigen Wellen-Überlebensspiels \"Narakashur\"",
+            "Design von 4 einzigartigen Gegnern; Entwicklung von Wellensystem, UI, globaler Bestenliste",
+            "Nutzung der Gerätehardware für einzigartige Spielermechaniken"
+          ]
+        },
+        "prodigalTech": {
+          "title": "Backend-Ingenieur — Prodigal Tech (YC S18)",
+          "period": "Apr 2022 — Feb 2023",
+          "achievements": [
+            "Kundenspezifische Backend-Dienste und KI-Datenpipelines für groß angelegte Sprachanalysen gebaut",
+            "Ingestion, Verarbeitung und Deployment für über 70 % der Kundenimplementierungen automatisiert",
+            "Datenqualität verbessert: über 200.000 fehlende Audiodateien nachgeladen",
+            "Rufbereitschaft in einem fünfköpfigen Team"
+          ]
+        }
+      }
+    },
+    "skills": {
+      "title": "Fähigkeiten",
+      "groups": {
+        "languages": {
+          "name": "Sprachen",
+          "items": "TypeScript, JavaScript, Python, C++, C#, SQL, Bash"
+        },
+        "frontend": {
+          "name": "Frontend",
+          "items": "React, Next.js, Tailwind CSS, React Query, Zustand, Vite"
+        },
+        "web3d": {
+          "name": "3D & XR",
+          "items": "Three.js, React Three Fiber, Babylon.js, WebXR, Godot, Unity, Unreal, Vulkan"
+        },
+        "backend": {
+          "name": "Backend",
+          "items": "Node.js, Express, Koa, PostgreSQL, REST APIs, Supabase"
+        },
+        "infra": {
+          "name": "Infrastruktur & Tools",
+          "items": "AWS, GCP, Docker, Kubernetes, GitHub Actions, Git, Claude Code, Cursor"
+        }
+      }
     },
     "leadership": {
       "title": "Führung und Errungenschaften",
       "items": {
+        "bytedance": {
+          "text": "ByteDance Web2Spatial Challenge — Best Game Award"
+        },
+        "tokyoAiHackathon": {
+          "text": "Tokyo AI Hackathon — 2. Platz"
+        },
         "godotDojo": {
           "text": "Gründungsmitglied von Godot Dojo",
           "link": "https://github.com/Godot-Dojo",
@@ -49,76 +136,15 @@
           "text": "Indian Army Tech Excellence Award — Entwickelte ein hybrides KI/Algorithmus-basiertes Tarnmuster-Generierungstool, in ganz Indien eingesetzt"
         },
         "exit": {
-          "text": "75 Mio. $ Exit navigiert"
+          "text": "Teil des Teams hinter der 75-Mio.-$-Übernahme von Ethereal Engine durch Infinite Reality"
         }
       }
     },
-    "experience": {
-      "title": "Berufserfahrung",
-      "jobs": {
-        "infiniteReality": {
-          "title": "WebXR-Ingenieur — Infinite Reality",
-          "period": "Feb 2024 — Sep 2025",
-          "achievements": [
-            "Leitung des clientseitigen Scripting-Systems mit Monaco Editor Integration in IRStudio",
-            "Entwurf von 2D/3D UI-Komponenten, Verbesserung der Benutzerfreundlichkeit um 35%",
-            "Entwicklung hochpräziser 3D-Gizmos, Steigerung der Bearbeitungsgeschwindigkeit um 50%+",
-            "Engine-Refactoring und Optimierungen: -20% Build-Größe, +15% Frame-Performance"
-          ]
-        },
-        "etherealEngine": {
-          "title": "WebXR-Ingenieur — Ethereal Engine (übernommen von Infinite Reality)",
-          "period": "Feb 2023 — Feb 2024",
-          "achievements": [
-            "Migration des Backends von Express zu Koa, -60% API-Antwortzeiten, 3× Durchsatz",
-            "Leitung der UI-Überholung in Übereinstimmung mit modernen UX-Standards",
-            "Architektur eines visuellen Scripting-Systems für Nicht-Programmierer-Workflows"
-          ]
-        },
-        "metawarp": {
-          "title": "XR-Anwendungsentwickler — Metawarp",
-          "period": "Dez 2022 — Feb 2023",
-          "achievements": [
-            "Entwicklung von XR- und GIS-Anwendungen",
-            "Mixed Reality Demontage/Montage-Workflows in Unity",
-            "VR-Kartenvisualisierung und 3D-Annotationen in Unreal",
-            "Optimierung von VR/MR-Apps für 72Hz-Betrieb"
-          ]
-        },
-        "jioTesseract": {
-          "title": "XR-Anwendungsentwickler — Jio Tesseract",
-          "period": "Apr 2022 — Gegenwart",
-          "achievements": [
-            "Veröffentlichung eines eigenständigen Wellen-Überlebensspiels \"Narakashur\"",
-            "Design von 4 einzigartigen Gegnern; Entwicklung von Wellensystem, UI, globaler Bestenliste",
-            "Nutzung der Gerätehardware für einzigartige Spielermechaniken"
-          ]
-        },
-        "prodigalTech": {
-          "title": "Backend-Ingenieur — Prodigal Tech (YC S18)",
-          "period": "Apr 2022 — Okt 2022",
-          "achievements": [
-            "Entwicklung und Wartung von ETL-Pipelines",
-            "Automatisierungen für 70%+ der technischen Operationen (−20% Pipeline-Zeit)",
-            "Datenqualitätsverbesserungen: Nachfüllung von 200k+ verpassten Audio-Dateien",
-            "Bereitschaftsdienst in einem 5-köpfigen Ingenieursteam"
-          ]
-        },
-        "assethub": {
-          "title": "Web3D-Ingenieur - AssetHub(Techstars '24)",
-          "period": "Sep 2025 - Gegenwart",
-          "achievements": [
-            "Entwicklung einer leistungsstarken 3D-Web-App für KI-basierte 3D-Asset-Entwicklung"
-          ]
-        },
-        "nirvanaxr": {
-          "title": "Gründer — Nirvana XR",
-          "period": "Jun 2025 — Gegenwart",
-          "achievements": [
-            "Entwicklung von Nirvana Animate, einer Web-First-3D-Animationssuite für Indie-Entwickler und Studios"
-          ]
-        }
-      }
+    "education": {
+      "title": "Bildung",
+      "degree": "Bachelor in Computertechnik und Auszeichnung in Künstlicher Intelligenz",
+      "institution": "Army Institute of Technology, Pune, India — CGPA 8.84",
+      "period": "2019 — 2023"
     }
   },
   "services": {
@@ -147,6 +173,10 @@
   },
   "portfolio": {
     "items": {
+      "niraAnimates": {
+        "title": "Nira Animates",
+        "description": "3D-Animationssuite für das Web, die Indie-Entwicklern und Studios ermöglicht, direkt im Browser zu riggen, zu retargeten und Animationen zu erstellen."
+      },
       "godotProjects": {
         "title": "Godot Projekte",
         "description": "Sammlung von XR- und Spieleentwicklungsprojekten mit der Godot-Engine.",
@@ -201,10 +231,6 @@
         "description": "Eigenständiges Wellen-Survival-Spiel für Jio Mixed Reality Brille.",
         "extendedDescription": "Narakashur ist ein Wellen-Überlebensspiel für Jio Mixed Reality Glasses mit 4 einzigartigen Gegnertypen."
       },
-      "nirvanaAnimate": {
-        "title": "Nirvana Animate",
-        "description": "3D-Animationssuite für das Web, die Indie-Entwicklern und Studios ermöglicht, direkt im Browser zu riggen, zu retargeten und Animationen zu erstellen."
-      },
       "etherealEngine": {
         "title": "IR Engine",
         "description": "Open-Source-3D-Toolkit für das soziale räumliche Web mit Multiplayer, Avataren, Weltbearbeitung, XR-Unterstützung und WebRTC-Netzwerk."
@@ -216,6 +242,11 @@
       "avatarAsWebsites": {
         "title": "Avatar als Websites",
         "description": "System zur Erstellung persönlicher 3D-Avatare und deren Umwandlung in interaktive Portfolio-Seiten im Web."
+      },
+      "augury": {
+        "title": "AUGURY: Duel of the Gods",
+        "description": "Rundenbasiertes Mind-Game-Kampfspiel, in dem mythologische Götter gegeneinander antreten. Beide Spieler wählen gleichzeitig einen Zug, gewinnen heißt also, den Gegner zu durchschauen, nicht schneller zu reagieren.",
+        "extendedDescription": "Ein rundenbasiertes Mind-Game-Kampfspiel für den DreamLayer Jam, im Geist von Your Only Move Is HUSTLE. Götter aus verschiedenen Pantheons wie Anubis und Raijin duellieren sich in einer 2D-Arena: Beide Spieler wählen ihre Züge gleichzeitig, und jeder Schlagabtausch läuft als Standbild-Posen ab. Arenen kündigen ihre Gefahren im Voraus an, Götter können die Arena mit ihren Domänen umschreiben, und wer den Zug des Gegners richtig vorhersagt, erhält Göttlichkeit und einen Konter. Die Charakterkunst wurde mit DreamLayer generiert und schrittweise überarbeitet, sodass jeder Gott in allen Posen konsistent bleibt."
       }
     }
   }

@@ -12,8 +12,7 @@ import type { LLMParams, LLMResult } from '../llmTypes'
 const MIN_BREATH_LENGTH = 20
 
 export async function llmApi(params: LLMParams): Promise<LLMResult> {
-  const { userMessage, interrupt, messages, llmUrl, latestInterrupt, responseCallback, updateMessages, setThinking } =
-    params
+  const { userMessage, interrupt, messages, llmUrl, isStale, responseCallback, updateMessages, setThinking } = params
 
   if (!llmUrl) {
     return { success: false, error: new Error('Chat API URL is required') }
@@ -29,7 +28,7 @@ export async function llmApi(params: LLMParams): Promise<LLMResult> {
   // Network chunks can hold several sentences, so split on every boundary
   // (punctuation followed by whitespace) once the breath is long enough.
   const breathHelper = (fragment: string | null = null, finished = false) => {
-    if (latestInterrupt > interrupt) {
+    if (isStale()) {
       logger.log('LLM: skipping - work is old', interrupt)
       return
     }
@@ -94,7 +93,7 @@ export async function llmApi(params: LLMParams): Promise<LLMResult> {
       const { done, value } = await reader.read()
       if (done) break
 
-      if (latestInterrupt > interrupt) {
+      if (isStale()) {
         logger.log('LLM: API request outdated, stopping')
         await reader.cancel()
         break
