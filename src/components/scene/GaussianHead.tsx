@@ -15,6 +15,8 @@ import { Vector3 } from 'three'
 import { createVirtualRig, rigToArkit, type ArkitBlendshape, type ArkitMappingOptions } from './avatar/arkitMapping'
 import { createBlendshapeOpacity } from './avatar/blendshapeOpacity'
 import { createBlendshapeSort } from './avatar/blendshapeSort'
+import { createBlinkBalance } from './avatar/blinkBalance'
+import { createMouthInterior } from './avatar/mouthInterior'
 import { attachGlasses } from './avatar/glasses'
 import { createEyeMotion, gazeToArkit, updateEyeMotion } from './avatar/eyeMotion'
 import { A2E_CHANNELS } from '../../services/audio2expression/postprocess'
@@ -245,6 +247,8 @@ const GaussianHeadComponent = ({
     let sortTarget: GaussianSplatRenderer | null = null
     let updateSort: ReturnType<typeof createBlendshapeSort> | undefined
     let updateOpacity: ReturnType<typeof createBlendshapeOpacity> | undefined
+    let balanceBlink: ReturnType<typeof createBlinkBalance> | undefined
+    let updateMouth: ReturnType<typeof createMouthInterior> | undefined
 
     const getExpressionData = () => {
       const now = performance.now()
@@ -273,16 +277,21 @@ const GaussianHeadComponent = ({
         })
         // Wait a moment after loading: the renderer can still refresh its splat data just after it reports 100%
         if (updateSort === undefined && loaded && sortTarget && now - loadedAt > 2000) {
+          // First, since it reshapes the jaw blendshape the depth sort reads
+          updateMouth = createMouthInterior(sortTarget)
           updateSort = createBlendshapeSort(sortTarget)
           updateOpacity = createBlendshapeOpacity(sortTarget)
+          balanceBlink = createBlinkBalance(sortTarget)
           // Dev-only: lets test harnesses that hold fixed poses keep these in step
           if (import.meta.env.DEV) {
             const handle = (window as unknown as Record<string, Record<string, unknown>>).__gaussianHead
-            if (handle) Object.assign(handle, { updateSort, updateOpacity })
+            if (handle) Object.assign(handle, { updateSort, updateOpacity, balanceBlink, updateMouth })
           }
         }
+        balanceBlink?.(frame)
         updateSort?.(frame)
         updateOpacity?.(frame)
+        updateMouth?.(frame)
         return frame
       } catch (error) {
         logger.warn('GaussianHead: expression update failed', error)
