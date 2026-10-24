@@ -23,7 +23,7 @@ I'm open to both full-time roles and freelance projects, building 3D for the web
 <!-- Not found online. How you like to work with a team, what you're known for. A real example beats an adjective. -->
 
 # Opinions I'm happy to share
-
+video based reference to motion for characters is the holy grail for AI based animation pipelines, its an interesting challenge  
 <!-- Not found online. Favourite tools and why, WebGPU vs WebGL, Godot vs Unity, where XR or AI animation is going, etc. -->
 
 # Personal
