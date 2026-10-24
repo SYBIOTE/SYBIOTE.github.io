@@ -47,7 +47,7 @@
           ]
         },
         "infiniteReality": {
-          "title": "फुल-स्टैक इंजीनियर (WebXR) — Infinite Reality",
+          "title": "फुल-स्टैक इंजीनियर (WebXR) — Napster Corp (पहले Infinite Reality)",
           "period": "फरवरी 2024 — अगस्त 2025",
           "achievements": [
             "डेवलपर टूलिंग डिज़ाइन की, जिसमें IR Studio में Monaco Editor आधारित ब्राउज़र स्क्रिप्टिंग वर्कफ़्लो शामिल हैं",
@@ -90,25 +90,25 @@
     "skills": {
       "title": "कौशल",
       "groups": {
-        "languages": {
-          "name": "भाषाएं",
-          "items": "TypeScript, JavaScript, Python, C++, C#, SQL, Bash"
-        },
-        "frontend": {
-          "name": "फ्रंटएंड",
-          "items": "React, Next.js, Tailwind CSS, React Query, Zustand, Vite"
-        },
         "web3d": {
           "name": "3D और XR",
-          "items": "Three.js, React Three Fiber, Babylon.js, WebXR, Godot, Unity, Unreal, Vulkan"
+          "items": "Three.js, WebGL, GLSL shaders, React Three Fiber, WebXR, Godot, Unity"
         },
-        "backend": {
-          "name": "बैकएंड",
-          "items": "Node.js, Express, Koa, PostgreSQL, REST APIs, Supabase"
+        "ai": {
+          "name": "AI",
+          "items": "LLMs, RAG, AI एजेंट, OpenAI API, Python"
         },
-        "infra": {
-          "name": "इंफ्रास्ट्रक्चर और टूल्स",
-          "items": "AWS, GCP, Docker, Kubernetes, GitHub Actions, Git, Claude Code, Cursor"
+        "web": {
+          "name": "वेब",
+          "items": "TypeScript, React, Next.js, Node.js"
+        },
+        "cloud": {
+          "name": "डेटा और क्लाउड",
+          "items": "PostgreSQL, REST APIs, AWS, Docker"
+        },
+        "engineering": {
+          "name": "इंजीनियरिंग",
+          "items": "C++, परफ़ॉर्मेंस ऑप्टिमाइज़ेशन"
         }
       }
     },
@@ -242,10 +242,6 @@
         "title": "AssetHub",
         "description": "AI-नेटिव 3D एडिटर जो टीमों को कॉन्सेप्ट आर्ट से प्रोडक्शन-रेडी मॉडल्स तक ले जाता है, AI मेश जनरेशन और टेक्सचर रिफ़ाइनमेंट के साथ।",
         "extendedDescription": "करीब 20 लाख डॉलर के सीड राउंड वाली एक Techstars कंपनी, जहाँ मैं सितंबर 2025 से सितंबर 2026 तक फ़ुल-स्टैक इंजीनियर था: React एडिटर, बैकएंड, कस्टमर वर्कफ़्लो और इंटरनल टूल्स। 8 महीनों में प्रोडक्ट 11,000 से ज़्यादा यूज़र्स और 5,000 डॉलर मासिक रिकरिंग रेवेन्यू तक पहुँचा।"
-      },
-      "avatarAsWebsites": {
-        "title": "वेबसाइट के रूप में अवतार",
-        "description": "पर्सनल 3D अवतार बनाने और उन्हें वेब पर इंटरैक्टिव पोर्टफोलियो पेजों में बदलने की प्रणाली।"
       },
       "augury": {
         "title": "AUGURY: Duel of the Gods",

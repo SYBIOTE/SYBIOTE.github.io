@@ -64,6 +64,12 @@ describe('chat system prompt', () => {
     expect(buildSystemPrompt('en', [user('hi')], [])).not.toContain('shared screen right now')
   })
 
+  it('brings in the job notes for a project made at that job', () => {
+    const topics = topicsFor([user('how did you build this?')], undefined, 'assetHub')
+    expect(topics.jobs.has('assethub')).toBe(true)
+    expect(topics.notes).toContain('work/assethub')
+  })
+
   it('does not match short words by accident', () => {
     expect(topicsFor([user('can you do VR work for me')]).projects).toEqual([])
   })

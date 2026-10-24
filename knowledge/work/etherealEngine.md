@@ -1,6 +1,6 @@
 # The company and my role
 
-Ethereal Engine was an open-source engine for the social spatial web: multiplayer 3D worlds with avatars, world editing, XR support and WebRTC networking, all in the browser, written in TypeScript with React and Three.js on an entity component system. Infinite Reality acquired it, and it became IR Engine. I joined in February 2023 as a full-stack WebXR engineer.
+Ethereal Engine was an open-source engine for the social spatial web: multiplayer 3D worlds with avatars, world editing, XR support and WebRTC networking, all in the browser, written in TypeScript with React and Three.js on an entity component system. Infinite Reality acquired it for 75 million dollars, and it became IR Engine. I joined in February 2023 as a full-stack WebXR engineer and stayed through the acquisition, building IR Studio, its browser-based world editor, until August 2025: code scripting with the Monaco editor, gizmos, much of the studio's UI, and rendering features like lit and unlit view modes and scene complexity checks.
 
 <!-- Who you reported to, team size, why you joined: add if you want. -->
 

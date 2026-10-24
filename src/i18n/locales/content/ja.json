@@ -47,7 +47,7 @@
           ]
         },
         "infiniteReality": {
-          "title": "フルスタックエンジニア (WebXR) — Infinite Reality",
+          "title": "フルスタックエンジニア (WebXR) — Napster Corp(旧Infinite Reality)",
           "period": "2024年2月 — 2025年8月",
           "achievements": [
             "IR StudioでMonaco Editorを用いたブラウザ上のスクリプトワークフローなど、開発者向けツールを設計",
@@ -90,25 +90,25 @@
     "skills": {
       "title": "スキル",
       "groups": {
-        "languages": {
-          "name": "言語",
-          "items": "TypeScript, JavaScript, Python, C++, C#, SQL, Bash"
-        },
-        "frontend": {
-          "name": "フロントエンド",
-          "items": "React, Next.js, Tailwind CSS, React Query, Zustand, Vite"
-        },
         "web3d": {
           "name": "3D・XR",
-          "items": "Three.js, React Three Fiber, Babylon.js, WebXR, Godot, Unity, Unreal, Vulkan"
+          "items": "Three.js, WebGL, GLSL shaders, React Three Fiber, WebXR, Godot, Unity"
         },
-        "backend": {
-          "name": "バックエンド",
-          "items": "Node.js, Express, Koa, PostgreSQL, REST APIs, Supabase"
+        "ai": {
+          "name": "AI",
+          "items": "LLMs, RAG, AIエージェント, OpenAI API, Python"
         },
-        "infra": {
-          "name": "インフラ・ツール",
-          "items": "AWS, GCP, Docker, Kubernetes, GitHub Actions, Git, Claude Code, Cursor"
+        "web": {
+          "name": "Web",
+          "items": "TypeScript, React, Next.js, Node.js"
+        },
+        "cloud": {
+          "name": "データ・クラウド",
+          "items": "PostgreSQL, REST APIs, AWS, Docker"
+        },
+        "engineering": {
+          "name": "エンジニアリング",
+          "items": "C++, パフォーマンス最適化"
         }
       }
     },
@@ -242,10 +242,6 @@
         "title": "AssetHub",
         "description": "コンセプトアートから本番品質の3Dモデルまでチームを導くAIネイティブの3Dエディタ。AIによるメッシュ生成とテクスチャのリファインに対応。",
         "extendedDescription": "約200万ドルのシードラウンドを調達したTechstarsの企業で、2025年9月から2026年9月までフルスタックエンジニアとしてReactエディタ、バックエンド、顧客ワークフロー、社内ツールを担当しました。8か月でプロダクトは11,000人以上のユーザーと月間経常収益5,000ドルに成長しました。"
-      },
-      "avatarAsWebsites": {
-        "title": "ウェブサイトとしてのアバター",
-        "description": "パーソナル3Dアバターを作成し、ウェブ上のインタラクティブなポートフォリオページに変換するシステム。"
       },
       "augury": {
         "title": "AUGURY: Duel of the Gods",

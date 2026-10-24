@@ -2,27 +2,34 @@
   "jobs": [
     {
       "id": "niraAnimates",
-      "order": 1
+      "order": 1,
+      "logo": "/assets/img/companies/nira-animates.png"
     },
     {
       "id": "assethub",
-      "order": 2
+      "order": 2,
+      "logo": "/assets/img/companies/assethub.svg"
     },
     {
       "id": "infiniteReality",
-      "order": 3
+      "order": 3,
+      "logo": "/assets/img/companies/napster.png"
     },
     {
       "id": "etherealEngine",
-      "order": 4
+      "order": 4,
+      "logo": "/assets/img/companies/ethereal-engine.png",
+      "logoInvert": true
     },
     {
       "id": "jioTesseract",
-      "order": 5
+      "order": 5,
+      "logo": "/assets/img/companies/jio-tesseract.png"
     },
     {
       "id": "prodigalTech",
-      "order": 6
+      "order": 6,
+      "logo": "/assets/img/companies/prodigal.png"
     }
   ]
 }

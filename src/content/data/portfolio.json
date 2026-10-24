@@ -96,25 +96,6 @@
       ]
     },
     {
-      "id": "avatarAsWebsites",
-      "image": "/assets/img/portfolio/nirvanaXR.webp",
-      "order": 101,
-      "links": [
-        {
-          "type": "website",
-          "url": "https://nirvanaxr.com/"
-        }
-      ],
-      "date": "2025-08",
-      "stack": [
-        "React",
-        "Three.js",
-        "Gaussian splats",
-        "ONNX Runtime",
-        "LLMs"
-      ]
-    },
-    {
       "id": "augury",
       "image": "/assets/img/portfolio/augury/cover.webp",
       "order": 100,
@@ -141,7 +122,6 @@
       "type": "folder",
       "children": [
         "augury",
-        "avatarAsWebsites",
         "mrEarthViewer",
         "cppRaytracer",
         "narakashur",

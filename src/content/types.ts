@@ -32,6 +32,10 @@ export interface PortfolioContent {
 export interface ResumeJobData {
   id: string
   order: number
+  /** Company logo, shown on a light tile */
+  logo?: string
+  /** For a white logo: drawn dark so it shows on the tile */
+  logoInvert?: boolean
 }
 
 export interface ResumeData {

@@ -169,3 +169,72 @@ export const ArrowIcon = () => (
     <path d="M5 12h14M13 6l6 6-6 6" />
   </Icon>
 )
+
+// Contact and resume
+export const MailIcon = () => (
+  <Icon>
+    <rect x="3" y="5" width="18" height="14" rx="2.5" />
+    <path d="M4 7l8 6 8-6" />
+  </Icon>
+)
+
+export const PhoneIcon = () => (
+  <Icon>
+    <path d="M6.5 3.5h3l1.5 4.5-2.2 1.4a11 11 0 0 0 5.8 5.8l1.4-2.2 4.5 1.5v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.5 5.7a2 2 0 0 1 2-2.2z" />
+  </Icon>
+)
+
+export const MapPinIcon = () => (
+  <Icon>
+    <path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z" />
+    <circle cx="12" cy="10" r="2.3" />
+  </Icon>
+)
+
+export const LinkedInIcon = () => (
+  <Icon>
+    <rect x="3" y="3" width="18" height="18" rx="3" />
+    <path d="M8 10.5V16M8 7.8v.01M11.5 16v-5.5M11.5 13c0-1.6 1-2.5 2.3-2.5S16 11.3 16 13v3" />
+  </Icon>
+)
+
+export const XLogoIcon = () => (
+  <Icon>
+    <path d="M4 4l16 16M20 4l-6.6 7.2M10.6 12.8L4 20" />
+  </Icon>
+)
+
+export const CopyIcon = () => (
+  <Icon>
+    <rect x="8" y="8" width="12" height="12" rx="2.5" />
+    <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" />
+  </Icon>
+)
+
+export const CheckIcon = () => (
+  <Icon>
+    <path d="M5 12.5l4.5 4.5L19 7.5" />
+  </Icon>
+)
+
+// Shared screen's browser chrome
+export const FileIcon = () => (
+  <Icon>
+    <path d="M7 3h7l5 5v13H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" />
+    <path d="M14 3v5h5M9 13h6M9 17h6" />
+  </Icon>
+)
+
+export const BriefcaseIcon = () => (
+  <Icon>
+    <rect x="3" y="7" width="18" height="13" rx="2.5" />
+    <path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7M3 12.5h18" />
+  </Icon>
+)
+
+export const LockIcon = () => (
+  <Icon>
+    <rect x="5" y="10.5" width="14" height="10" rx="2.5" />
+    <path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" />
+  </Icon>
+)

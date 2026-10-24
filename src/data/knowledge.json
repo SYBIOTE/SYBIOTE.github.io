@@ -12,30 +12,18 @@
     "text": "# About me\n\nI work on AI and XR: I like bending reality with code and coffee, and lately I build AI avatars in XR, like the one you're talking to. I started out making VR games in Godot in college, where I founded the game development and XR club and was a founding member of Godot Dojo. From 2023 I moved to the 3D web, building the editor and visual scripting of an open-source WebXR engine, Ethereal Engine, which became IR Engine. These days I'm deep in AI for 3D characters: auto-rigging, motion generation and animation tools in the browser."
   },
   {
+    "id": "projects/augury",
+    "always": false,
+    "aliases": [],
+    "project": "augury",
+    "text": "# AUGURY: Duel of the Gods\n\nAUGURY is a turn-based mind-game fighter I made for the DreamLayer Jam in October 2026, in the spirit of Your Only Move Is HUSTLE. Gods from different pantheons, like Anubis and Raijin, duel in a 2D arena. Both players pick their moves at the same time, and each exchange plays out as freeze-frame poses, so winning is about reading your opponent, not reaction speed.\n\nA few systems make the reads interesting: arenas announce their hazards ahead of time, so you can plan around them; each god has a Domain that rewrites the arena; and correctly calling your opponent's move earns Divinity and a counter-hit.\n\nThe character art was generated and then iteratively edited with DreamLayer, which is what kept each god consistent across all their poses. It's playable on my itch.io, sybiote dot itch dot io, and there's a gameplay video on YouTube."
+  },
+  {
     "id": "projects/autov",
     "always": false,
     "aliases": [],
     "project": "autov",
-    "text": "# autoV\n\nautoV is prompt-to-VFX for real-time games that stays editable. I built it as an engineer on Team V for the TAI x OpenAI 100-Hour Game Builder Challenge in 2026, in the game dev tools track, where it won second place and $25,000 in OpenAI credits. Most prompt-to-VFX tools give you a video, and a video isn't a visual effect: you can't retime it, recolor it or drop it into an engine. In autoV the model never writes code. It designs a bounded, declarative effect document, with layers, tracks, colors, emission shapes and timing, and a fixed Three.js renderer runs it. Every effect is rendered and critiqued before you see it, a chat edit only touches one layer in one time window, and effects export as JSON or a single-file HTML player. I worked on the agent pipeline and its tools, the reference canvas, the UI and projects page, and the exporters and plugins for Godot, Unity and Unreal Engine.\n\nBuilt with Next.js, Three.js, OpenAI structured outputs and Supabase."
-  },
-  {
-    "id": "projects/avatarAsWebsites",
-    "always": false,
-    "aliases": [
-      "how were you built",
-      "how are you built",
-      "how do you work",
-      "how were you made",
-      "how are you made",
-      "this website",
-      "this site",
-      "ai twin",
-      "digital twin",
-      "are you real",
-      "are you an ai"
-    ],
-    "project": "avatarAsWebsites",
-    "text": "# How this AI twin works\n\nThis site is the project: instead of a portfolio page, you get a video call with an AI version of me. The head is a 3D Gaussian splat avatar of me, rendered in the browser. My replies come from a language model that only knows what I've written about myself, and they're spoken in a clone of my voice. The face and lip sync are driven by the actual audio, by a model that runs on your device. When you talk, voice detection runs locally, and a small turn-taking model decides when you've finished speaking, so I don't cut you off. I can also share my screen to show you my projects, resume and contact page while we talk."
+    "text": "# autoV\n\nautoV is prompt-to-VFX for real-time games that stays editable. I built it as an engineer on Team V for the TAI x OpenAI 100-Hour Game Builder Challenge in 2026, in the game dev tools track, where it won second place and $25,000 in OpenAI credits. Most prompt-to-VFX tools give you a video, and a video isn't a visual effect: you can't retime it, recolor it or drop it into an engine. In autoV the model never writes code. It designs a bounded, declarative effect document, with layers, tracks, colors, emission shapes and timing, and a fixed Three.js renderer runs it. Each prompt gives you a few distinct candidate compositions rather than one guess, every effect is rendered and critiqued before you see it, a chat edit only touches one layer in one time window, and undo is backed by immutable checkpoints, so you can always get back to a version you liked. Effects export as JSON, a single-file HTML player, or through plugins for Godot, Unity and Unreal Engine. I worked on the agent pipeline and its tools, the reference canvas, the UI and projects page, and the exporters and plugins for Godot, Unity and Unreal Engine.\n\nBuilt with Next.js, Three.js, OpenAI structured outputs and Supabase."
   },
   {
     "id": "projects/cppRaytracer",
@@ -57,6 +45,24 @@
     "aliases": [],
     "project": "threeDGestureRecognition",
     "text": "It's built on the $P point-cloud recognizer, modified to work in 3D. In VR you hold the index trigger, draw a gesture in the air, and on release it tries to recognize it. There are no built-in gestures: you record your own templates in an add mode. A dev version lets you author and save templates to a file, and a game version just loads them. It's on GitHub as VR-gesture-recognition-godot, with a demo on YouTube."
+  },
+  {
+    "id": "topics/aiTwin",
+    "always": false,
+    "aliases": [
+      "how were you built",
+      "how are you built",
+      "how do you work",
+      "how were you made",
+      "how are you made",
+      "this website",
+      "this site",
+      "ai twin",
+      "digital twin",
+      "are you real",
+      "are you an ai"
+    ],
+    "text": "# How this AI twin works\n\nThis site is the project: instead of a portfolio page, you get a video call with an AI version of me. The head is a 3D Gaussian splat avatar of me, rendered in the browser. My replies come from a language model that only knows what I've written about myself, and they're spoken in a clone of my voice. The face and lip sync are driven by the actual audio, by a model that runs on your device. When you talk, voice detection runs locally, and a small turn-taking model decides when you've finished speaking, so I don't cut you off. I can also share my screen to show you my projects, resume and contact page while we talk."
   },
   {
     "id": "topics/games",
@@ -114,21 +120,21 @@
     "always": false,
     "aliases": [],
     "job": "assethub",
-    "text": "# The company and my role\n\nAssetHub is an AI-powered 3D platform, a Techstars company: an AI-native 3D editor that takes you from concept art to production-ready 3D models, with AI mesh generation and texture refinement. Around when I joined, it had raised a seed round of about two million dollars. I was a full-stack engineer there from September 2025 to September 2026."
+    "text": "# The company and my role\n\nAssetHub is an AI-powered 3D platform, a Techstars company: an AI-native 3D editor that takes you from concept art to production-ready 3D models, with AI mesh generation and texture refinement. Around when I joined, it had raised a seed round of about two million dollars. I was a full-stack engineer there from September 2025 to September 2026.\n\n# What I built\n\nI built customer-facing workflows and internal tooling for generating and processing 3D assets with AI, and worked across the React and TypeScript interfaces and the backend services behind the core 3D editor. The editor takes a team from concept art to a production-ready model in one place: generate a mesh with AI, refine its textures and keep iterating without leaving the browser. We shipped fast and iterated with customers, and in 8 months the platform grew to more than 11,000 users and $5K in monthly recurring revenue."
   },
   {
     "id": "work/etherealEngine",
     "always": false,
     "aliases": [],
     "job": "etherealEngine",
-    "text": "# The company and my role\n\nEthereal Engine was an open-source engine for the social spatial web: multiplayer 3D worlds with avatars, world editing, XR support and WebRTC networking, all in the browser, written in TypeScript with React and Three.js on an entity component system. Infinite Reality acquired it, and it became IR Engine. I joined in February 2023 as a full-stack WebXR engineer.\n\n# What I built\n\n- Visual scripting, built on behave-graph, so non-programmers could script scenes in the editor. I wrote much of the node library: nodes to get and set any component or state, query and event nodes, action nodes, spline nodes and XR session nodes, plus making graphs reactive to the engine's state. I also contributed to behave-graph itself.\n- A rewrite of the transform gizmo, the move, rotate and scale handles in the editor, later refactored onto the engine's ECS.\n- Editor features like primitive geometry, post-processing in the component shelf, and many fixes to the file browser, like pagination and shift and ctrl click selection the way desktop file browsers work.\n- Unit tests for scene loading and editor snapshots.\n- On the backend, I led the move of platform services from Express to Koa.\n\n# Stack\n\nTypeScript, React, Three.js, an ECS architecture with Hookstate for state, behave-graph for visual scripting, Node.js with Koa.\n\n# What I learned / why I moved on\n\nI didn't move on so much as come along: the engine was acquired by Infinite Reality and I kept building it there."
+    "text": "# The company and my role\n\nEthereal Engine was an open-source engine for the social spatial web: multiplayer 3D worlds with avatars, world editing, XR support and WebRTC networking, all in the browser, written in TypeScript with React and Three.js on an entity component system. Infinite Reality acquired it for 75 million dollars, and it became IR Engine. I joined in February 2023 as a full-stack WebXR engineer and stayed through the acquisition, building IR Studio, its browser-based world editor, until August 2025: code scripting with the Monaco editor, gizmos, much of the studio's UI, and rendering features like lit and unlit view modes and scene complexity checks.\n\n# What I built\n\n- Visual scripting, built on behave-graph, so non-programmers could script scenes in the editor. I wrote much of the node library: nodes to get and set any component or state, query and event nodes, action nodes, spline nodes and XR session nodes, plus making graphs reactive to the engine's state. I also contributed to behave-graph itself.\n- A rewrite of the transform gizmo, the move, rotate and scale handles in the editor, later refactored onto the engine's ECS.\n- Editor features like primitive geometry, post-processing in the component shelf, and many fixes to the file browser, like pagination and shift and ctrl click selection the way desktop file browsers work.\n- Unit tests for scene loading and editor snapshots.\n- On the backend, I led the move of platform services from Express to Koa.\n\n# Stack\n\nTypeScript, React, Three.js, an ECS architecture with Hookstate for state, behave-graph for visual scripting, Node.js with Koa.\n\n# What I learned / why I moved on\n\nI didn't move on so much as come along: the engine was acquired by Infinite Reality and I kept building it there."
   },
   {
     "id": "work/infiniteReality",
     "always": false,
     "aliases": [],
     "job": "infiniteReality",
-    "text": "# The company and my role\n\nInfinite Reality acquired Ethereal Engine for 75 million dollars, and the engine became IR Engine, with IR Studio as its browser-based world editor. I was a full-stack WebXR engineer there from February 2024 to August 2025, mostly on IR Studio.\n\n# What I built\n\n- Code scripting in IR Studio: I integrated the Monaco editor, the editor behind VS Code, so creators could write scripts in the browser, then added multi-script editing and example scripts. I also moved visual scripting into its own package and rebuilt it for the new studio.\n- Gizmos: a camera gizmo, gizmo presets, helpers that show only for the selected object, new visualizer icons for lights and spawn points, and one standard way to create gizmos across the engine.\n- Studio UI: lots of the editor's panels and inputs, from the hierarchy panel (reordering, search, adding directly into it) and the asset panel to inputs like rotation fields that work in quaternions with smooth angle display, keyboard shortcuts and accessibility for dialogs.\n- Rendering: lit and unlit view modes, scene complexity checks that warn creators before a scene gets too heavy, thumbnail and environment map generation for publishing, skybox fixes, shadow and particle system fixes.\n\n# Stack\n\nTypeScript, React, Three.js, the engine's ECS, Monaco editor, Tailwind."
+    "text": "# The company and my role\n\nInfinite Reality, which has since renamed itself Napster Corp, acquired Ethereal Engine for 75 million dollars, and the engine became IR Engine, with IR Studio as its browser-based world editor. I was a full-stack WebXR engineer there from February 2024 to August 2025, mostly on IR Studio.\n\n# What I built\n\n- Code scripting in IR Studio: I integrated the Monaco editor, the editor behind VS Code, so creators could write scripts in the browser, then added multi-script editing and example scripts. I also moved visual scripting into its own package and rebuilt it for the new studio.\n- Gizmos: a camera gizmo, gizmo presets, helpers that show only for the selected object, new visualizer icons for lights and spawn points, and one standard way to create gizmos across the engine.\n- Studio UI: lots of the editor's panels and inputs, from the hierarchy panel (reordering, search, adding directly into it) and the asset panel to inputs like rotation fields that work in quaternions with smooth angle display, keyboard shortcuts and accessibility for dialogs.\n- Rendering: lit and unlit view modes, scene complexity checks that warn creators before a scene gets too heavy, thumbnail and environment map generation for publishing, skybox fixes, shadow and particle system fixes.\n\n# Stack\n\nTypeScript, React, Three.js, the engine's ECS, Monaco editor, Tailwind."
   },
   {
     "id": "work/niraAnimates",

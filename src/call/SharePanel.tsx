@@ -4,7 +4,7 @@
  */
 
 import { useSimpleStore } from '@hexafield/simple-store/react'
-import { memo } from 'react'
+import { memo, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { ContactSection } from '../components/sections/ContactSection'
@@ -13,13 +13,24 @@ import { ServicesSection } from '../components/sections/ServicesSection'
 import type { PortfolioItem } from '../content/types'
 import { getSortedPortfolioItems, usePortfolioContent } from '../content/useContent'
 import { AvatarUIState } from '../services/actions/avatarActions'
-import { BackIcon, CloseIcon } from './callIcons'
+import { BackIcon, BriefcaseIcon, CloseIcon, FileIcon, GridIcon, LockIcon, MailIcon } from './callIcons'
 import { ProjectDetail } from './ProjectDetail'
 import { isShareTab, SHARE_TABS, type ShareTab } from './shareTabs'
+
+const TAB_ICONS: Record<ShareTab, ReactNode> = {
+  portfolio: <GridIcon />,
+  resume: <FileIcon />,
+  services: <BriefcaseIcon />,
+  contact: <MailIcon />
+}
+
+// otherProjects -> other-projects, for the address bar
+const slug = (id: string) => id.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase()
 
 const SharePanelComponent = () => {
   const { t } = useTranslation()
   const name = t('core.name')
+  const displayHost = t('core.website').replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')
   const [{ openSectionId, focusProjectId, openFolderId: folderId }, setUI] = useSimpleStore(AvatarUIState)
   const items = getSortedPortfolioItems(usePortfolioContent())
 
@@ -47,35 +58,43 @@ const SharePanelComponent = () => {
   const others = items.filter((i) => !i.featured && i.type !== 'folder').sort(byDate)
   const gridItems = folder ? items.filter((i) => folder.children?.includes(i.id)).sort(byDate) : featured
 
-  const sharing = project ? title(project.id) : folder ? title(folder.id) : tabLabel(tab)
+  // The active tab is titled after the page it shows, like a browser tab
+  const pageTitle = project ? title(project.id) : folder ? title(folder.id) : tabLabel(tab)
   const canGoBack = !!project || !!folder
+  const path = [tab, folder && slug(folder.id), project && slug(project.id)].filter(Boolean).join('/')
+  const goBack = () => (project ? setUI((prev) => ({ ...prev, focusProjectId: null })) : setUI((prev) => ({ ...prev, openFolderId: null })))
 
   return (
-    <section className="share" aria-label={t('call.sharing', 'Shared screen')}>
-      <div className="share-head">
-        {canGoBack && (
-          <button
-            className="icon-btn"
-            onClick={() => (project ? setUI((prev) => ({ ...prev, focusProjectId: null })) : setUI((prev) => ({ ...prev, openFolderId: null })))}
-            aria-label={t('call.back', 'Back')}
-          >
-            <BackIcon />
-          </button>
-        )}
-        <div className="share-status">
-          {t('call.isSharing', '{{name}} is sharing', { name })} · <b>{sharing}</b>
+    <section className="share browser" aria-label={t('call.sharing', 'Shared screen')}>
+      {/* Browser chrome: a tab per section, then the address bar */}
+      <div className="browser-top">
+        <div className="browser-tabs" role="tablist">
+          {SHARE_TABS.map((id) => (
+            <button key={id} role="tab" className="browser-tab" aria-selected={tab === id} onClick={() => openTab(id)} title={tabLabel(id)}>
+              <span className="browser-favicon">{TAB_ICONS[id]}</span>
+              <span className="browser-tab-title">{tab === id ? pageTitle : tabLabel(id)}</span>
+            </button>
+          ))}
         </div>
-        <button className="icon-btn" onClick={stopSharing} aria-label={t('call.hideScreen', "Hide {{name}}'s screen", { name })}>
+        <button className="icon-btn browser-close" onClick={stopSharing} aria-label={t('call.hideScreen', "Hide {{name}}'s screen", { name })}>
           <CloseIcon />
         </button>
       </div>
-
-      <div className="share-tabs" role="tablist">
-        {SHARE_TABS.map((id) => (
-          <button key={id} role="tab" className="share-tab" aria-selected={tab === id} onClick={() => openTab(id)}>
-            {tabLabel(id)}
-          </button>
-        ))}
+      <div className="browser-bar">
+        <button className="icon-btn browser-nav" onClick={goBack} disabled={!canGoBack} aria-label={t('call.back', 'Back')}>
+          <BackIcon />
+        </button>
+        <div className="browser-url">
+          <LockIcon />
+          <span>
+            {displayHost}
+            <b>/{path}</b>
+          </span>
+        </div>
+        <span className="browser-sharing">
+          <i aria-hidden="true" />
+          {t('call.isSharing', '{{name}} is sharing', { name })}
+        </span>
       </div>
 
       <div className="share-body">

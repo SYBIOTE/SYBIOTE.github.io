@@ -47,7 +47,7 @@
           ]
         },
         "infiniteReality": {
-          "title": "Full-Stack Engineer (WebXR) — Infinite Reality",
+          "title": "Full-Stack Engineer (WebXR) — Napster Corp (formerly Infinite Reality)",
           "period": "Feb 2024 — Aug 2025",
           "achievements": [
             "Designed developer-facing tooling, including browser-based scripting workflows in IR Studio powered by Monaco Editor",
@@ -90,25 +90,25 @@
     "skills": {
       "title": "Skills",
       "groups": {
-        "languages": {
-          "name": "Languages",
-          "items": "TypeScript, JavaScript, Python, C++, C#, SQL, Bash"
-        },
-        "frontend": {
-          "name": "Frontend",
-          "items": "React, Next.js, Tailwind CSS, React Query, Zustand, Vite"
-        },
         "web3d": {
           "name": "3D & XR",
-          "items": "Three.js, React Three Fiber, Babylon.js, WebXR, Godot, Unity, Unreal, Vulkan"
+          "items": "Three.js, WebGL, GLSL shaders, React Three Fiber, WebXR, Godot, Unity"
         },
-        "backend": {
-          "name": "Backend",
-          "items": "Node.js, Express, Koa, PostgreSQL, REST APIs, Supabase"
+        "ai": {
+          "name": "AI",
+          "items": "LLMs, RAG, AI agents, OpenAI API, Python"
         },
-        "infra": {
-          "name": "Infrastructure & Tools",
-          "items": "AWS, GCP, Docker, Kubernetes, GitHub Actions, Git, Claude Code, Cursor"
+        "web": {
+          "name": "Web",
+          "items": "TypeScript, React, Next.js, Node.js"
+        },
+        "cloud": {
+          "name": "Data & Cloud",
+          "items": "PostgreSQL, REST APIs, AWS, Docker"
+        },
+        "engineering": {
+          "name": "Engineering",
+          "items": "C++, Performance optimization"
         }
       }
     },
@@ -242,10 +242,6 @@
         "title": "AssetHub",
         "description": "AI-native 3D editor that takes teams from concept art to production-ready models, with AI mesh generation and texture refinement.",
         "extendedDescription": "A Techstars company with a ~$2M seed round, where I was a full-stack engineer from September 2025 to September 2026, across the React editor, backend, customer workflows and internal tools. In 8 months the product grew to 11,000+ users and $5K monthly recurring revenue."
-      },
-      "avatarAsWebsites": {
-        "title": "Avatar as Websites",
-        "description": "System to create personal 3D avatars and transform them into interactive portfolio pages on the web."
       },
       "augury": {
         "title": "AUGURY: Duel of the Gods",

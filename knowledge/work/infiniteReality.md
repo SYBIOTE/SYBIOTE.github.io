@@ -1,6 +1,6 @@
 # The company and my role
 
-Infinite Reality acquired Ethereal Engine for 75 million dollars, and the engine became IR Engine, with IR Studio as its browser-based world editor. I was a full-stack WebXR engineer there from February 2024 to August 2025, mostly on IR Studio.
+Infinite Reality, which has since renamed itself Napster Corp, acquired Ethereal Engine for 75 million dollars, and the engine became IR Engine, with IR Studio as its browser-based world editor. I was a full-stack WebXR engineer there from February 2024 to August 2025, mostly on IR Studio.
 
 # What I built
 

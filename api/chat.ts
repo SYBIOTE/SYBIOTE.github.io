@@ -50,7 +50,15 @@ export interface Note {
 const NOTES = KNOWLEDGE as Note[]
 // The projects the shared screen's portfolio shows; the rest open only when the avatar presents them
 const FEATURED = new Set((PORTFOLIO.items as { id: string; featured?: boolean }[]).filter((i) => i.featured).map((i) => i.id))
-const PORTFOLIO_ITEMS = PORTFOLIO.items as { id: string; order: number; date?: string; featured?: boolean; type?: string; children?: string[] }[]
+const PORTFOLIO_ITEMS = PORTFOLIO.items as {
+  id: string
+  order: number
+  date?: string
+  featured?: boolean
+  type?: string
+  children?: string[]
+  job?: string
+}[]
 const PROJECT_IDS = new Set(PORTFOLIO_ITEMS.map((i) => i.id))
 const FOLDER_IDS = new Set(PORTFOLIO_ITEMS.filter((i) => i.type === 'folder').map((i) => i.id))
 // The cards the shared screen's grid shows, in its order: featured by order, a folder's newest first
@@ -174,7 +182,9 @@ export const topicsFor = (messages: { role: string; content: string }[], notes: 
   const projects = [
     ...new Set([...findTopics(last, TOPICS.projects), ...(onScreen ? [onScreen] : []), ...findTopics(previous, TOPICS.projects)])
   ].slice(0, MAX_DETAILED_PROJECTS)
-  const jobs = new Set([...findTopics(last, TOPICS.jobs), ...findTopics(previous, TOPICS.jobs)])
+  // A project made at a job brings that job in too (AssetHub on screen -> the AssetHub notes)
+  const projectJobs = projects.map((id) => PORTFOLIO_ITEMS.find((i) => i.id === id)?.job).filter((j): j is string => !!j)
+  const jobs = new Set([...findTopics(last, TOPICS.jobs), ...findTopics(previous, TOPICS.jobs), ...projectJobs])
   const allJobs = mentionsAny(last, TOPICS.experience)
   // Knowledge notes the conversation brings up: by their own aliases, or with their job or project
   const noteAliases = Object.fromEntries(notes.filter((n) => !n.always && n.aliases.length).map((n) => [n.id, n.aliases]))
