@@ -10,7 +10,9 @@ I work on AI and XR: I like bending reality with code and coffee, and lately I b
 
 # What I'm looking for
 
-<!-- Not found online. Right now: full-time, freelance, both? Kinds of roles, teams, problems and companies you want. Remote / hybrid / relocation. Anything you'd say no to. -->
+I'm open to both full-time roles and freelance projects, building 3D for the web, XR and AI for 3D. I prefer working remotely, but for the right opportunity I'm open to hybrid work or relocating.
+
+<!-- Add: kinds of teams, problems or companies you want, and anything you'd say no to. -->
 
 # Goals
 

@@ -14,7 +14,9 @@ Ethereal Engine was an open-source engine for the social spatial web: multiplaye
 
 # Hard problems and decisions
 
-<!-- Add a story: e.g. designing the visual scripting node model, or the Express to Koa migration (how you measured -60% response time and 3x throughput). -->
+The toughest one was visual scripting. Behave-graph is a standalone graph runtime with its own model of values, events and execution, while the engine ran on its own custom entity component system, with Hookstate for state. They didn't fit together out of the box, so I engineered a layer on top of behave-graph that bridges the two: nodes that can get and set any component or state in the ECS, query nodes that work over the engine's entities, event and action nodes wired to the engine, and graphs that react when the engine's state changes. That's what let non-programmers script real scenes in the editor instead of a toy subset, and I contributed fixes back to behave-graph itself along the way.
+
+<!-- Add: the Express to Koa migration (how you measured -60% response time and 3x throughput). -->
 
 # Stack
 

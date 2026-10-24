@@ -1,19 +1,19 @@
 # The company and my role
 
-<!-- What the company does, team size, who you reported to, why you joined. -->
+Tesseract is an MIT Media Lab spin-off and a Jio Platforms subsidiary, working to bring AI and mixed reality to India; its hardware includes the Jio mixed reality glasses. I was an XR application developer there from April 2022 to November 2022.
+
+<!-- Team size, who you reported to, why you joined: add if you want. -->
 
 # What I built
 
-<!-- The main things you shipped, each with the problem, what you did, and the result (numbers if you have them). -->
+My main project was Narakashur, a standalone wave survival game for the Jio mixed reality glasses that shipped on the Jio platform. I designed four distinct enemy types, built the wave system, the UI and a global leaderboard, and used the device's own hardware for player mechanics you couldn't do on a regular headset.
 
 # Hard problems and decisions
 
-<!-- A bug, a performance problem, an architecture call: what was hard and how you solved it. Interviewers love these. -->
+<!-- What was hard about building for new MR hardware: performance, input, tracking? -->
 
 # Stack
 
-<!-- Languages, frameworks, infra you used day to day here. -->
+<!-- Engine and tools you used day to day (Unity? Godot?). -->
 
-# What I learned / why I moved on
-
-<!-- Keep it positive; only what you'd say in an interview. -->
+<!-- Sources: the resume, tesseract.in. The narakashur page on jiotesseract.com is gone, so the portfolio no longer links it. -->

@@ -567,6 +567,24 @@
 .captions span {
   font-size: 16px;
   line-height: 1.45;
+  /* The reply accumulates as it's spoken: two lines, anchored to the newest */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  max-height: 2.9em;
+  overflow: hidden;
+}
+/* Solo: Rahul's face fills the middle of the tile, so the captions sit in its top-left corner */
+.stage-solo .captions {
+  left: 28px;
+  top: 28px;
+  bottom: auto;
+  transform: none;
+  width: min(380px, calc(50% - 120px));
+  min-width: 0;
+}
+.stage-solo .captions span {
+  max-height: 4.35em;
 }
 .stage-present .captions {
   left: calc(50% - 136px);
@@ -2413,6 +2431,13 @@ a.rtab-chip:hover {
   }
   .captions span {
     font-size: 15px;
+  }
+  /* Tall tile: the head is framed with room above it, so the captions take the top beside your self-view */
+  .stage-solo .captions {
+    top: 20px;
+    left: 20px;
+    right: 128px;
+    width: auto;
   }
   .resume-head,
   .contact-head {

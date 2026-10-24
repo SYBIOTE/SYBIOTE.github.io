@@ -3,13 +3,13 @@
     "id": "faq",
     "always": true,
     "aliases": [],
-    "text": "# Quick answers\n\n- Timezone: I'm in Bengaluru, so India time, UTC plus five thirty.\n- Links: my GitHub is github dot com slash sybiote, my games are on sybiote dot itch dot io, and my site is rahulghosh dot com."
+    "text": "# Quick answers\n\n- Timezone: I'm in Bengaluru, so India time, UTC plus five thirty.\n- Links: my GitHub is github dot com slash sybiote, my games are on sybiote dot itch dot io, my LinkedIn is rahul dash g h zero s h, I'm on X as rahul underscore underscore g h zero s h, and my site is rahulghosh dot com.\n- Work setup: remote preferred; open to hybrid or relocating for the right opportunity."
   },
   {
     "id": "me",
     "always": true,
     "aliases": [],
-    "text": "# About me\n\nI work on AI and XR: I like bending reality with code and coffee, and lately I build AI avatars in XR, like the one you're talking to. I started out making VR games in Godot in college, where I founded the game development and XR club and was a founding member of Godot Dojo. From 2023 I moved to the 3D web, building the editor and visual scripting of an open-source WebXR engine, Ethereal Engine, which became IR Engine. These days I'm deep in AI for 3D characters: auto-rigging, motion generation and animation tools in the browser."
+    "text": "# About me\n\nI work on AI and XR: I like bending reality with code and coffee, and lately I build AI avatars in XR, like the one you're talking to. I started out making VR games in Godot in college, where I founded the game development and XR club and was a founding member of Godot Dojo. From 2023 I moved to the 3D web, building the editor and visual scripting of an open-source WebXR engine, Ethereal Engine, which became IR Engine. These days I'm deep in AI for 3D characters: auto-rigging, motion generation and animation tools in the browser.\n\n# What I'm looking for\n\nI'm open to both full-time roles and freelance projects, building 3D for the web, XR and AI for 3D. I prefer working remotely, but for the right opportunity I'm open to hybrid work or relocating."
   },
   {
     "id": "projects/augury",
@@ -31,6 +31,20 @@
     "aliases": [],
     "project": "cppRaytracer",
     "text": "I built the ray tracer while following The Cherno's ray tracing series, on his Walnut framework, which is Vulkan with Dear ImGui. It does path tracing with customizable materials and renders spheres."
+  },
+  {
+    "id": "projects/godotDojo",
+    "always": false,
+    "aliases": [],
+    "project": "godotDojo",
+    "text": "Godot Dojo is an open-source group building VR tools and templates for the Godot engine, and I'm a founding member. My biggest contribution was to The Dojo, its MIT-licensed VR template game: I built the bow and arrow, stabbing with a dagger, and a skeleton enemy with AI and an active ragdoll, plus the scenes to test them, in 2022."
+  },
+  {
+    "id": "projects/godotOculusPlatform",
+    "always": false,
+    "aliases": [],
+    "project": "godotOculusPlatform",
+    "text": "This is a Godot plugin for the Oculus (now Meta) Platform SDK, written in C++ with GDNative and built for Android, so Godot VR games on Quest can use Meta's platform features. It started as Martin Schwan's repository, and I wrote most of it: 19 of its 24 commits. I added the entitlement check and user ID retrieval with signals, cloud and user functions, working leaderboards, rooms and friends, and achievements."
   },
   {
     "id": "projects/meshSlicerGodot",
@@ -120,14 +134,14 @@
     "always": false,
     "aliases": [],
     "job": "assethub",
-    "text": "# The company and my role\n\nAssetHub is an AI-powered 3D platform, a Techstars company: an AI-native 3D editor that takes you from concept art to production-ready 3D models, with AI mesh generation and texture refinement. Around when I joined, it had raised a seed round of about two million dollars. I was a full-stack engineer there from September 2025 to September 2026.\n\n# What I built\n\nI built customer-facing workflows and internal tooling for generating and processing 3D assets with AI, and worked across the React and TypeScript interfaces and the backend services behind the core 3D editor. The editor takes a team from concept art to a production-ready model in one place: generate a mesh with AI, refine its textures and keep iterating without leaving the browser. We shipped fast and iterated with customers, and in 8 months the platform grew to more than 11,000 users and $5K in monthly recurring revenue."
+    "text": "# The company and my role\n\nAssetHub is an AI-powered 3D platform, a Techstars company: an AI-native 3D editor that takes you from concept art to production-ready 3D models, with AI mesh generation and texture refinement. Around when I joined, it had raised a seed round of about two million dollars. I was a full-stack engineer there from September 2025 to September 2026.\n\n# What I built\n\nI built customer-facing workflows and internal tooling for generating and processing 3D assets with AI, and worked across the React and TypeScript interfaces and the backend services behind the core 3D editor. The editor takes a team from concept art to a production-ready model in one place: generate a mesh with AI, refine its textures and keep iterating without leaving the browser. We shipped fast and iterated with customers, and in 8 months the platform grew to more than 11,000 users and $5K in monthly recurring revenue.\n\nTwo things I built that I'm proud of:\n\n- A 3D composer agent. Different AI providers are good at different things, so a character might come back as separate meshes from different models. The composer agent takes meshes generated by different AI providers and combines them into one single character mesh, so you get one usable asset instead of a pile of parts.\n- GPU-driven face selection for the editor, explained below.\n\n# Hard problems and decisions\n\nMost 3D editors break down when meshes get really dense: try selecting faces on a mesh with millions of triangles and it quickly becomes slow or unusable, because picking is done with raycasting on the CPU. So I built face selection that runs on the GPU instead, in the browser, with hover, box selection and lasso selection; it can support any bounded selection shape while staying interactive on very large meshes.\n\nHow it works: when selection mode turns on, the mesh is converted to non-indexed geometry in the background, so every triangle has its own face ID. A WebGPU render pass then draws the mesh into an offscreen framebuffer, writing identifiers instead of colors: the geometry index goes in the red channel, which handles scenes with several meshes, and the face index in the green channel. That gives a texture that maps every pixel to the triangle under it. When the mouse moves, the pointer position is normalized and used to sample that buffer, which instantly gives the face under the cursor, and box or lasso selection reads the faces inside the region. From there the face index flows through the shader pipeline for highlighting, previews and selection feedback. The result is smooth interaction even on meshes with millions of faces. I built it with WebGPU and TSL, Three.js's shading language, and wrote it up as a post on LinkedIn.\n\n# Stack\n\nReact, TypeScript, Three.js with WebGPU and TSL, and the backend services behind the editor."
   },
   {
     "id": "work/etherealEngine",
     "always": false,
     "aliases": [],
     "job": "etherealEngine",
-    "text": "# The company and my role\n\nEthereal Engine was an open-source engine for the social spatial web: multiplayer 3D worlds with avatars, world editing, XR support and WebRTC networking, all in the browser, written in TypeScript with React and Three.js on an entity component system. Infinite Reality acquired it for 75 million dollars, and it became IR Engine. I joined in February 2023 as a full-stack WebXR engineer and stayed through the acquisition, building IR Studio, its browser-based world editor, until August 2025: code scripting with the Monaco editor, gizmos, much of the studio's UI, and rendering features like lit and unlit view modes and scene complexity checks.\n\n# What I built\n\n- Visual scripting, built on behave-graph, so non-programmers could script scenes in the editor. I wrote much of the node library: nodes to get and set any component or state, query and event nodes, action nodes, spline nodes and XR session nodes, plus making graphs reactive to the engine's state. I also contributed to behave-graph itself.\n- A rewrite of the transform gizmo, the move, rotate and scale handles in the editor, later refactored onto the engine's ECS.\n- Editor features like primitive geometry, post-processing in the component shelf, and many fixes to the file browser, like pagination and shift and ctrl click selection the way desktop file browsers work.\n- Unit tests for scene loading and editor snapshots.\n- On the backend, I led the move of platform services from Express to Koa.\n\n# Stack\n\nTypeScript, React, Three.js, an ECS architecture with Hookstate for state, behave-graph for visual scripting, Node.js with Koa.\n\n# What I learned / why I moved on\n\nI didn't move on so much as come along: the engine was acquired by Infinite Reality and I kept building it there."
+    "text": "# The company and my role\n\nEthereal Engine was an open-source engine for the social spatial web: multiplayer 3D worlds with avatars, world editing, XR support and WebRTC networking, all in the browser, written in TypeScript with React and Three.js on an entity component system. Infinite Reality acquired it for 75 million dollars, and it became IR Engine. I joined in February 2023 as a full-stack WebXR engineer and stayed through the acquisition, building IR Studio, its browser-based world editor, until August 2025: code scripting with the Monaco editor, gizmos, much of the studio's UI, and rendering features like lit and unlit view modes and scene complexity checks.\n\n# What I built\n\n- Visual scripting, built on behave-graph, so non-programmers could script scenes in the editor. I wrote much of the node library: nodes to get and set any component or state, query and event nodes, action nodes, spline nodes and XR session nodes, plus making graphs reactive to the engine's state. I also contributed to behave-graph itself.\n- A rewrite of the transform gizmo, the move, rotate and scale handles in the editor, later refactored onto the engine's ECS.\n- Editor features like primitive geometry, post-processing in the component shelf, and many fixes to the file browser, like pagination and shift and ctrl click selection the way desktop file browsers work.\n- Unit tests for scene loading and editor snapshots.\n- On the backend, I led the move of platform services from Express to Koa.\n\n# Hard problems and decisions\n\nThe toughest one was visual scripting. Behave-graph is a standalone graph runtime with its own model of values, events and execution, while the engine ran on its own custom entity component system, with Hookstate for state. They didn't fit together out of the box, so I engineered a layer on top of behave-graph that bridges the two: nodes that can get and set any component or state in the ECS, query nodes that work over the engine's entities, event and action nodes wired to the engine, and graphs that react when the engine's state changes. That's what let non-programmers script real scenes in the editor instead of a toy subset, and I contributed fixes back to behave-graph itself along the way.\n\n# Stack\n\nTypeScript, React, Three.js, an ECS architecture with Hookstate for state, behave-graph for visual scripting, Node.js with Koa.\n\n# What I learned / why I moved on\n\nI didn't move on so much as come along: the engine was acquired by Infinite Reality and I kept building it there."
   },
   {
     "id": "work/infiniteReality",
@@ -137,10 +151,24 @@
     "text": "# The company and my role\n\nInfinite Reality, which has since renamed itself Napster Corp, acquired Ethereal Engine for 75 million dollars, and the engine became IR Engine, with IR Studio as its browser-based world editor. I was a full-stack WebXR engineer there from February 2024 to August 2025, mostly on IR Studio.\n\n# What I built\n\n- Code scripting in IR Studio: I integrated the Monaco editor, the editor behind VS Code, so creators could write scripts in the browser, then added multi-script editing and example scripts. I also moved visual scripting into its own package and rebuilt it for the new studio.\n- Gizmos: a camera gizmo, gizmo presets, helpers that show only for the selected object, new visualizer icons for lights and spawn points, and one standard way to create gizmos across the engine.\n- Studio UI: lots of the editor's panels and inputs, from the hierarchy panel (reordering, search, adding directly into it) and the asset panel to inputs like rotation fields that work in quaternions with smooth angle display, keyboard shortcuts and accessibility for dialogs.\n- Rendering: lit and unlit view modes, scene complexity checks that warn creators before a scene gets too heavy, thumbnail and environment map generation for publishing, skybox fixes, shadow and particle system fixes.\n\n# Stack\n\nTypeScript, React, Three.js, the engine's ECS, Monaco editor, Tailwind."
   },
   {
+    "id": "work/jioTesseract",
+    "always": false,
+    "aliases": [],
+    "job": "jioTesseract",
+    "text": "# The company and my role\n\nTesseract is an MIT Media Lab spin-off and a Jio Platforms subsidiary, working to bring AI and mixed reality to India; its hardware includes the Jio mixed reality glasses. I was an XR application developer there from April 2022 to November 2022.\n\n# What I built\n\nMy main project was Narakashur, a standalone wave survival game for the Jio mixed reality glasses that shipped on the Jio platform. I designed four distinct enemy types, built the wave system, the UI and a global leaderboard, and used the device's own hardware for player mechanics you couldn't do on a regular headset."
+  },
+  {
     "id": "work/niraAnimates",
     "always": false,
     "aliases": [],
     "job": "niraAnimates",
     "text": "# The company and my role\n\nNira is AI 3D animation software from Nirvana XR, built in India. You upload a 3D character, and it rigs it, even non-humanoid characters, generates animation from a text prompt, and lets you edit the motion with a pose mode, timeline keyframes, a multi-clip sequencer and IK controls, then retarget it and export GLB for engines like Unity and Unreal. It has a free tier, and paid plans run on tokens. I've been a technical advisor on it since June 2025.\n\n# Stack\n\nReact, TypeScript, Node.js, Supabase and AI models for rigging and motion."
+  },
+  {
+    "id": "work/prodigalTech",
+    "always": false,
+    "aliases": [],
+    "job": "prodigalTech",
+    "text": "# The company and my role\n\nProdigal is a Y Combinator company (S18) that builds AI for loan servicing and debt collections; today it sells purpose-built AI agents for that work. I was a backend engineer there from April 2022 to February 2023, on the voice analytics side.\n\n# What I built\n\n- Customer-specific backend services and AI data pipelines for voice analytics at large scale.\n- Automation for ingesting, processing and deploying customer data, which covered more than 70 percent of customer implementations.\n- Data quality work, including backfilling over 200,000 audio files the pipeline had missed.\n- I was on call in a team of five."
   }
 ]

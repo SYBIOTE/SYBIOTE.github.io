@@ -1,0 +1,3 @@
+This is a Godot plugin for the Oculus (now Meta) Platform SDK, written in C++ with GDNative and built for Android, so Godot VR games on Quest can use Meta's platform features. It started as Martin Schwan's repository, and I wrote most of it: 19 of its 24 commits. I added the entitlement check and user ID retrieval with signals, cloud and user functions, working leaderboards, rooms and friends, and achievements.
+
+<!-- Sources: github.com/SYBIOTE/godot_oculus_platform and mgschwan/godot_oculus_platform commit history (Jan and Oct-Nov 2022). Note: the portfolio text also claims OAuth, matchmaking and in-app purchases, which the commits don't show. -->

@@ -141,7 +141,7 @@
       "links": [
         {
           "type": "github",
-          "url": "https://github.com/sybiote/cpp-raytracer"
+          "url": "https://github.com/SYBIOTE/Ray_tracer_project"
         },
         {
           "type": "youtube",
@@ -198,13 +198,8 @@
       "gallery": [
         "/assets/img/portfolio/other/narakashur_page.webp"
       ],
-      "links": [
-        {
-          "type": "website",
-          "url": "https://jiotesseract.com/narakashur"
-        }
-      ],
-      "date": "2022-11"
+      "date": "2022-11",
+      "job": "jioTesseract"
     },
     {
       "id": "meshSlicerGodot",
@@ -214,7 +209,7 @@
       "links": [
         {
           "type": "github",
-          "url": "https://github.com/Godot-Dojo/mesh-slicer"
+          "url": "https://github.com/SYBIOTE/Godot-Mesh-slicer"
         },
         {
           "type": "youtube",
@@ -252,7 +247,7 @@
       "links": [
         {
           "type": "github",
-          "url": "https://github.com/sybiote/3d-gesture-recognition"
+          "url": "https://github.com/SYBIOTE/VR-gesture-recognition-godot"
         },
         {
           "type": "youtube",
@@ -295,7 +290,7 @@
       "links": [
         {
           "type": "itch",
-          "url": "https://itch.io/wizardvsrobot"
+          "url": "https://sybiote.itch.io/wizardvsrobot"
         },
         {
           "type": "youtube",

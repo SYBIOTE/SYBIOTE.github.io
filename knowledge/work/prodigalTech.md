@@ -1,19 +1,20 @@
 # The company and my role
 
-<!-- What the company does, team size, who you reported to, why you joined. -->
+Prodigal is a Y Combinator company (S18) that builds AI for loan servicing and debt collections; today it sells purpose-built AI agents for that work. I was a backend engineer there from April 2022 to February 2023, on the voice analytics side.
 
 # What I built
 
-<!-- The main things you shipped, each with the problem, what you did, and the result (numbers if you have them). -->
+- Customer-specific backend services and AI data pipelines for voice analytics at large scale.
+- Automation for ingesting, processing and deploying customer data, which covered more than 70 percent of customer implementations.
+- Data quality work, including backfilling over 200,000 audio files the pipeline had missed.
+- I was on call in a team of five.
 
 # Hard problems and decisions
 
-<!-- A bug, a performance problem, an architecture call: what was hard and how you solved it. Interviewers love these. -->
+<!-- e.g. how you found and backfilled the 200k missed audio files, or what the automation replaced. -->
 
 # Stack
 
-<!-- Languages, frameworks, infra you used day to day here. -->
+<!-- Languages and infra used day to day (Python? AWS? queues?). -->
 
-# What I learned / why I moved on
-
-<!-- Keep it positive; only what you'd say in an interview. -->
+<!-- Sources: the resume, prodigaltech.com. -->

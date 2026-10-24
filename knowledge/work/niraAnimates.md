@@ -2,7 +2,7 @@
 
 Nira is AI 3D animation software from Nirvana XR, built in India. You upload a 3D character, and it rigs it, even non-humanoid characters, generates animation from a text prompt, and lets you edit the motion with a pose mode, timeline keyframes, a multi-clip sequencer and IK controls, then retarget it and export GLB for engines like Unity and Unreal. It has a free tier, and paid plans run on tokens. I've been a technical advisor on it since June 2025.
 
-<!-- Your relationship to Nirvana XR isn't public: if you're a founder or the main engineer, say so here. -->
+<!-- Publicly this stays "technical advisor": don't add founder or main-engineer wording here. -->
 
 # What I built
 

@@ -416,7 +416,9 @@ const GaussianHeadComponent = ({
 const Subtitle = memo(({ text }: { text?: string }) =>
   text ? (
     <div style={styles.subtitleWrap}>
-      <div style={styles.subtitle}>{text}</div>
+      <div style={styles.subtitle}>
+        <div style={styles.subtitleText}>{text}</div>
+      </div>
     </div>
   ) : null
 )
@@ -462,6 +464,15 @@ const styles: Record<string, CSSProperties> = {
     fontSize: 16,
     lineHeight: 1.45,
     textAlign: 'center'
+  },
+  // The reply accumulates as it's spoken: cap it at three lines, anchored to the newest,
+  // so the box never grows up over the face
+  subtitleText: {
+    maxHeight: '4.35em',
+    overflow: 'hidden',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-end'
   }
 }
 
