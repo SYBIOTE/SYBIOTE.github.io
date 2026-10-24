@@ -19,6 +19,7 @@ import { isShareTab, SHARE_TABS, type ShareTab } from './shareTabs'
 
 const SharePanelComponent = () => {
   const { t } = useTranslation()
+  const name = t('core.name')
   const [{ openSectionId, focusProjectId }, setUI] = useSimpleStore(AvatarUIState)
   const items = getSortedPortfolioItems(usePortfolioContent())
   const [folderId, setFolderId] = useState<string | null>(null)
@@ -64,9 +65,9 @@ const SharePanelComponent = () => {
           </button>
         )}
         <div className="share-status">
-          {t('call.isSharing', 'Rahul is sharing')} · <b>{sharing}</b>
+          {t('call.isSharing', '{{name}} is sharing', { name })} · <b>{sharing}</b>
         </div>
-        <button className="icon-btn" onClick={stopSharing} aria-label={t('call.stopSharing', 'Stop sharing')}>
+        <button className="icon-btn" onClick={stopSharing} aria-label={t('call.hideScreen', "Hide {{name}}'s screen", { name })}>
           <CloseIcon />
         </button>
       </div>

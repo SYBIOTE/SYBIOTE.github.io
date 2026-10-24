@@ -101,7 +101,8 @@ const SceneContent = ({
 }
 
 const Scene3DComponent = ({ sceneConfig, setXRStore, showAvatar = true }: Scene3DProps) => {
-  const store = useMemo(() => createXRStore(), [])
+  // The IWER emulator (and its ~5MB of sample rooms) is only for desktop testing in dev
+  const store = useMemo(() => createXRStore({ emulate: import.meta.env.DEV ? undefined : false }), [])
   
 
   useEffect(() => {

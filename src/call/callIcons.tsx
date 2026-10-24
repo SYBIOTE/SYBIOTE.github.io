@@ -37,10 +37,10 @@ export const ChatIcon = () => (
   </Icon>
 )
 
-export const ShareIcon = () => (
+export const ScreenIcon = () => (
   <Icon>
     <rect x="3" y="4" width="18" height="13" rx="2" />
-    <path d="M12 14V8M9 10.5 12 7.5l3 3M8 21h8" />
+    <path d="M12 17v4M8 21h8" />
   </Icon>
 )
 

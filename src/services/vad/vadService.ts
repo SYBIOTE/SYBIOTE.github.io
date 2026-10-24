@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {  defaultVadConfig, type VADConfig, type VADResult } from './vadConfig'
-import { MicVAD } from '@ricky0123/vad-web'
 
 // Type for VAD instance
 interface VADInstance {
@@ -11,6 +10,30 @@ interface VADInstance {
 
 interface VADProbs {
   isSpeech: number
+}
+
+// vad-web fetches its model, worklet and onnxruntime (its own 1.14, separate from ours) from these
+// at start. Pinned to the installed versions (its default is @latest), and warmed by preloadVAD()
+const VAD_ASSET_PATH = 'https://cdn.jsdelivr.net/npm/@ricky0123/vad-web@0.0.24/dist/'
+const VAD_ORT_WASM_PATH = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.14.0/dist/'
+// Without cross-origin isolation onnxruntime 1.14 runs single-threaded, which is the SIMD build
+const VAD_FILES = [
+  `${VAD_ASSET_PATH}silero_vad_v5.onnx`,
+  `${VAD_ASSET_PATH}vad.worklet.bundle.min.js`,
+  `${VAD_ORT_WASM_PATH}ort-wasm-simd.wasm`
+]
+
+let vadPreload: Promise<void> | null = null
+
+/** Downloads the VAD code and its ~12MB of assets into the HTTP cache, so turning the mic on is quick. */
+export const preloadVAD = (): Promise<void> => {
+  vadPreload ??= Promise.all([
+    import('@ricky0123/vad-web'),
+    ...VAD_FILES.map((url) => fetch(url).then((response) => response.arrayBuffer()))
+  ])
+    .then(() => undefined)
+    .catch((error) => logger.warn('VAD preload failed:', error))
+  return vadPreload
 }
 
 interface UseVADServiceProps {
@@ -60,6 +83,8 @@ export const useVADService = ({
         originalWarn(...args)
       }
 
+      // Loaded on first use so the VAD's onnxruntime stays out of the initial bundle
+      const { MicVAD } = await import('@ricky0123/vad-web')
       const vad = await MicVAD.new({
         positiveSpeechThreshold: config.vadThreshold,
         minSpeechFrames: 5,
@@ -67,6 +92,8 @@ export const useVADService = ({
         // ~0.38s of silence ends a segment (default ~0.77s); Smart Turn then decides if the turn is over
         redemptionFrames: 12,
         model: 'v5',
+        baseAssetPath: VAD_ASSET_PATH,
+        onnxWASMBasePath: VAD_ORT_WASM_PATH,
         onFrameProcessed: (probs: VADProbs) => {
           if (probs.isSpeech && probs.isSpeech > config.vadThreshold) {
             handleVADResult({

@@ -38,7 +38,8 @@ import {
   type Material,
   type Object3D
 } from 'three'
-import { DRACOLoader, GLTFLoader } from 'three/examples/jsm/Addons.js'
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 // Same decoder drei's useGLTF uses
 const DRACO_DECODER_PATH = 'https://www.gstatic.com/draco/versioned/decoders/1.5.5/'

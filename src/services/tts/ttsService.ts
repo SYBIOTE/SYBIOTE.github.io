@@ -72,6 +72,30 @@ const TRACK_WAIT_MS = 1200
 // Set once /api/tts reports it isn't configured: stop asking for the rest of the session
 let cloudUnavailable = false
 
+const fetchCloudSpeech = async (url: string, text: string): Promise<ArrayBuffer> => {
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text })
+  })
+  if (response.status === 503) cloudUnavailable = true
+  if (!response.ok) throw new Error(`TTS ${response.status}`)
+  return response.arrayBuffer()
+}
+
+// Clips requested ahead of time (the greeting, while the visitor is being let in), by text
+const prefetched = new Map<string, Promise<ArrayBuffer>>()
+
+/** Starts fetching a line in Rahul's voice so speaking it later doesn't wait on the network. */
+export const prefetchCloudSpeech = (line: string, url = defaultTTSConfig.cloudUrl || '/api/tts') => {
+  // Keyed like speak() queues it
+  const text = cleanText(line)
+  if (!text.trim() || cloudUnavailable || defaultTTSConfig.mode !== 'cloud' || prefetched.has(text)) return
+  const clip = fetchCloudSpeech(url, text)
+  clip.catch(() => {}) // reported when it's spoken
+  prefetched.set(text, clip)
+}
+
 // Rahul's voice is male, always. Without the cloned voice he speaks with a browser voice known to be
 // male (browserVoice.ts), else with a male voice that runs in the browser (Piper, via vits-web), else
 // not at all, with subtitles only. A browser's default voice is never used: it's often female
@@ -296,14 +320,9 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
         return
       }
       try {
-        const response = await fetch(config.cloudUrl || '/api/tts', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text: message.text })
-        })
-        if (response.status === 503) cloudUnavailable = true
-        if (!response.ok) throw new Error(`TTS ${response.status}`)
-        message.decoded = await getAudioContext().decodeAudioData(await response.arrayBuffer())
+        const clip = prefetched.get(message.text) ?? fetchCloudSpeech(config.cloudUrl || '/api/tts', message.text)
+        prefetched.delete(message.text)
+        message.decoded = await getAudioContext().decodeAudioData(await clip)
         // Face frames are computed in the background while earlier clips play
         message.track = expressionTrackFor(message.decoded)
       } catch (error) {

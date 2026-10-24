@@ -1,12 +1,14 @@
 import type { XRStore } from '@react-three/xr'
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { lazy, memo, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { supportsGaussianHead } from './avatar/gaussianSupport'
 import { AvatarErrorBoundary } from './AvatarErrorBoundary'
 import { GaussianHead } from './GaussianHead'
 
-import { Scene3D } from './Scene3D'
 import type { SceneConfig } from '../../app/sceneTypes'
+
+// R3F, drei, three-vrm and XR only load when the VRM fallback is actually shown
+const Scene3D = lazy(() => import('./Scene3D').then((m) => ({ default: m.Scene3D })))
 
 interface Viewport3DProps {
   sceneConfig: SceneConfig
@@ -86,7 +88,11 @@ const Viewport3DComponent = ({
         id="avatar-viewport"
       >
         {/* The R3F scene is only needed for the VRM avatar (and its AR mode) */}
-        {showVrm && <Scene3D sceneConfig={sceneConfig} setXRStore={setXRStore} />}
+        {showVrm && (
+          <Suspense fallback={null}>
+            <Scene3D sceneConfig={sceneConfig} setXRStore={setXRStore} />
+          </Suspense>
+        )}
         {useGaussian && (
           <AvatarErrorBoundary onError={handleGaussianError}>
             <GaussianHead

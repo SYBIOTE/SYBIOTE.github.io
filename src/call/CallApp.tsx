@@ -24,6 +24,9 @@ import { Viewport3D } from '../components/scene/Viewport3D'
 import i18n from '../i18n/i18n'
 import { buildGreeting, markVisit } from './greeting'
 import { preloadIfVoiceConfigured } from '../services/audio2expression/audio2expression'
+import { preloadSmartTurn } from '../services/smartTurn/smartTurn'
+import { prefetchCloudSpeech } from '../services/tts/ttsService'
+import { preloadVAD } from '../services/vad/vadService'
 import { AvatarUIState } from '../services/actions/avatarActions'
 import './call.css'
 import {
@@ -40,7 +43,7 @@ import {
   PeopleIcon,
   PhoneDownIcon,
   SendIcon,
-  ShareIcon
+  ScreenIcon
 } from './callIcons'
 import { playChime, primeAudio } from './chime'
 import { ContactPage } from './postcall/ContactPage'
@@ -173,15 +176,23 @@ const CallAppComponent = () => {
     void preloadIfVoiceConfigured()
   }, [])
 
+  // Mic on in the waiting room: fetch voice detection and turn-taking now, not once they're talking
+  useEffect(() => {
+    if (!inWaitingRoom || !micPref) return
+    void preloadVAD()
+    void preloadSmartTurn()
+  }, [inWaitingRoom, micPref])
+
   // Greet once in the call: right away if the head is ready, otherwise after a short wait
   const greetedRef = useRef(false)
-  // Joined a call here before (checked when they click join)
-  const returningRef = useRef(false)
+  // Picked when they click join, so its audio can be fetched while they're being let in
+  const greetingRef = useRef('')
   const greet = useCallback(() => {
     if (greetedRef.current) return
     greetedRef.current = true
     actions.performEmotionAction({ emotion: 'happy', relaxTime: 3000 })
-    actions.speak(buildGreeting({ name: myName, locale: i18n.language, returning: returningRef.current }))
+    // Empty if the call was entered without join()
+    actions.speak(greetingRef.current || buildGreeting({ name: myName, locale: i18n.language, returning: false }))
   }, [actions, myName])
   useEffect(() => {
     if (phase !== 'call' || greetedRef.current) return
@@ -222,7 +233,9 @@ const CallAppComponent = () => {
       } catch {
         // speech synthesis unavailable
       }
-      returningRef.current = markVisit()
+      // markVisit: joined a call here before
+      greetingRef.current = buildGreeting({ name: guestName.trim(), locale: i18n.language, returning: markVisit() })
+      if (!greetedRef.current) prefetchCloudSpeech(greetingRef.current)
       try {
         localStorage.setItem(NAME_KEY, guestName.trim())
       } catch {
@@ -548,8 +561,13 @@ const CallAppComponent = () => {
             <RoundButton className="desk-only" label={t('call.raiseHand', 'Raise hand')} on={handRaised} onClick={raiseHand}>
               <HandIcon />
             </RoundButton>
-            <RoundButton label={t('call.present', 'Present')} on={presenting} onClick={togglePresent}>
-              <ShareIcon />
+            {/* Rahul is the one sharing: the visitor asks for his screen, or hides it */}
+            <RoundButton
+              label={presenting ? t('call.hideScreen', "Hide {{name}}'s screen", { name }) : t('call.askToShare', 'Ask {{name}} to share screen', { name })}
+              on={presenting}
+              onClick={togglePresent}
+            >
+              <ScreenIcon />
             </RoundButton>
             <RoundButton className="phone-only" label={t('call.panel.chat', 'In-call messages')} on={panel === 'chat'} badge={unread} onClick={() => togglePanel('chat')}>
               <ChatIcon />

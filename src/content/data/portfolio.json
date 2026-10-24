@@ -2,14 +2,14 @@
   "items": [
     {
       "id": "niraAnimates",
-      "image": "/assets/img/portfolio/animate/home.png",
+      "image": "/assets/img/portfolio/animate/home.webp",
       "order": 1,
       "videoId": "Esz4OVHdZT8",
       "videos": [
         "D-xPP4cuy94"
       ],
       "gallery": [
-        "/assets/img/portfolio/animate/tools.png"
+        "/assets/img/portfolio/animate/tools.webp"
       ],
       "links": [
         {
@@ -32,12 +32,12 @@
     },
     {
       "id": "assetHub",
-      "image": "/assets/img/portfolio/assethub/home.png",
+      "image": "/assets/img/portfolio/assethub/home.webp",
       "order": 3,
       "gallery": [
-        "/assets/img/portfolio/assethub/workflow.png",
-        "/assets/img/portfolio/assethub/texturing.png",
-        "/assets/img/portfolio/assethub/inventory.png"
+        "/assets/img/portfolio/assethub/workflow.webp",
+        "/assets/img/portfolio/assethub/texturing.webp",
+        "/assets/img/portfolio/assethub/inventory.webp"
       ],
       "links": [
         {
@@ -48,7 +48,7 @@
     },
     {
       "id": "avatarAsWebsites",
-      "image": "/assets/img/portfolio/nirvanaXR.png",
+      "image": "/assets/img/portfolio/nirvanaXR.webp",
       "order": 4,
       "links": [
         {
@@ -59,10 +59,10 @@
     },
     {
       "id": "augury",
-      "image": "/assets/img/portfolio/augury/cover.jpg",
+      "image": "/assets/img/portfolio/augury/cover.webp",
       "order": 5,
       "gallery": [
-        "/assets/img/portfolio/augury/title.jpg"
+        "/assets/img/portfolio/augury/title.webp"
       ],
       "links": [
         {
@@ -87,7 +87,7 @@
     },
     {
       "id": "otherProjects",
-      "image": "/assets/img/portfolio/other/raytracer.png",
+      "image": "/assets/img/portfolio/other/raytracer.webp",
       "order": 11,
       "type": "folder",
       "children": [
@@ -98,7 +98,7 @@
     },
     {
       "id": "cppRaytracer",
-      "image": "/assets/img/portfolio/other/raytracer.png",
+      "image": "/assets/img/portfolio/other/raytracer.webp",
       "videoId": "oMT4qSkk8t0",
       "order": 100,
       "links": [
@@ -138,10 +138,10 @@
     },
     {
       "id": "narakashur",
-      "image": "/assets/img/portfolio/other/narakashur.png",
+      "image": "/assets/img/portfolio/other/narakashur.webp",
       "order": 103,
       "gallery": [
-        "/assets/img/portfolio/other/narakashur_page.jpg"
+        "/assets/img/portfolio/other/narakashur_page.webp"
       ],
       "links": [
         {
@@ -168,7 +168,7 @@
     },
     {
       "id": "godotOculusPlatform",
-      "image": "/assets/img/portfolio/godot/GodotOculusPlugin.png",
+      "image": "/assets/img/portfolio/godot/GodotOculusPlugin.webp",
       "order": 105,
       "links": [
         {
