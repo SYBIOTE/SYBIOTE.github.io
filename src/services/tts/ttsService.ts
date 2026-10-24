@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react'
 
 import { expressionTrackFor, type ExpressionTrack } from '../audio2expression/audio2expression'
 import { startSpeechFace, stopSpeechFace } from '../audio2expression/speechFace'
+import { getAudioContext } from './audioContext'
 import { pickMaleVoice } from './browserVoice'
 import { cleanText } from './textUtils'
 import { approximateWhisperDataFromText } from './whisperDataGenerator'
@@ -67,14 +68,6 @@ let globalId = 0
 // reply already takes about a second to start, so a short extra wait buys audio-accurate lipsync.
 const TRACK_WAIT_MS = 1200
 
-// One AudioContext for all playback (creating one per clip leaks, and a single graph lets the
-// browser's echo cancellation see what the avatar is saying)
-let sharedAudioContext: AudioContext | null = null
-const getAudioContext = () => {
-  sharedAudioContext ??= new AudioContext()
-  if (sharedAudioContext.state === 'suspended') void sharedAudioContext.resume()
-  return sharedAudioContext
-}
 
 // Set once /api/tts reports it isn't configured: stop asking for the rest of the session
 let cloudUnavailable = false
@@ -154,6 +147,14 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
         currentSourceRef.current = source
         currentGainRef.current = { node: gainNode, level }
         currentResolveRef.current = resolve
+        // A context the browser keeps suspended (no tap has unlocked it) never fires onended, which
+        // would stall the whole queue: give up once the clip should have finished
+        const watchdog = window.setTimeout(() => {
+          if (audioContext.state === 'running' || currentSourceRef.current !== source) return
+          logger.warn('Audio is suspended by the browser; skipping clip')
+          source.onended?.(new Event('ended'))
+        }, decoded.duration * 1000 + 1500)
+        source.addEventListener('ended', () => window.clearTimeout(watchdog))
         source.start(0)
         onStart?.(performance.now() + audioContext.outputLatency * 1000)
       }),

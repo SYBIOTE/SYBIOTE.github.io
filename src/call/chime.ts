@@ -3,12 +3,16 @@
  * Call primeAudio() inside a click so the browser allows playback later.
  */
 
+import { getAudioContext, keepAudioUnlocked, unlockAudio } from '../services/tts/audioContext'
+
 let context: AudioContext | null = null
 
+/** Unlocks the shared context the chimes and the avatar's voice both play through */
 export const primeAudio = () => {
+  unlockAudio()
+  keepAudioUnlocked()
   try {
-    context ??= new AudioContext()
-    if (context.state === 'suspended') void context.resume()
+    context = getAudioContext()
   } catch {
     context = null
   }
