@@ -15,8 +15,9 @@
  * and a see-through lens drawn before the splats would just be painted over by the face, so they're
  * kept on their own layer and drawn in an extra pass after the splats.
  *
- * Once the head's own fade-in has finished, the glasses materialise outward from the bridge with a
- * glowing edge and the lenses fade in. The frame is revealed by discarding pixels rather than fading
+ * The model is downloaded alongside the head (see loadGlasses) so it's ready when the head is. As the
+ * head fades in, the glasses materialise outward from the bridge with a glowing edge and the lenses
+ * fade in. The frame is revealed by discarding pixels rather than fading
  * it, since a half-transparent frame drawn before the splats would punch holes in the face.
  */
 
@@ -65,8 +66,8 @@ const MIN_LENS_AREA = 0.02
 // Layer the lenses live on, so the renderer's normal pass skips them
 const LENS_LAYER = 5
 
-// Appearing: how long the reveal takes, a short beat after the head has faded in (ms)
-const REVEAL_DELAY = 150
+// Appearing: share of the head's fade-in after which the glasses start, and how long they take (ms)
+const REVEAL_AT_HEAD_FADE = 0.5
 const REVEAL_DURATION = 1100
 // Start anyway after this long, in case the head's fade can't be read or never quite finishes (ms)
 const REVEAL_FALLBACK = 10000
@@ -258,8 +259,15 @@ interface GlassesInternals {
   }
 }
 
-/** Loads the glasses and fits them to the head. Returns a function that removes them again. */
-export const attachGlasses = async (renderer: unknown, url: string) => {
+/** Starts downloading the glasses, so they can be fetched while the head is still loading. */
+export const loadGlasses = (url: string) => {
+  const draco = new DRACOLoader().setDecoderPath(DRACO_DECODER_PATH)
+  const loader = new GLTFLoader().setDRACOLoader(draco)
+  return loader.loadAsync(url).finally(() => draco.dispose())
+}
+
+/** Fits the loaded glasses to the head. Returns a function that removes them again. */
+export const attachGlasses = async (renderer: unknown, glasses: ReturnType<typeof loadGlasses>) => {
   const viewer = (renderer as GlassesInternals).viewer
   const scene = viewer?.threeScene
   const bones = viewer?.skinModel?.skeleton?.bones
@@ -269,10 +277,7 @@ export const attachGlasses = async (renderer: unknown, url: string) => {
   const nose = find('Nose')
   if (!scene || !lEye || !rEye || !nose) throw new Error('avatar has no eye and nose bones')
 
-  const draco = new DRACOLoader().setDecoderPath(DRACO_DECODER_PATH)
-  const loader = new GLTFLoader().setDRACOLoader(draco)
-  const gltf = await loader.loadAsync(url).finally(() => draco.dispose())
-  const model = gltf.scene
+  const model = (await glasses).scene
   const frames: Mesh[] = []
   model.traverse((object) => {
     if ((object as Mesh).isMesh) frames.push(object as Mesh)
@@ -322,26 +327,26 @@ export const attachGlasses = async (renderer: unknown, url: string) => {
   // Follow the head: the skeleton is added to the scene before us, so its world matrices are
   // already current for this frame when ours are updated
   const frame = new Matrix4()
-  const glasses = new Group()
-  glasses.name = 'glasses'
-  glasses.matrixAutoUpdate = false
-  glasses.add(model)
-  const updateMatrixWorld = glasses.updateMatrixWorld.bind(glasses)
-  // Appear once the head has faded in (straight away if the visitor prefers less motion)
+  const group = new Group()
+  group.name = 'glasses'
+  group.matrixAutoUpdate = false
+  group.add(model)
+  const updateMatrixWorld = group.updateMatrixWorld.bind(group)
+  // Appear as the head fades in (straight away if the visitor prefers less motion)
   const attachedAt = performance.now()
   const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
   let revealStart: number | null = null
   let revealed = false
-  const headFadedIn = () => {
+  const headFadingIn = () => {
     const splats = viewer.splatMesh
     const buffer = splats?.visibleRegionBufferRadius ?? 0
-    return buffer > 0 && (splats?.visibleRegionFadeStartRadius ?? 0) / buffer > 0.99
+    return buffer > 0 && (splats?.visibleRegionFadeStartRadius ?? 0) / buffer > REVEAL_AT_HEAD_FADE
   }
   const updateReveal = (now: number) => {
     if (revealed) return
     if (revealStart === null) {
       if (reducedMotion) revealStart = -Infinity
-      else if (headFadedIn() || now - attachedAt > REVEAL_FALLBACK) revealStart = now + REVEAL_DELAY
+      else if (headFadingIn() || now - attachedAt > REVEAL_FALLBACK) revealStart = now
       else return
     }
     const t = Math.min(Math.max((now - revealStart) / REVEAL_DURATION, 0), 1)
@@ -352,10 +357,10 @@ export const attachGlasses = async (renderer: unknown, url: string) => {
     revealed = t >= 1
   }
 
-  glasses.updateMatrixWorld = (force?: boolean) => {
+  group.updateMatrixWorld = (force?: boolean) => {
     updateReveal(performance.now())
-    glasses.matrix.multiplyMatrices(headFrame(lEye, rEye, nose, frame), offset)
-    glasses.matrixWorldNeedsUpdate = true
+    group.matrix.multiplyMatrices(headFrame(lEye, rEye, nose, frame), offset)
+    group.matrixWorldNeedsUpdate = true
     updateMatrixWorld(force)
   }
 
@@ -364,7 +369,7 @@ export const attachGlasses = async (renderer: unknown, url: string) => {
   const key = new DirectionalLight(0xffffff, 2)
   key.position.set(0.5, 1, 2)
 
-  scene.add(glasses)
+  scene.add(group)
   scene.add(ambient)
   scene.add(key)
 
@@ -387,7 +392,7 @@ export const attachGlasses = async (renderer: unknown, url: string) => {
 
   return () => {
     if (render) viewer.render = render
-    scene.remove(glasses)
+    scene.remove(group)
     scene.remove(ambient)
     scene.remove(key)
   }

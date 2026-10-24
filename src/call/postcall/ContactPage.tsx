@@ -51,6 +51,14 @@ export const ContactPage = ({ onBack, defaultName = '' }: Props) => {
           <div>
             <h1>{t('call.contact.title', 'Leave Rahul a message')}</h1>
             <p>{t('contact.description')}</p>
+            <p className="contact-links">
+              <a href={t('core.linkedin')} target="_blank" rel="noreferrer">
+                {t('call.linkedin', 'LinkedIn')}
+              </a>
+              <a href={t('core.x')} target="_blank" rel="noreferrer">
+                {t('call.x', 'X')}
+              </a>
+            </p>
           </div>
         </header>
 

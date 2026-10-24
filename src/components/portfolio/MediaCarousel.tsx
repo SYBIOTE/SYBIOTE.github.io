@@ -119,10 +119,14 @@ interface MediaItem {
   videoId?: string
 }
 
+// A video is a YouTube id, or a path/URL to a video file we host ("/assets/video/x.mp4")
+const isVideoFile = (video: string) => video.startsWith('/') || /^https?:\/\//.test(video)
+const youtubeThumbnail = (id: string) => `https://img.youtube.com/vi/${id}/maxresdefault.jpg`
+
 interface MediaCarouselProps {
   mainImage?: string
-  videoId?: string
-  videos?: string[]  // Additional video IDs
+  videoId?: string   // YouTube id or video file path
+  videos?: string[]  // Additional videos, same format
   gallery?: string[]
   title: string
 }
@@ -136,7 +140,7 @@ export const MediaCarousel = ({ mainImage, videoId, videos = [], gallery = [], t
   
   // Main video first (with thumbnail - use YouTube thumbnail if no custom image)
   if (videoId) {
-    const thumbnail = mainImage || `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
+    const thumbnail = mainImage || (isVideoFile(videoId) ? '' : youtubeThumbnail(videoId))
     mediaItems.push({ type: 'video', src: thumbnail, videoId })
   } else if (mainImage) {
     mediaItems.push({ type: 'image', src: mainImage })
@@ -144,7 +148,7 @@ export const MediaCarousel = ({ mainImage, videoId, videos = [], gallery = [], t
   
   // Add additional videos
   videos.forEach(vid => {
-    mediaItems.push({ type: 'video', src: `https://img.youtube.com/vi/${vid}/maxresdefault.jpg`, videoId: vid })
+    mediaItems.push({ type: 'video', src: isVideoFile(vid) ? '' : youtubeThumbnail(vid), videoId: vid })
   })
   
   // Add gallery images
@@ -176,7 +180,18 @@ export const MediaCarousel = ({ mainImage, videoId, videos = [], gallery = [], t
   return (
     <div style={containerStyle}>
       <div style={mediaContainerStyle}>
-        {currentItem.type === 'video' && showVideo ? (
+        {currentItem.type === 'video' && isVideoFile(currentItem.videoId!) && (showVideo || !currentItem.src) ? (
+          // Without a thumbnail the player itself is the poster; nothing downloads until it's played
+          <video
+            style={iframeStyle}
+            src={currentItem.videoId}
+            poster={currentItem.src || undefined}
+            controls
+            autoPlay={showVideo}
+            preload="none"
+            playsInline
+          />
+        ) : currentItem.type === 'video' && showVideo ? (
           <iframe
             style={iframeStyle}
             src={`https://www.youtube.com/embed/${currentItem.videoId}?autoplay=1&modestbranding=1&rel=0`}

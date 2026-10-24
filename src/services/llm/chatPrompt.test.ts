@@ -8,7 +8,8 @@ const tokens = (text: string) => Math.round(text.length / 4)
 
 describe('chat system prompt', () => {
   it('stays small when no project is being discussed', () => {
-    const prompt = buildSystemPrompt('en', [user('hey, who are you?')])
+    // Without knowledge notes, which have their own budget below
+    const prompt = buildSystemPrompt('en', [user('hey, who are you?')], [])
     // Was ~2600 with every project's full description
     expect(tokens(prompt)).toBeLessThan(2000)
     // The tools he uses are listed, so the model doesn't invent a stack
@@ -43,6 +44,26 @@ describe('chat system prompt', () => {
     expect(buildSystemPrompt('en', [user('hi')])).not.toContain('backfilled')
   })
 
+  it('knows what the shared screen shows', () => {
+    // "what's this?" while the raytracer is on screen brings in its details
+    const project = buildSystemPrompt('en', [user("what's this?")], [], { section: 'portfolio', project: 'cppRaytracer' })
+    expect(project).toContain('shared screen right now: the details page for C++ Raytracer')
+    expect(project).toContain('importance sampling')
+    // A project the visitor names still comes first
+    expect(topicsFor([user('tell me about assethub')], [], 'cppRaytracer').projects).toEqual(['assetHub', 'cppRaytracer'])
+
+    const services = buildSystemPrompt('en', [user('which of these fits me?')], [], { section: 'services', project: null })
+    expect(services).toContain('AI for 3D (AI inside 3D workflows')
+
+    // The other-projects folder lists its cards, and a project opened from it says so
+    const folder = buildSystemPrompt('en', [user('which one is your favourite?')], [], { section: 'portfolio', project: null, folder: 'otherProjects' })
+    expect(folder).toContain('the Other Projects folder, with a card for each project, newest first: AUGURY: Duel of the Gods (augury)')
+    const fromFolder = buildSystemPrompt('en', [user('how long did this take?')], [], { section: 'portfolio', project: 'augury', folder: 'otherProjects' })
+    expect(fromFolder).toContain('the details page for AUGURY: Duel of the Gods (augury), opened from the Other Projects folder')
+
+    expect(buildSystemPrompt('en', [user('hi')], [])).not.toContain('shared screen right now')
+  })
+
   it('does not match short words by accident', () => {
     expect(topicsFor([user('can you do VR work for me')]).projects).toEqual([])
   })
@@ -55,6 +76,32 @@ describe('chat system prompt', () => {
     const prompt = buildSystemPrompt('en', [user('what is nira animates')])
     expect(prompt).toContain('- niraAnimates: Nira Animates')
     expect(prompt).toContain('Technical Advisor — Nira Animates: Advising')
+  })
+
+  it('keeps the always-loaded knowledge notes within budget', () => {
+    expect(tokens(buildSystemPrompt('en', [user('hi')])) - tokens(buildSystemPrompt('en', [user('hi')], []))).toBeLessThan(1500)
+  })
+
+  describe('knowledge notes', () => {
+    const notes = [
+      { id: 'me', always: true, aliases: [], text: "I'm looking for a staff role on a WebGPU team." },
+      { id: 'work/assethub', always: false, aliases: [], job: 'assethub', text: 'I rebuilt the texturing pipeline on job queues.' },
+      { id: 'projects/cppRaytracer', always: false, aliases: [], project: 'cppRaytracer', text: 'Started it to learn path tracing.' },
+      { id: 'topics/oss', always: false, aliases: ['open source'], text: 'I contribute to three.js.' }
+    ]
+
+    it('always carries the always-on notes', () => {
+      const prompt = buildSystemPrompt('en', [user('hi')], notes)
+      expect(prompt).toContain('staff role on a WebGPU team')
+      expect(prompt).not.toContain('texturing pipeline')
+      expect(prompt).not.toContain('three.js.')
+    })
+
+    it('brings in notes with their job, project or aliases', () => {
+      expect(buildSystemPrompt('en', [user('what did you do at asset hub')], notes)).toContain('texturing pipeline')
+      expect(buildSystemPrompt('en', [user('tell me about the ray tracer')], notes)).toContain('learn path tracing')
+      expect(buildSystemPrompt('en', [user('do you do open source?')], notes)).toContain('I contribute to three.js.')
+    })
   })
 
   it('reports its size', () => {

@@ -4,7 +4,9 @@
     "email": "ghoshr698@gmail.com",
     "phone": "+91 90511 86767",
     "city": "Bengaluru, India",
-    "website": "https://rahulghosh.is-a.dev/",
+    "website": "https://rahulghosh.com/",
+    "linkedin": "https://www.linkedin.com/in/rahul-gh0sh/",
+    "x": "https://x.com/rahul__gh0sh",
     "freelance": "利用可能",
     "role": "フルスタック & Web 3Dエンジニア"
   },
@@ -148,26 +150,30 @@
     }
   },
   "services": {
+    "intro": "最初のプロトタイプから毎日使われるプロダクトまで、チームがWebで3Dを届けるお手伝いをします。",
+    "seenIn": "実績",
+    "ctaText": "3Dプロダクトの構想はありますか?",
+    "ctaButton": "相談する",
     "items": {
-      "web3dDevelopment": {
-        "name": "Web3D開発",
-        "desc": "Three.js、React Three Fiber、Babylon.jsなどの最新フレームワークを使用した、没入型ブラウザベース体験のための高性能web3Dアプリケーション開発。"
+      "web3d": {
+        "name": "Web 3Dアプリとエディタ",
+        "desc": "Three.jsとReactによる高速なブラウザ3Dプロダクト。どのデバイスでも快適に動くエディタ、ビューア、コンフィギュレーター。"
       },
-      "gameDevelopment": {
-        "name": "ゲーム開発",
-        "desc": "コンセプトからデプロイまで、ゲームプレイメカニクス、システム設計、最適化を含むフルスタックゲーム開発。"
+      "ai3d": {
+        "name": "3D向けAI",
+        "desc": "3DワークフローにAIを。自動リギング、テキストからのモーション生成、メッシュ生成、エディタのツールを操作するエージェント。"
       },
-      "xrDevelopment": {
+      "xr": {
         "name": "XR開発",
-        "desc": "没入型ユーザー体験を提供する仮想現実（VR）、拡張現実（AR）、複合現実（MR）アプリケーション。"
+        "desc": "Questとブラウザ向けのVR・AR・MR。WebXRのインタラクションからリーダーボードなどのプラットフォーム機能まで。"
       },
-      "gameEngineProgramming": {
-        "name": "ゲームエンジンプログラミング",
-        "desc": "カスタムゲームエンジン開発、エンジン改造、最適なパフォーマンスのための低レベルシステムプログラミング。"
+      "games": {
+        "name": "ゲームとゲームツール",
+        "desc": "ゲーム、Godotプラグイン、ビジュアルスクリプティング、VFXツール。Unity・Unreal・Godotへの書き出しにも対応。"
       },
-      "gameBackend": {
-        "name": "ゲームバックエンド",
-        "desc": "ゲーム用のサーバーサイドゲームロジック、マルチプレイヤーシステム、データベース設計、クラウドインフラストラクチャ。"
+      "backend": {
+        "name": "バックエンドとマルチプレイヤー",
+        "desc": "Node.jsとSupabaseのバックエンド、リアルタイムマルチプレイヤー、3Dプロダクトのリリースと拡大に必要なAPI。"
       }
     }
   },
@@ -175,16 +181,12 @@
     "items": {
       "niraAnimates": {
         "title": "Nira Animates",
-        "description": "インディー開発者やスタジオがブラウザで直接リギング、リターゲット、アニメーション作成ができるWeb向け3Dアニメーションスイート。"
-      },
-      "godotProjects": {
-        "title": "Godotプロジェクト",
-        "description": "Godotエンジンで構築されたXRおよびゲーム開発プロジェクトのコレクション。",
-        "extendedDescription": "Godotゲームエンジンを使用して構築されたプロジェクトのコレクションで、XR開発、VRゲーム、エンジンツールに焦点を当てています。"
+        "description": "どんな3Dキャラクターでもアップロードしてブラウザでアニメーション。人型以外にも対応する自動リギング、テキストからのモーション生成、キーフレーム編集、UnityとUnrealへのエクスポートまで。",
+        "extendedDescription": "Nirvana XRのAI 3Dアニメーションソフトウェアで、私は2025年6月から技術アドバイザーを務めています。テキストプロンプトでモーションを生成し、ポーズモード、キーフレーム、クリップシーケンサー、IKで仕上げ、リターゲットしてGLBで書き出せます。React、TypeScript、Node.js、Supabaseで構築。"
       },
       "otherProjects": {
         "title": "その他のプロジェクト",
-        "description": "グラフィックス、XR、ゲーム開発にまたがる様々なプロジェクト。"
+        "description": "そのほかに作ってきたもの(新しい順):ゲーム、XRの実験、Godotプラグイン、グラフィックス。"
       },
       "godotDojo": {
         "title": "Godot Dojo",
@@ -233,11 +235,13 @@
       },
       "etherealEngine": {
         "title": "IR Engine",
-        "description": "マルチプレイヤー、アバター、ワールド編集、XRサポート、WebRTCネットワーキングを備えたソーシャル空間ウェブ向けオープンソース3Dツールキット。"
+        "description": "ブラウザで動くマルチプレイヤー3Dワールドのためのオープンソースエンジン。ビジュアルスクリプティング、コードスクリプティング、エディタのギズモ、IR StudioのUIの多くを構築しました。",
+        "extendedDescription": "2023年にEthereal Engineに参加し、Infinite Realityによる7,500万ドルの買収後も残って、主にブラウザのワールドエディタIR Studioを担当しました。behave-graphによるビジュアルスクリプティング、Monacoを使ったブラウザ内コードスクリプティング、トランスフォームとカメラのギズモを構築し、バックエンドのExpressからKoaへの移行を主導しました。"
       },
       "assetHub": {
         "title": "AssetHub",
-        "description": "コンセプトアートから製品レディの3Dモデルまで、AIメッシュ生成とテクスチャ改良による高速イテレーションを可能にするAIネイティブ3Dエディタ。"
+        "description": "コンセプトアートから本番品質の3Dモデルまでチームを導くAIネイティブの3Dエディタ。AIによるメッシュ生成とテクスチャのリファインに対応。",
+        "extendedDescription": "約200万ドルのシードラウンドを調達したTechstarsの企業で、2025年9月から2026年9月までフルスタックエンジニアとしてReactエディタ、バックエンド、顧客ワークフロー、社内ツールを担当しました。8か月でプロダクトは11,000人以上のユーザーと月間経常収益5,000ドルに成長しました。"
       },
       "avatarAsWebsites": {
         "title": "ウェブサイトとしてのアバター",
@@ -246,7 +250,13 @@
       "augury": {
         "title": "AUGURY: Duel of the Gods",
         "description": "神話の神々が戦う、読み合いのターン制対戦格闘ゲーム。両者が同時に行動を選ぶので、勝敗を分けるのは反応速度ではなく相手を読む力です。",
-        "extendedDescription": "DreamLayer Jamのために制作した、Your Only Move Is HUSTLEの流れをくむ読み合いのターン制対戦格闘ゲーム。アヌビスや雷神など、さまざまな神話の神々が2Dのアリーナで戦います。両プレイヤーが同時に行動を選び、攻防はフリーズフレームのポーズで再生されます。アリーナは危険を事前に予告し、神々は「ドメイン」でアリーナを書き換えられ、相手の行動を読み当てると神性とカウンターヒットを得られます。キャラクターのアートはDreamLayerで生成・反復編集しており、どのポーズでも神々の姿が一貫しています。"
+        "extendedDescription": "Your Only Move Is HUSTLEの流れをくむ、ターン制の読み合い格闘ゲーム。アヌビスや雷神といった神々が2Dアリーナで戦います。両プレイヤーが同時に技を選び、攻防は静止ポーズで展開。ドメインでアリーナを書き換え、相手の技を読み当てるとディヴィニティとカウンターを得られます。"
+      },
+      "autov": {
+        "title": "autoV",
+        "description": "リアルタイムゲーム向けのプロンプトからVFXを作るツール。AIが設計したThree.jsエフェクトをレイヤー単位で編集でき、Godot・Unity・Unrealへ書き出せます。",
+        "extendedDescription": "TAI x OpenAI 100-Hour Game Builder Challenge 2026で2位を獲得し、25,000ドル分のOpenAIクレジットを受賞。Team Vで開発しました。動画ではなく、モデルが編集可能なエフェクト文書を設計し、固定のThree.jsレンダラーが実行するので、チャットでレイヤー単位に調整してGodot・Unity・Unrealへ書き出せます。",
+        "role": "エンジニア(Team V)"
       }
     }
   }

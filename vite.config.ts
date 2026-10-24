@@ -1,3 +1,4 @@
+import { execFileSync } from 'child_process'
 import fs from 'fs'
 import path from 'path'
 import react from '@vitejs/plugin-react-swc'
@@ -13,6 +14,29 @@ const projectRoot = path.dirname(fileURLToPath(import.meta.url))
 dotenv.config({
   path: path.join(projectRoot, '.env.local')
 })
+
+// Dev-only: recompile knowledge/*.md (what the AI twin knows) whenever one changes
+function knowledgePlugin(): PluginOption {
+  const compile = () => {
+    try {
+      execFileSync(process.execPath, [path.join(projectRoot, 'scripts/build-knowledge.mjs')], { stdio: 'inherit' })
+    } catch {
+      // the script already printed why
+    }
+  }
+  return {
+    name: 'knowledge',
+    configureServer(server: ViteDevServer) {
+      const dir = path.join(projectRoot, 'knowledge')
+      compile()
+      server.watcher.add(dir)
+      const onChange = (file: string) => {
+        if (file.startsWith(dir) && file.endsWith('.md')) compile()
+      }
+      server.watcher.on('add', onChange).on('change', onChange).on('unlink', onChange)
+    }
+  }
+}
 
 // Dev-only content API plugin
 function contentApiPlugin(): PluginOption {
@@ -174,5 +198,5 @@ export default defineConfig(({ command }) => ({
         }
       : {})
   },
-  plugins: [react(), contentApiPlugin(), apiFunctionsPlugin()]
+  plugins: [react(), knowledgePlugin(), contentApiPlugin(), apiFunctionsPlugin()]
 }))

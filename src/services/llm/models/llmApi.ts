@@ -7,6 +7,7 @@
  */
 
 import i18n from '../../../i18n/i18n'
+import { AvatarUIState } from '../../actions/avatarActions'
 import type { LLMParams, LLMResult } from '../llmTypes'
 
 const MIN_BREATH_LENGTH = 20
@@ -75,10 +76,14 @@ export async function llmApi(params: LLMParams): Promise<LLMResult> {
       .filter((m) => m.role !== 'system')
       .map((m) => ({ role: m.role, content: m.content }))
 
+    // What the shared screen shows, so the avatar can talk about it ("what's this?")
+    const { openSectionId, focusProjectId, openFolderId } = AvatarUIState.get()
+    const screen = { section: openSectionId, project: focusProjectId, folder: openFolderId ?? null }
+
     const response = await fetch(llmUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages: history, locale: i18n.language })
+      body: JSON.stringify({ messages: history, locale: i18n.language, screen })
     })
 
     if (!response.ok || !response.body) {

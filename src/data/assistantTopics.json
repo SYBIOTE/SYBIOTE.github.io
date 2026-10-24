@@ -83,12 +83,13 @@
       "naraka",
       "wave survival"
     ],
-    "godotProjects": [
+    "otherProjects": [
+      "other projects",
+      "more projects",
+      "side projects",
+      "older projects",
       "godot projects",
       "godot"
-    ],
-    "otherProjects": [
-      "other projects"
     ],
     "augury": [
       "augury",
@@ -99,6 +100,14 @@
       "dreamlayer",
       "dreamlayer jam",
       "game jam"
+    ],
+    "autov": [
+      "autov",
+      "auto v",
+      "vfx",
+      "visual effects",
+      "game builder challenge",
+      "team v"
     ]
   },
   "jobs": {

@@ -530,6 +530,18 @@ const CallAppComponent = () => {
                     {t('core.website').replace(/^https?:\/\//, '').replace(/\/$/, '')}
                   </a>
                 </dd>
+                <dt>{t('call.linkedin', 'LinkedIn')}</dt>
+                <dd>
+                  <a href={t('core.linkedin')} target="_blank" rel="noreferrer">
+                    {t('core.linkedin').replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}
+                  </a>
+                </dd>
+                <dt>{t('call.x', 'X')}</dt>
+                <dd>
+                  <a href={t('core.x')} target="_blank" rel="noreferrer">
+                    {t('core.x').replace(/^https?:\/\//, '').replace(/\/$/, '')}
+                  </a>
+                </dd>
               </dl>
               <button className="pill ghost" onClick={() => openSection('contact')}>
                 {t('call.ended.message', 'Leave Rahul a message')}

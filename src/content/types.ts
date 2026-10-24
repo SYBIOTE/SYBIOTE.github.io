@@ -13,6 +13,11 @@ export interface PortfolioItem {
   videoId?: string
   videos?: string[]            // additional video IDs for carousel
   order: number
+  featured?: boolean           // shown on the shared screen; the rest only open when the avatar presents them
+  date?: string                // 'YYYY-MM' it was made; the other-projects folder lists newest first
+  endDate?: string             // 'YYYY-MM' or 'present', for work that spanned a while
+  job?: string                 // resume job id: the role comes from that job's title
+  stack?: string[]             // tools it was built with
   type?: 'folder' | 'project'  // default: 'project'
   children?: string[]          // only if type is 'folder'
   gallery?: string[]           // additional images for carousel
@@ -105,6 +110,8 @@ export interface CoreInfo {
   phone: string
   city: string
   website: string
+  linkedin: string
+  x: string
   freelance: string
   role: string
 }

@@ -17,7 +17,7 @@ import { createBlendshapeOpacity } from './avatar/blendshapeOpacity'
 import { createBlendshapeSort } from './avatar/blendshapeSort'
 import { createBlinkBalance } from './avatar/blinkBalance'
 import { createMouthInterior } from './avatar/mouthInterior'
-import { attachGlasses } from './avatar/glasses'
+import { attachGlasses, loadGlasses } from './avatar/glasses'
 import { attachHeadMotion } from './avatar/headMotion'
 import { createPresence, updatePresence } from './avatar/presence'
 import { A2E_CHANNELS } from '../../services/audio2expression/postprocess'
@@ -333,6 +333,10 @@ const GaussianHeadComponent = ({
       return 'Idle'
     }
 
+    // Fetch the glasses alongside the head so they're ready when it appears
+    const glasses = loadGlasses(GLASSES_URL)
+    glasses.catch(() => {})
+
     rendererPromise = import('gaussian-splat-renderer-for-lam').then(({ GaussianSplatRenderer }) =>
       GaussianSplatRenderer.getInstance(container, avatarUrl, {
         getExpressionData,
@@ -362,7 +366,7 @@ const GaussianHeadComponent = ({
         }
         reframe()
         new ResizeObserver(reframe).observe(container)
-        attachGlasses(renderer, GLASSES_URL).catch((error) => logger.warn('GaussianHead: glasses failed to load', error))
+        attachGlasses(renderer, glasses).catch((error) => logger.warn('GaussianHead: glasses failed to load', error))
         container.querySelector('canvas')?.addEventListener('webglcontextlost', () => {
           logger.warn('GaussianHead: WebGL context lost')
           setFailed(true)

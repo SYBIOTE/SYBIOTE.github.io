@@ -26,12 +26,49 @@ import fr from '../src/i18n/locales/content/fr.json' with { type: 'json' }
 import hi from '../src/i18n/locales/content/hi.json' with { type: 'json' }
 import ja from '../src/i18n/locales/content/ja.json' with { type: 'json' }
 import TOPICS from '../src/data/assistantTopics.json' with { type: 'json' }
+import KNOWLEDGE from '../src/data/knowledge.json' with { type: 'json' }
+import PORTFOLIO from '../src/content/data/portfolio.json' with { type: 'json' }
 
 // Content files are loosely shaped (and differ per locale), so read them dynamically
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Json = Record<string, any>
 
 const CONTENT: Record<string, Json> = { en, de, es, fr, hi, ja }
+
+/** What Rahul wrote in knowledge/*.md, compiled by scripts/build-knowledge.mjs */
+export interface Note {
+  id: string
+  /** In every prompt */
+  always: boolean
+  /** Brought in when the conversation mentions one of these */
+  aliases: string[]
+  /** Brought in with this job or project */
+  job?: string
+  project?: string
+  text: string
+}
+const NOTES = KNOWLEDGE as Note[]
+// The projects the shared screen's portfolio shows; the rest open only when the avatar presents them
+const FEATURED = new Set((PORTFOLIO.items as { id: string; featured?: boolean }[]).filter((i) => i.featured).map((i) => i.id))
+const PORTFOLIO_ITEMS = PORTFOLIO.items as { id: string; order: number; date?: string; featured?: boolean; type?: string; children?: string[] }[]
+const PROJECT_IDS = new Set(PORTFOLIO_ITEMS.map((i) => i.id))
+const FOLDER_IDS = new Set(PORTFOLIO_ITEMS.filter((i) => i.type === 'folder').map((i) => i.id))
+// The cards the shared screen's grid shows, in its order: featured by order, a folder's newest first
+const FEATURED_CARDS = PORTFOLIO_ITEMS.filter((i) => i.featured)
+  .sort((a, b) => a.order - b.order)
+  .map((i) => i.id)
+const folderCards = (folderId: string) =>
+  PORTFOLIO_ITEMS.filter((i) => PORTFOLIO_ITEMS.find((f) => f.id === folderId)?.children?.includes(i.id))
+    .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))
+    .map((i) => i.id)
+
+/** What the visitor's shared screen shows: the open tab, the portfolio folder and the project when one is open */
+export interface Screen {
+  section: 'portfolio' | 'resume' | 'services' | 'contact' | null
+  project: string | null
+  folder?: string | null
+}
+const SCREEN_SECTIONS = ['portfolio', 'resume', 'services', 'contact'] as const
 const LANGUAGE_NAMES: Record<string, string> = {
   en: 'English',
   de: 'German',
@@ -125,24 +162,39 @@ const mentionsAny = (text: string, phrases: string[]) => {
   })
 }
 
-// Details for at most this many projects per request
+// Details for at most this many projects, and this many knowledge notes, per request
 const MAX_DETAILED_PROJECTS = 3
+const MAX_DETAILED_NOTES = 3
 
 /** The projects and jobs to describe in full: those in the visitor's last message and the reply before it. */
-export const topicsFor = (messages: { role: string; content: string }[]) => {
+export const topicsFor = (messages: { role: string; content: string }[], notes: Note[] = NOTES, onScreen: string | null = null) => {
   const last = messages[messages.length - 1]?.content ?? ''
   const previous = [...messages].reverse().find((m) => m.role === 'assistant')?.content ?? ''
-  // The visitor's own words first, then what the last reply was about ("tell me more about it")
-  const projects = [...new Set([...findTopics(last, TOPICS.projects), ...findTopics(previous, TOPICS.projects)])].slice(0, MAX_DETAILED_PROJECTS)
+  // The visitor's own words first, then what's on screen ("what's this?"), then what the last reply was about ("tell me more about it")
+  const projects = [
+    ...new Set([...findTopics(last, TOPICS.projects), ...(onScreen ? [onScreen] : []), ...findTopics(previous, TOPICS.projects)])
+  ].slice(0, MAX_DETAILED_PROJECTS)
   const jobs = new Set([...findTopics(last, TOPICS.jobs), ...findTopics(previous, TOPICS.jobs)])
   const allJobs = mentionsAny(last, TOPICS.experience)
-  return { projects, jobs, allJobs }
+  // Knowledge notes the conversation brings up: by their own aliases, or with their job or project
+  const noteAliases = Object.fromEntries(notes.filter((n) => !n.always && n.aliases.length).map((n) => [n.id, n.aliases]))
+  const named = new Set([...findTopics(last, noteAliases), ...findTopics(previous, noteAliases)])
+  const noteIds = notes
+    .filter((n) => !n.always && (named.has(n.id) || (n.project && projects.includes(n.project)) || (n.job && jobs.has(n.job))))
+    .map((n) => n.id)
+    .slice(0, MAX_DETAILED_NOTES)
+  return { projects, jobs, allJobs, notes: noteIds }
 }
 
 // Email as it should be said out loud
 const spokenEmail = (email: string) => email.replace('@', ' at ').replace(/\.(?=[a-z]+$)/i, ' dot ')
 
-export const buildSystemPrompt = (locale: string, messages: { role: string; content: string }[] = []): string => {
+export const buildSystemPrompt = (
+  locale: string,
+  messages: { role: string; content: string }[] = [],
+  notes: Note[] = NOTES,
+  screen: Screen | null = null
+): string => {
   const c = CONTENT[locale] ?? en
   const fallback = en as Json
   const core = { ...fallback.core, ...c.core }
@@ -150,7 +202,7 @@ export const buildSystemPrompt = (locale: string, messages: { role: string; cont
   const name = core.name
   const projects = entries(c.portfolio?.items ?? fallback.portfolio?.items)
   const jobs = entries(resume?.experience?.jobs)
-  const topics = topicsFor(messages)
+  const topics = topicsFor(messages, notes, screen?.project ?? null)
 
   const lines = (items: string[]) => items.filter(Boolean).join('\n')
   const facts = lines([
@@ -162,8 +214,8 @@ export const buildSystemPrompt = (locale: string, messages: { role: string; cont
     'Experience (role, period):',
     ...jobs.map(([, job]) => `- ${job.title}, ${job.period}`),
     '',
-    'Projects (id: name, what it is):',
-    ...projects.map(([id, item]) => `- ${id}: ${item.title}, ${item.description}`),
+    'Projects (id: name, what it is; * = on the portfolio the visitor can browse):',
+    ...projects.map(([id, item]) => `- ${id}: ${item.title}, ${item.description}${FEATURED.has(id) ? ' *' : ''}`),
     '',
     'Skills:',
     ...values(resume?.skills?.groups).map((g) => `- ${g.name}: ${g.items}`),
@@ -183,7 +235,38 @@ export const buildSystemPrompt = (locale: string, messages: { role: string; cont
   const detailedJobs = jobs
     .filter(([id]) => topics.allJobs || topics.jobs.has(id))
     .map(([, job]) => `- ${job.title}: ${values(job.achievements).join('; ')}`)
-  const details = [...detailedProjects, ...detailedJobs]
+  const details = [
+    ...detailedProjects,
+    ...detailedJobs,
+    ...notes.filter((n) => topics.notes.includes(n.id)).map((n) => `\nNotes (${n.id}):\n${n.text}`)
+  ]
+  const ownWords = notes.filter((n) => n.always).map((n) => n.text)
+
+  const projectTitle = (id: string) => projects.find(([key]) => key === id)?.[1]?.title ?? id
+  const cardList = (ids: string[]) => ids.map((id) => `${projectTitle(id)} (${id})`).join(', ')
+  const onScreen = (() => {
+    if (!screen?.section) return null
+    const folder = screen.folder ? `the ${projectTitle(screen.folder)} folder` : null
+    if (screen.project) {
+      const item = projects.find(([id]) => id === screen.project)?.[1]
+      if (item)
+        return `the details page for ${item.title} (${screen.project})${folder ? `, opened from ${folder}` : ''}: its write-up, images or video, what it was built with and its links. Its full details are below.`
+    }
+    switch (screen.section) {
+      case 'portfolio':
+        return screen.folder
+          ? `${folder}, with a card for each project, newest first: ${cardList(folderCards(screen.folder))}. Nothing is opened yet.`
+          : `your portfolio, with a card for each featured project: ${cardList(FEATURED_CARDS)}. Nothing is opened yet.`
+      case 'services':
+        return `your services, each with the projects that prove it: ${values(c.services?.items)
+          .map((s) => `${s.name} (${s.desc})`)
+          .join('; ')}.`
+      case 'resume':
+        return 'your resume: summary, experience, skills and education.'
+      case 'contact':
+        return 'the contact form, with your email, phone, LinkedIn and X.'
+    }
+  })()
 
   const language = LANGUAGE_NAMES[locale] ?? 'English'
 
@@ -191,7 +274,7 @@ export const buildSystemPrompt = (locale: string, messages: { role: string; cont
 
 Facts about ${name} (the only source of truth):
 ${facts}
-${
+${ownWords.length ? `\nIn my own words (also facts; use these for goals, opinions, what I'm looking for and how I work):\n${ownWords.join('\n\n')}\n` : ''}${
   details.length
     ? `\nDetails for what the visitor is asking about:\n${lines(details)}\n`
     : `\n(Only the summaries above are loaded right now. If asked for specifics of a project or job, give the summary; details come when the visitor names it.)\n`
@@ -199,7 +282,7 @@ ${
 How to behave:
 - You are ${name}, speaking in the first person ("I built", "email me"); never refer to ${name} as "he", "his" or "Rahul". Only mention being an AI when asked who or what you are, or whether you're real; then be clear you're an AI version of ${name} and can make mistakes.
 - Only state facts found above, with dates exactly as written. If something about your work isn't covered, say you don't know that one and suggest emailing you.
-- Harmless personal questions (favourite food, hobbies, how your day is) aren't off-topic: answer lightly that it's not something you know as the avatar, or keep it vague, and move on. Don't invent personal facts.
+- Harmless personal questions (favourite food, hobbies, how your day is) aren't off-topic: answer from the facts above if they cover it; otherwise say lightly that it's not something you know as the avatar, or keep it vague, and move on. Don't invent personal facts.
 - Keep replies short: 1-3 sentences unless the visitor asks for detail. Plain conversational text only: no markdown, lists, emojis or URLs.
 - Stay on your work: projects, skills, web 3D, XR, game development and software engineering. For requests to do unrelated tasks (write code for them, general knowledge, opinions on news), say in your own words that it's not what you're here for, and steer back to your work. Never say "I can't comply".
 - If someone asks about hiring or collaboration, mention freelance availability and the contact section.
@@ -213,9 +296,18 @@ Sounding like a conversation (this is a voice call, not a chat window):
 - The visitor's words come from speech recognition and can be slightly wrong: go with the most likely meaning (especially for project names) instead of answering odd words literally. If you really can't tell, ask.
 - If one of your earlier replies ends with "—", the visitor cut you off there. Don't repeat what you'd already said or apologise at length; respond to what they said next.
 
-Showing things on the website (actions):
+${
+  onScreen
+    ? `What the visitor sees on your shared screen right now: ${onScreen}
+- When they say "this", "it", "here" or ask what they're looking at, they mean what's on screen. Build on it: add the story, the why and what was hard, rather than reading out what's already on the page.
+- When you're presenting something, you can point at it ("on the right you can see the stack").
+- Don't show or open what's already on screen.
+
+`
+    : ''
+}Showing things on the website (actions):
 You can control the site by writing an action tag inside your reply. Tags are removed before your reply is spoken, so never mention or explain them.
-- [[show_project:<id>]] opens a project's details. Use the exact project id from the facts above.
+- [[show_project:<id>]] shares your screen on a project's details. Use the exact project id from the facts above. Any project works, not just the starred ones the visitor can browse, so when one comes up, show it.
 - [[open:<section>]] opens a panel. Sections: resume, portfolio, services, contact.
 - [[emote:<emotion>]] changes your facial expression. Emotions: happy, love, alert, sad, neutral.
 - [[close]] closes whatever is open.
@@ -430,6 +522,16 @@ const isRateLimited = (ip: string): boolean => {
   return recent.length > RATE_LIMIT_PER_MINUTE
 }
 
+const sanitizeScreen = (input: unknown): Screen | null => {
+  if (!input || typeof input !== 'object') return null
+  const { section, project, folder } = input as { section?: unknown; project?: unknown; folder?: unknown }
+  const validSection = SCREEN_SECTIONS.find((s) => s === section) ?? null
+  const inPortfolio = validSection === 'portfolio'
+  const validProject = inPortfolio && typeof project === 'string' && PROJECT_IDS.has(project) ? project : null
+  const validFolder = inPortfolio && typeof folder === 'string' && FOLDER_IDS.has(folder) ? folder : null
+  return { section: validSection, project: validProject, folder: validFolder }
+}
+
 const sanitizeMessages = (input: unknown): ChatMessage[] | null => {
   if (!Array.isArray(input)) return null
   const messages = input
@@ -462,7 +564,7 @@ export default {
     const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
     if (isRateLimited(ip)) return json(429, { error: 'Too many requests' }, cors)
 
-    let body: { messages?: unknown; locale?: unknown }
+    let body: { messages?: unknown; locale?: unknown; screen?: unknown }
     try {
       body = await request.json()
     } catch {
@@ -473,7 +575,7 @@ export default {
     if (!messages) return json(400, { error: 'Invalid messages' }, cors)
 
     const locale = typeof body.locale === 'string' ? body.locale.slice(0, 2).toLowerCase() : 'en'
-    const fullMessages: ChatMessage[] = [{ role: 'system', content: buildSystemPrompt(locale, messages) }, ...messages]
+    const fullMessages: ChatMessage[] = [{ role: 'system', content: buildSystemPrompt(locale, messages, NOTES, sanitizeScreen(body.screen)) }, ...messages]
 
     const providers = getProviders()
     if (!providers.length) return json(503, { error: 'No LLM provider configured' }, cors)

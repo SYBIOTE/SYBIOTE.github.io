@@ -4,7 +4,9 @@
     "email": "ghoshr698@gmail.com",
     "phone": "+91 90511 86767",
     "city": "Bengaluru, India",
-    "website": "https://rahulghosh.is-a.dev/",
+    "website": "https://rahulghosh.com/",
+    "linkedin": "https://www.linkedin.com/in/rahul-gh0sh/",
+    "x": "https://x.com/rahul__gh0sh",
     "freelance": "Disponible",
     "role": "Ingénieur Full-Stack & Web 3D"
   },
@@ -148,26 +150,30 @@
     }
   },
   "services": {
+    "intro": "J'aide les équipes à livrer de la 3D sur le web, du premier prototype à un produit utilisé au quotidien.",
+    "seenIn": "Vu dans",
+    "ctaText": "Un produit 3D en tête ?",
+    "ctaButton": "Parlons-en",
     "items": {
-      "web3dDevelopment": {
-        "name": "Développement Web3D",
-        "desc": "Développement d'applications web3D haute performance utilisant des frameworks modernes comme Three.js, React Three Fiber et Babylon.js pour des expériences immersives basées sur navigateur."
+      "web3d": {
+        "name": "Apps et éditeurs web 3D",
+        "desc": "Des produits 3D rapides dans le navigateur avec Three.js et React : éditeurs, visionneuses et configurateurs qui tiennent sur tous les appareils."
       },
-      "gameDevelopment": {
-        "name": "Développement de Jeux",
-        "desc": "Développement de jeux full-stack du concept au déploiement, incluant la mécanique de jeu, la conception de systèmes et l'optimisation."
+      "ai3d": {
+        "name": "IA pour la 3D",
+        "desc": "L'IA au cœur des workflows 3D : rigging automatique, texte vers mouvement, génération de maillages et agents qui pilotent les outils de votre éditeur."
       },
-      "xrDevelopment": {
+      "xr": {
         "name": "Développement XR",
-        "desc": "Applications de Réalité Virtuelle (VR), Réalité Augmentée (AR) et Réalité Mixte (MR) avec des expériences utilisateur immersives."
+        "desc": "VR, AR et réalité mixte pour Quest et le navigateur, des interactions WebXR aux fonctions de plateforme comme les classements."
       },
-      "gameEngineProgramming": {
-        "name": "Programmation de Moteurs de Jeu",
-        "desc": "Développement de moteurs de jeu personnalisés, modifications de moteurs et programmation de systèmes de bas niveau pour des performances optimales."
+      "games": {
+        "name": "Jeux et outils de jeu",
+        "desc": "Jeux, plugins Godot, scripting visuel et outils VFX, avec export vers Unity, Unreal et Godot."
       },
-      "gameBackend": {
-        "name": "Backend de Jeux",
-        "desc": "Logique côté serveur pour les jeux, systèmes multijoueurs, conception de bases de données et infrastructure cloud pour les jeux."
+      "backend": {
+        "name": "Backends et multijoueur",
+        "desc": "Backends Node.js et Supabase, multijoueur en temps réel et les API dont un produit 3D a besoin pour sortir et grandir."
       }
     }
   },
@@ -175,16 +181,12 @@
     "items": {
       "niraAnimates": {
         "title": "Nira Animates",
-        "description": "Suite d'animation 3D pour le web permettant aux développeurs indépendants et studios de rigger, retargeter et créer des animations directement dans le navigateur."
-      },
-      "godotProjects": {
-        "title": "Projets Godot",
-        "description": "Collection de projets de développement XR et jeux construits avec le moteur Godot.",
-        "extendedDescription": "Une collection de projets construits avec le moteur de jeu Godot, axés sur le développement XR, les jeux VR et l'outillage du moteur."
+        "description": "Importez n'importe quel personnage 3D et animez-le dans le navigateur : rigging automatique, même pour les personnages non humanoïdes, texte vers mouvement et édition par keyframes, avec export vers Unity et Unreal.",
+        "extendedDescription": "Logiciel d'animation 3D par IA de Nirvana XR, dont je suis conseiller technique depuis juin 2025. Générez un mouvement à partir d'un prompt texte, affinez-le avec le mode pose, les keyframes, un séquenceur de clips et l'IK, puis retargetez et exportez en GLB. Construit avec React, TypeScript, Node.js et Supabase."
       },
       "otherProjects": {
-        "title": "Autres Projets",
-        "description": "Divers projets couvrant les graphiques, XR et le développement de jeux."
+        "title": "Autres projets",
+        "description": "Tout le reste de ce que j'ai créé, du plus récent au plus ancien : jeux, expériences XR, plugins Godot et graphisme."
       },
       "godotDojo": {
         "title": "Godot Dojo",
@@ -233,11 +235,13 @@
       },
       "etherealEngine": {
         "title": "IR Engine",
-        "description": "Toolkit 3D open-source pour le web spatial social avec multijoueur, avatars, édition de monde, support XR et réseau WebRTC."
+        "description": "Moteur open source pour des mondes 3D multijoueurs dans le navigateur. J'ai construit son scripting visuel, le scripting en code, les gizmos de l'éditeur et une grande partie de l'interface d'IR Studio.",
+        "extendedDescription": "J'ai rejoint Ethereal Engine en 2023 et je suis resté après son rachat par Infinite Reality pour 75 millions de dollars, surtout sur IR Studio, son éditeur de mondes dans le navigateur. J'ai construit le scripting visuel sur behave-graph, le scripting en code dans le navigateur avec Monaco et les gizmos de transformation et de caméra, et mené la migration du backend d'Express vers Koa."
       },
       "assetHub": {
         "title": "AssetHub",
-        "description": "Éditeur 3D natif IA permettant une itération rapide de l'art conceptuel aux modèles 3D prêts pour la production avec génération de maillage IA et raffinement de texture."
+        "description": "Éditeur 3D natif IA qui mène les équipes du concept art à des modèles prêts pour la production, avec génération de maillages par IA et affinage des textures.",
+        "extendedDescription": "Une entreprise Techstars avec un tour d'amorçage d'environ 2 millions de dollars, où j'ai été ingénieur full-stack de septembre 2025 à septembre 2026 : éditeur React, backend, workflows clients et outils internes. En 8 mois, le produit a dépassé 11 000 utilisateurs et 5 000 dollars de revenus récurrents mensuels."
       },
       "avatarAsWebsites": {
         "title": "Avatar comme Sites Web",
@@ -246,7 +250,13 @@
       "augury": {
         "title": "AUGURY: Duel of the Gods",
         "description": "Jeu de combat au tour par tour fondé sur la lecture de l'adversaire, où s'affrontent des dieux mythologiques. Les deux joueurs choisissent leur coup en même temps : gagner, c'est deviner l'autre, pas réagir plus vite.",
-        "extendedDescription": "Un jeu de combat au tour par tour fondé sur la lecture de l'adversaire, créé pour la DreamLayer Jam, dans l'esprit de Your Only Move Is HUSTLE. Des dieux de différents panthéons, comme Anubis et Raijin, s'affrontent dans une arène 2D : les deux joueurs choisissent leurs coups en même temps, et chaque échange se joue en poses figées. Les arènes annoncent leurs dangers à l'avance, les dieux peuvent réécrire l'arène avec leurs Domaines, et deviner le coup de l'adversaire rapporte de la Divinité et un contre. Les personnages ont été générés et retouchés pas à pas avec DreamLayer, pour que chaque dieu reste cohérent dans toutes ses poses."
+        "extendedDescription": "Un jeu de combat au tour par tour fondé sur la lecture de l'adversaire, dans l'esprit de Your Only Move Is HUSTLE. Des dieux comme Anubis et Raijin s'affrontent dans une arène 2D : chacun choisit son coup en même temps, chaque échange se joue en poses figées, les Domaines transforment l'arène, et deviner le coup adverse rapporte de la Divinité et une contre-attaque."
+      },
+      "autov": {
+        "title": "autoV",
+        "description": "Du prompt au VFX pour les jeux en temps réel : des effets Three.js conçus par IA qui restent modifiables calque par calque et s'exportent vers Godot, Unity et Unreal.",
+        "extendedDescription": "2e place et 25 000 dollars de crédits OpenAI au TAI x OpenAI 100-Hour Game Builder Challenge 2026, réalisé avec Team V. Au lieu d'une vidéo, le modèle conçoit un document d'effet modifiable qu'exécute un moteur de rendu Three.js fixe : on retouche un calque par chat et on exporte vers Godot, Unity ou Unreal.",
+        "role": "Ingénieur, Team V"
       }
     }
   }

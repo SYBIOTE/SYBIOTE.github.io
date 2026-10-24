@@ -1,88 +1,69 @@
-import type { CSSProperties } from 'react'
-import { useState } from 'react'
+/**
+ * Services as a bento grid: AI for 3D leads as the wide card, and every service links to
+ * the projects that prove it. Styles live in call.css (.services*).
+ */
+
+import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
-const container: CSSProperties = {
-  width: '100%',
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  padding: '0.75rem 0rem',
-  color: 'rgba(240, 245, 255, 0.2)',
-  overflowY: 'auto',
-  overflowX: 'hidden'
+import { ArrowIcon, CubeIcon, GamepadIcon, HeadsetIcon, ServerIcon, SparkleIcon } from '../../call/callIcons'
+import { AvatarUIState } from '../../services/actions/avatarActions'
+
+interface Service {
+  id: string
+  icon: ReactNode
+  /** Portfolio item ids shown as "Seen in" links */
+  proof: string[]
+  wide?: boolean
 }
 
-const grid: CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-  gap: '0.6rem'
-}
-
-const card: CSSProperties = {
-  background: 'rgba(255,255,255,0.06)',
-  border: '1px solid rgba(255,255,255,0.12)',
-  borderRadius: '12px',
-  padding: '0.75rem',
-  backdropFilter: 'blur(8px)',
-  transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-  cursor: 'pointer',
-  boxShadow: 'none'
-}
-
-const cardHover: CSSProperties = {
-  transform: 'translateY(-2px)',
-  borderColor: 'rgba(30,136,229,0.3)',
-  background: 'radial-gradient(ellipse at center, rgba(255,255,255,0.02) 0%, rgba(255, 255, 255, 0.02) 70%, rgba(30,136,229,0.12) 100%)',
-  boxShadow: '0 0.5rem 1rem rgba(30,136,229,0.15)'
-}
-
-
+const SERVICES: Service[] = [
+  { id: 'ai3d', icon: <SparkleIcon />, proof: ['niraAnimates', 'assetHub', 'autov'], wide: true },
+  { id: 'web3d', icon: <CubeIcon />, proof: ['etherealEngine', 'assetHub'] },
+  { id: 'xr', icon: <HeadsetIcon />, proof: ['godotOculusPlatform', 'mrEarthViewer'] },
+  { id: 'games', icon: <GamepadIcon />, proof: ['augury', 'meshSlicerGodot'] },
+  { id: 'backend', icon: <ServerIcon />, proof: ['etherealEngine'] }
+]
 
 export const ServicesSection = () => {
   const { t } = useTranslation()
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
-  
-  // Dynamically read services from i18n
-  const servicesData = t("services.items", { returnObjects: true }) as Record<string, { name: string; desc: string }>
-  const services = Object.entries(servicesData).map(([id, item]) => ({
-    id,
-    name: item.name,
-    desc: item.desc
-  }))
+
+  const showProject = (id: string) => AvatarUIState.set({ openSectionId: 'portfolio', focusProjectId: id })
+  const openContact = () => AvatarUIState.set({ openSectionId: 'contact', focusProjectId: null })
 
   return (
-    <div style={container}  className='no-scrollbar'>
-      <div style={grid}>
-        {services.map((s, index) => (
-          <div
-            key={s.id}
-            style={{
-              ...card,
-              ...(hoveredIndex === index ? cardHover : {})
-            }}
-            onMouseEnter={() => setHoveredIndex(index)}
-            onMouseLeave={() => setHoveredIndex(null)}
-          >
-            <div style={{ 
-              fontWeight: 600, 
-              color: 'rgba(255, 255, 255, 0.95)',
-              fontSize: '1rem',
-              lineHeight: 1.3
-            }}>{s.name}</div>
-            <div style={{ 
-              color: 'rgba(220, 230, 255, 0.8)', 
-              fontSize: '0.9rem', 
-              marginTop: '0.25rem',
-              lineHeight: 1.4
-            }}>{s.desc}</div>
-          </div>
+    <div className="services">
+      <p className="services-intro">{t('services.intro')}</p>
+
+      <div className="services-grid">
+        {SERVICES.map((s, i) => (
+          <article key={s.id} className={`service-card${s.wide ? ' wide' : ''}`}>
+            <div className="service-top">
+              <span className="service-icon">{s.icon}</span>
+              <span className="service-num">{String(i + 1).padStart(2, '0')}</span>
+            </div>
+            <h3>{t(`services.items.${s.id}.name`)}</h3>
+            <p>{t(`services.items.${s.id}.desc`)}</p>
+            <div className="service-proof">
+              <span>{t('services.seenIn')}</span>
+              {s.proof.map((id) => (
+                <button key={id} className="service-chip" onClick={() => showProject(id)}>
+                  {t(`portfolio.items.${id}.title`)}
+                </button>
+              ))}
+            </div>
+          </article>
         ))}
+      </div>
+
+      <div className="services-cta">
+        <span>{t('services.ctaText')}</span>
+        <button className="pill primary" onClick={openContact}>
+          {t('services.ctaButton')} <ArrowIcon />
+        </button>
       </div>
     </div>
   )
 }
 
 export default ServicesSection
-
-

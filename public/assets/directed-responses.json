@@ -43,15 +43,16 @@
     "narakashur": [
       "Narakashur is a wave survival game I shipped for Jio's mixed reality glasses. I designed its four enemy types, the wave system and a global leaderboard [[show_project:narakashur]]."
     ],
-    "godotProjects": [
-      "I've done a lot in Godot, mostly XR: VR games, a mesh slicer, an Oculus platform plugin and work with Godot Dojo [[show_project:godotProjects]]."
-    ],
     "otherProjects": [
-      "Outside Godot I've built things like a C++ ray tracer, 3D gesture recognition and a mixed reality Earth viewer [[show_project:otherProjects]]."
+      "Beyond the big four, I've built a lot: a jam fighting game, VR games and plugins in Godot like a mesh slicer and an Oculus platform plugin, a C++ ray tracer and a mixed reality Earth viewer. Here they are, newest first [[show_project:otherProjects]]."
     ],
     "augury": [
-      "Augury is a turn-based fighting game I made for the DreamLayer Jam. Mythological gods duel, both players pick their move at the same time, and winning comes down to reading your opponent [[show_project:augury]].",
+      "Augury is a turn-based fighting game I made for a game jam. Mythological gods duel, both players pick their move at the same time, and winning comes down to reading your opponent [[show_project:augury]].",
       "That's my jam game: gods like Anubis and Raijin fighting in a mind-game duel, where you lock in moves at the same time and try to outguess each other [[show_project:augury]]."
+    ],
+    "autov": [
+      "autoV is prompt-to-VFX for games that stays editable. I built it with Team V for the TAI x OpenAI 100-Hour Game Builder Challenge: the model designs a layered effect document instead of code, so you can tweak every layer and export it to Godot, Unity or Unreal [[show_project:autov]].",
+      "That's my game-jam-speed VFX tool: describe an effect, get a few distinct takes rendered in Three.js, then edit them layer by layer by chatting [[show_project:autov]]."
     ]
   },
   "intents": [
@@ -217,8 +218,8 @@
         "help me build"
       ],
       "responses": [
-        "I build web 3D apps, games, XR experiences and engine tech, plus the backends behind them [[open:services]].",
-        "Mostly high-performance web 3D, game and XR development, and engine-level work when it's needed [[open:services]]."
+        "I build web 3D apps and editors, AI tools for 3D like auto-rigging and motion generation, XR, games and the backends behind them [[open:services]].",
+        "Mostly fast browser 3D products and AI for 3D workflows, plus XR, games and game tools [[open:services]]."
       ]
     },
     {

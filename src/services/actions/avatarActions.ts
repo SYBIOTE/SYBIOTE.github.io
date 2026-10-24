@@ -72,6 +72,8 @@ export interface AvatarUIState {
   openSectionId: string | null
   /** Project the portfolio should open; consumed (reset to null) by the portfolio once shown */
   focusProjectId: string | null
+  /** Portfolio folder being browsed (e.g. otherProjects); setting a whole new state closes it */
+  openFolderId?: string | null
 }
 
 export const AvatarUIState = createSimpleStore<AvatarUIState>({ openSectionId: null, focusProjectId: null })

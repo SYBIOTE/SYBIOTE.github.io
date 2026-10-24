@@ -4,7 +4,9 @@
     "email": "ghoshr698@gmail.com",
     "phone": "+91 90511 86767",
     "city": "Bengaluru, India",
-    "website": "https://rahulghosh.is-a.dev/",
+    "website": "https://rahulghosh.com/",
+    "linkedin": "https://www.linkedin.com/in/rahul-gh0sh/",
+    "x": "https://x.com/rahul__gh0sh",
     "freelance": "Verfügbar",
     "role": "Full-Stack- & Web-3D-Ingenieur"
   },
@@ -148,26 +150,30 @@
     }
   },
   "services": {
+    "intro": "Ich helfe Teams, 3D im Web auszuliefern, vom ersten Prototyp bis zum Produkt, das Menschen täglich nutzen.",
+    "seenIn": "Zu sehen in",
+    "ctaText": "Hast du ein 3D-Produkt im Kopf?",
+    "ctaButton": "Lass uns reden",
     "items": {
-      "web3dDevelopment": {
-        "name": "Web3D-Entwicklung",
-        "desc": "Entwicklung von leistungsstarken Web3D-Anwendungen mit modernen Frameworks wie Three.js, React Three Fiber und Babylon.js für immersive Browser-Erlebnisse."
+      "web3d": {
+        "name": "Web-3D-Apps & Editoren",
+        "desc": "Schnelle 3D-Produkte im Browser mit Three.js und React: Editoren, Viewer und Konfiguratoren, die auf jedem Gerät laufen."
       },
-      "gameDevelopment": {
-        "name": "Spieleentwicklung",
-        "desc": "Full-Stack-Spieleentwicklung vom Konzept bis zum Deployment, einschließlich Gameplay-Mechaniken, Systemdesign und Optimierung."
+      "ai3d": {
+        "name": "KI für 3D",
+        "desc": "KI in 3D-Workflows: Auto-Rigging, Text-zu-Bewegung, Mesh-Generierung und Agenten, die die Werkzeuge deines Editors bedienen."
       },
-      "xrDevelopment": {
+      "xr": {
         "name": "XR-Entwicklung",
-        "desc": "Virtual Reality (VR), Augmented Reality (AR) und Mixed Reality (MR) Anwendungen mit immersiven Benutzererfahrungen."
+        "desc": "VR, AR und Mixed Reality für Quest und den Browser, von WebXR-Interaktionen bis zu Plattformfunktionen wie Bestenlisten."
       },
-      "gameEngineProgramming": {
-        "name": "Spiele-Engine-Programmierung",
-        "desc": "Entwicklung benutzerdefinierter Spiele-Engines, Engine-Modifikationen und Low-Level-Systemprogrammierung für optimale Leistung."
+      "games": {
+        "name": "Spiele & Spiele-Tools",
+        "desc": "Spiele, Godot-Plugins, visuelles Scripting und VFX-Tools, mit Exportwegen nach Unity, Unreal und Godot."
       },
-      "gameBackend": {
-        "name": "Spiele-Backend",
-        "desc": "Server-seitige Spielelogik, Multiplayer-Systeme, Datenbankdesign und Cloud-Infrastruktur für Spiele."
+      "backend": {
+        "name": "Backends & Multiplayer",
+        "desc": "Node.js- und Supabase-Backends, Echtzeit-Multiplayer und die APIs, die ein 3D-Produkt zum Launch und Wachsen braucht."
       }
     }
   },
@@ -175,16 +181,12 @@
     "items": {
       "niraAnimates": {
         "title": "Nira Animates",
-        "description": "3D-Animationssuite für das Web, die Indie-Entwicklern und Studios ermöglicht, direkt im Browser zu riggen, zu retargeten und Animationen zu erstellen."
-      },
-      "godotProjects": {
-        "title": "Godot Projekte",
-        "description": "Sammlung von XR- und Spieleentwicklungsprojekten mit der Godot-Engine.",
-        "extendedDescription": "Eine Sammlung von Projekten, die mit der Godot-Spiele-Engine entwickelt wurden, mit Fokus auf XR-Entwicklung, VR-Spiele und Engine-Tooling. Diese Projekte zeigen die Fähigkeiten von Godot für immersive Erlebnisse und tragen zum Open-Source-XR-Ökosystem bei."
+        "description": "Lade einen beliebigen 3D-Charakter hoch und animiere ihn im Browser: automatisches Rigging, auch für nicht-humanoide Figuren, Text-zu-Bewegung und Keyframe-Bearbeitung, mit Export nach Unity und Unreal.",
+        "extendedDescription": "KI-3D-Animationssoftware von Nirvana XR, bei der ich seit Juni 2025 technischer Berater bin. Bewegung per Text-Prompt generieren, mit Pose-Modus, Keyframes, Clip-Sequencer und IK verfeinern, dann retargeten und als GLB exportieren. Gebaut mit React, TypeScript, Node.js und Supabase."
       },
       "otherProjects": {
-        "title": "Andere Projekte",
-        "description": "Verschiedene Projekte in den Bereichen Grafik, XR und Spieleentwicklung."
+        "title": "Weitere Projekte",
+        "description": "Alles andere, was ich gebaut habe, das Neueste zuerst: Spiele, XR-Experimente, Godot-Plugins und Grafik."
       },
       "godotDojo": {
         "title": "Godot Dojo",
@@ -233,11 +235,13 @@
       },
       "etherealEngine": {
         "title": "IR Engine",
-        "description": "Open-Source-3D-Toolkit für das soziale räumliche Web mit Multiplayer, Avataren, Weltbearbeitung, XR-Unterstützung und WebRTC-Netzwerk."
+        "description": "Open-Source-Engine für Multiplayer-3D-Welten im Browser. Ich habe ihr visuelles Scripting, das Code-Scripting, die Editor-Gizmos und große Teile der IR-Studio-Oberfläche gebaut.",
+        "extendedDescription": "Ich kam 2023 zu Ethereal Engine und blieb nach der Übernahme durch Infinite Reality für 75 Mio. $, vor allem bei IR Studio, dem Welt-Editor im Browser. Ich habe visuelles Scripting auf behave-graph, Code-Scripting im Browser mit Monaco sowie die Transform- und Kamera-Gizmos gebaut und den Backend-Umzug von Express zu Koa geleitet."
       },
       "assetHub": {
         "title": "AssetHub",
-        "description": "KI-nativer 3D-Editor für schnelle Iteration von Konzeptkunst zu produktionsreifen 3D-Modellen mit KI-Mesh-Generierung und Texturverfeinerung."
+        "description": "KI-nativer 3D-Editor, der Teams von Concept Art zu produktionsreifen Modellen bringt, mit KI-Mesh-Generierung und Textur-Verfeinerung.",
+        "extendedDescription": "Ein Techstars-Unternehmen mit rund 2 Mio. $ Seed-Finanzierung, bei dem ich von September 2025 bis September 2026 Full-Stack-Engineer war: React-Editor, Backend, Kunden-Workflows und interne Tools. In 8 Monaten wuchs das Produkt auf über 11.000 Nutzer und 5.000 $ monatlich wiederkehrenden Umsatz."
       },
       "avatarAsWebsites": {
         "title": "Avatar als Websites",
@@ -246,7 +250,13 @@
       "augury": {
         "title": "AUGURY: Duel of the Gods",
         "description": "Rundenbasiertes Mind-Game-Kampfspiel, in dem mythologische Götter gegeneinander antreten. Beide Spieler wählen gleichzeitig einen Zug, gewinnen heißt also, den Gegner zu durchschauen, nicht schneller zu reagieren.",
-        "extendedDescription": "Ein rundenbasiertes Mind-Game-Kampfspiel für den DreamLayer Jam, im Geist von Your Only Move Is HUSTLE. Götter aus verschiedenen Pantheons wie Anubis und Raijin duellieren sich in einer 2D-Arena: Beide Spieler wählen ihre Züge gleichzeitig, und jeder Schlagabtausch läuft als Standbild-Posen ab. Arenen kündigen ihre Gefahren im Voraus an, Götter können die Arena mit ihren Domänen umschreiben, und wer den Zug des Gegners richtig vorhersagt, erhält Göttlichkeit und einen Konter. Die Charakterkunst wurde mit DreamLayer generiert und schrittweise überarbeitet, sodass jeder Gott in allen Posen konsistent bleibt."
+        "extendedDescription": "Ein rundenbasiertes Mind-Game-Kampfspiel im Geist von Your Only Move Is HUSTLE. Götter wie Anubis und Raijin duellieren sich in einer 2D-Arena: Beide wählen gleichzeitig ihren Zug, jeder Schlagabtausch läuft als Standbild-Posen ab, Domänen verändern die Arena, und wer den Zug des Gegners errät, erhält Divinity und einen Konter."
+      },
+      "autov": {
+        "title": "autoV",
+        "description": "Prompt-to-VFX für Echtzeitspiele: KI-entworfene Three.js-Effekte, die Ebene für Ebene editierbar bleiben und sich nach Godot, Unity und Unreal exportieren lassen.",
+        "extendedDescription": "2. Platz und 25.000 $ in OpenAI-Credits bei der TAI x OpenAI 100-Hour Game Builder Challenge 2026, gebaut mit Team V. Statt eines Videos entwirft das Modell ein editierbares Effektdokument, das ein fester Three.js-Renderer ausführt: einzelne Ebenen per Chat anpassen und nach Godot, Unity oder Unreal exportieren.",
+        "role": "Ingenieur, Team V"
       }
     }
   }

@@ -2,6 +2,7 @@
   "items": [
     {
       "id": "niraAnimates",
+      "featured": true,
       "image": "/assets/img/portfolio/animate/home.webp",
       "order": 1,
       "videoId": "Esz4OVHdZT8",
@@ -16,10 +17,21 @@
           "type": "website",
           "url": "https://niraanimates.com/"
         }
-      ]
+      ],
+      "date": "2025-06",
+      "endDate": "present",
+      "stack": [
+        "React",
+        "TypeScript",
+        "Node.js",
+        "Supabase",
+        "AI rigging & motion models"
+      ],
+      "job": "niraAnimates"
     },
     {
       "id": "etherealEngine",
+      "featured": true,
       "image": "/assets/img/portfolio/engine/IREnginelogo.png",
       "order": 2,
       "videoId": "NqCLg1R0odk",
@@ -28,10 +40,22 @@
           "type": "github",
           "url": "https://github.com/ir-engine/ir-engine"
         }
-      ]
+      ],
+      "date": "2023-02",
+      "endDate": "2025-08",
+      "stack": [
+        "TypeScript",
+        "React",
+        "Three.js",
+        "ECS",
+        "Koa",
+        "Monaco"
+      ],
+      "job": "etherealEngine"
     },
     {
       "id": "assetHub",
+      "featured": true,
       "image": "/assets/img/portfolio/assethub/home.webp",
       "order": 3,
       "gallery": [
@@ -44,63 +68,96 @@
           "type": "website",
           "url": "https://app.assethub.io/"
         }
+      ],
+      "date": "2025-09",
+      "endDate": "2026-09",
+      "stack": [
+        "React",
+        "TypeScript",
+        "AI 3D generation"
+      ],
+      "job": "assethub"
+    },
+    {
+      "id": "autov",
+      "featured": true,
+      "image": "/assets/img/portfolio/autov/cover.webp",
+      "videoId": "jdrMaPvVaI8",
+      "order": 4,
+      "gallery": [
+        "/assets/img/portfolio/autov/studio.webp"
+      ],
+      "date": "2026-09",
+      "stack": [
+        "Next.js",
+        "Three.js",
+        "OpenAI Structured Outputs",
+        "Supabase"
       ]
     },
     {
       "id": "avatarAsWebsites",
       "image": "/assets/img/portfolio/nirvanaXR.webp",
-      "order": 4,
+      "order": 101,
       "links": [
         {
           "type": "website",
           "url": "https://nirvanaxr.com/"
         }
+      ],
+      "date": "2025-08",
+      "stack": [
+        "React",
+        "Three.js",
+        "Gaussian splats",
+        "ONNX Runtime",
+        "LLMs"
       ]
     },
     {
       "id": "augury",
       "image": "/assets/img/portfolio/augury/cover.webp",
-      "order": 5,
-      "gallery": [
-        "/assets/img/portfolio/augury/title.webp"
+      "order": 100,
+      "videos": [
+        "LhmzLzW9CfE"
       ],
       "links": [
         {
           "type": "itch",
           "url": "https://sybiote.itch.io/augury-duel"
+        },
+        {
+          "type": "youtube",
+          "url": "https://www.youtube.com/watch?v=LhmzLzW9CfE"
         }
-      ]
-    },
-    {
-      "id": "godotProjects",
-      "order": 10,
-      "image": "/assets/img/portfolio/godot/godot.webp",
-      "type": "folder",
-      "children": [
-        "vrHorrorPrototype",
-        "meshSlicerGodot",
-        "godotOculusPlatform",
-        "threeDGestureRecognition",
-        "godotDojo",
-        "wizardVsRobot"
-      ]
+      ],
+      "date": "2026-10"
     },
     {
       "id": "otherProjects",
-      "image": "/assets/img/portfolio/other/raytracer.webp",
-      "order": 11,
+      "featured": true,
+      "image": "/assets/img/portfolio/augury/cover.webp",
+      "order": 5,
       "type": "folder",
       "children": [
-        "cppRaytracer",
+        "augury",
+        "avatarAsWebsites",
         "mrEarthViewer",
-        "narakashur"
+        "cppRaytracer",
+        "narakashur",
+        "godotDojo",
+        "godotOculusPlatform",
+        "wizardVsRobot",
+        "vrHorrorPrototype",
+        "meshSlicerGodot",
+        "threeDGestureRecognition"
       ]
     },
     {
       "id": "cppRaytracer",
       "image": "/assets/img/portfolio/other/raytracer.webp",
       "videoId": "oMT4qSkk8t0",
-      "order": 100,
+      "order": 103,
       "links": [
         {
           "type": "github",
@@ -110,18 +167,30 @@
           "type": "youtube",
           "url": "https://www.youtube.com/watch?v=oMT4qSkk8t0"
         }
+      ],
+      "date": "2022-11",
+      "stack": [
+        "C++",
+        "Vulkan",
+        "Dear ImGui"
       ]
     },
     {
       "id": "vrHorrorPrototype",
       "image": "/assets/img/portfolio/godot/horrorVRproject.jpeg",
       "videoId": "2wMWHahEMK8",
-      "order": 101,
+      "order": 108,
       "links": [
         {
           "type": "youtube",
           "url": "https://www.youtube.com/watch?v=2wMWHahEMK8"
         }
+      ],
+      "date": "2021-07",
+      "stack": [
+        "Godot",
+        "VR",
+        "IK"
       ]
     },
     {
@@ -134,12 +203,18 @@
           "type": "youtube",
           "url": "https://www.youtube.com/watch?v=CneYyg4q_gE"
         }
+      ],
+      "date": "2022-12",
+      "stack": [
+        "Unity",
+        "Bing Maps SDK",
+        "Mixed Reality"
       ]
     },
     {
       "id": "narakashur",
       "image": "/assets/img/portfolio/other/narakashur.webp",
-      "order": 103,
+      "order": 104,
       "gallery": [
         "/assets/img/portfolio/other/narakashur_page.webp"
       ],
@@ -148,13 +223,14 @@
           "type": "website",
           "url": "https://jiotesseract.com/narakashur"
         }
-      ]
+      ],
+      "date": "2022-11"
     },
     {
       "id": "meshSlicerGodot",
       "image": "/assets/img/portfolio/godot/meshslicing.jpeg",
       "videoId": "ynZVK_XyaRc",
-      "order": 104,
+      "order": 109,
       "links": [
         {
           "type": "github",
@@ -164,24 +240,35 @@
           "type": "youtube",
           "url": "https://www.youtube.com/watch?v=ynZVK_XyaRc"
         }
+      ],
+      "date": "2021-05",
+      "stack": [
+        "Godot",
+        "GDScript"
       ]
     },
     {
       "id": "godotOculusPlatform",
       "image": "/assets/img/portfolio/godot/GodotOculusPlugin.webp",
-      "order": 105,
+      "order": 106,
       "links": [
         {
           "type": "github",
-          "url": "https://github.com/sybiote/godot-oculus-platform"
+          "url": "https://github.com/SYBIOTE/godot_oculus_platform"
         }
+      ],
+      "date": "2022-01",
+      "stack": [
+        "C++",
+        "GDNative",
+        "Oculus Platform SDK"
       ]
     },
     {
       "id": "threeDGestureRecognition",
       "image": "/assets/img/portfolio/godot/elementbending.jpeg",
       "videoId": "6Rnb6alUAG8",
-      "order": 106,
+      "order": 110,
       "links": [
         {
           "type": "github",
@@ -191,13 +278,19 @@
           "type": "youtube",
           "url": "https://www.youtube.com/watch?v=6Rnb6alUAG8"
         }
+      ],
+      "date": "2021-04",
+      "stack": [
+        "Godot",
+        "GDScript",
+        "VR"
       ]
     },
     {
       "id": "godotDojo",
       "image": "/assets/img/portfolio/godot/boids.jpeg",
       "videoId": "5kpkPr0dcss",
-      "order": 107,
+      "order": 105,
       "links": [
         {
           "type": "github",
@@ -207,13 +300,18 @@
           "type": "youtube",
           "url": "https://www.youtube.com/watch?v=5kpkPr0dcss"
         }
+      ],
+      "date": "2022-08",
+      "stack": [
+        "Godot",
+        "VR"
       ]
     },
     {
       "id": "wizardVsRobot",
       "image": "https://img.itch.zone/aW1nLzczMDg1NTYuanBn/347x500/lco4FY.jpg",
       "videoId": "BMQzoFrCdbk",
-      "order": 108,
+      "order": 107,
       "links": [
         {
           "type": "itch",
@@ -223,6 +321,11 @@
           "type": "youtube",
           "url": "https://www.youtube.com/watch?v=BMQzoFrCdbk"
         }
+      ],
+      "date": "2021-10",
+      "stack": [
+        "Godot",
+        "VR"
       ]
     }
   ]

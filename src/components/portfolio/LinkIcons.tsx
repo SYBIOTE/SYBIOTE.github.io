@@ -33,7 +33,7 @@ const icons: Record<PortfolioLinkType, string> = {
   download: `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>`
 }
 
-const labels: Record<PortfolioLinkType, string> = {
+const linkLabels: Record<PortfolioLinkType, string> = {
   github: 'GitHub',
   demo: 'Demo',
   itch: 'itch.io',
@@ -41,6 +41,21 @@ const labels: Record<PortfolioLinkType, string> = {
   website: 'Website',
   download: 'Download'
 }
+
+/** Compact pill links, styled by the page (.project-links / .project-link) */
+export const LinkChips = ({ links }: { links: PortfolioLink[] }) => (
+  <div className="project-links">
+    {links.map((link) => (
+      <a key={link.url} className="project-link" href={link.url} target="_blank" rel="noopener noreferrer">
+        <span aria-hidden dangerouslySetInnerHTML={{ __html: icons[link.type] }} style={{ display: 'flex', alignItems: 'center' }} />
+        {linkLabels[link.type]}
+        <span className="project-link-arrow" aria-hidden>
+          ↗
+        </span>
+      </a>
+    ))}
+  </div>
+)
 
 interface LinkIconsProps {
   links: PortfolioLink[]
@@ -73,7 +88,7 @@ export const LinkIcons = ({ links }: LinkIconsProps) => {
             dangerouslySetInnerHTML={{ __html: icons[link.type] }}
             style={{ display: 'flex', alignItems: 'center' }}
           />
-          {labels[link.type]}
+          {linkLabels[link.type]}
         </a>
       ))}
     </div>

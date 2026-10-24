@@ -140,6 +140,14 @@ export const ContactSection = () => {
           <span style={{ opacity: 0.9, fontWeight: 500 }}>{t("labels.phone")}</span>
           <span style={{ color: 'rgba(240, 245, 255, 0.95)', opacity: 0.9 }}>{t("core.phone")}</span>
         </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'rgba(200, 210, 230, 0.8)' }}>
+          <span style={{ opacity: 0.9, fontWeight: 500 }}>{t("labels.linkedin", "LinkedIn:")}</span>
+          <a href={t("core.linkedin")} target="_blank" rel="noopener noreferrer" style={{ color: 'rgba(240, 245, 255, 0.95)', textDecoration: 'none', opacity: 0.9 }}>{t("core.linkedin").replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}</a>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'rgba(200, 210, 230, 0.8)' }}>
+          <span style={{ opacity: 0.9, fontWeight: 500 }}>{t("labels.x", "X:")}</span>
+          <a href={t("core.x")} target="_blank" rel="noopener noreferrer" style={{ color: 'rgba(240, 245, 255, 0.95)', textDecoration: 'none', opacity: 0.9 }}>{t("core.x").replace(/^https?:\/\//, '').replace(/\/$/, '')}</a>
+        </div>
       </div>
       <div style={card}>
         {submitStatus === 'success' && (
