@@ -27,5 +27,5 @@ I'm open to both full-time roles and freelance projects, building 3D for the web
 <!-- Not found online. Favourite tools and why, WebGPU vs WebGL, Godot vs Unity, where XR or AI animation is going, etc. -->
 
 # Personal
-
+i speak japanese, really like deadlock, have a cat named mufasa , ilike playing boardgames 
 <!-- Not found online. Only what you're happy for strangers to hear: hobbies, games you play, languages you speak. -->

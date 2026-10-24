@@ -340,7 +340,12 @@ const GaussianHeadComponent = ({
     rendererPromise = import('gaussian-splat-renderer-for-lam').then(({ GaussianSplatRenderer }) =>
       GaussianSplatRenderer.getInstance(container, avatarUrl, {
         getExpressionData,
-        getChatState,
+        // The renderer's own think clip leans the head forward like it's listening; thinking is
+        // carried by the gaze and head gestures instead, over the idle clip
+        getChatState: () => {
+          const state = getChatState()
+          return state === 'Thinking' ? 'Idle' : state
+        },
         backgroundColor: '0x000000',
         alpha: 0,
         downloadProgress: (p) => setProgress(p * 0.8),
