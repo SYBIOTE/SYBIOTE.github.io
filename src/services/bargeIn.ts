@@ -79,14 +79,20 @@ export class BargeIn {
     const heard = words(text)
     const real = heard.filter((w) => !BACKCHANNELS.has(w))
     if (real.length < (final ? FINAL_WORDS : INTERIM_WORDS)) return
-    if (this.isEcho(heard)) return
+    if (this.echoes(heard)) return
     this.clearTimer()
     this.ducked = false
     this.overlapping = false
     this.options.interrupt()
   }
 
-  private isEcho(heard: string[]) {
+  /** Whether `text` is mostly words the avatar just said: its own voice coming back through the mic */
+  isEcho(text: string) {
+    const heard = words(text)
+    return heard.length > 0 && this.echoes(heard)
+  }
+
+  private echoes(heard: string[]) {
     const recent = new Set(words(this.options.spokenText()).slice(-ECHO_WINDOW_WORDS))
     if (!recent.size) return false
     return heard.filter((w) => recent.has(w)).length / heard.length >= ECHO_SHARE

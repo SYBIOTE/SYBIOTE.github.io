@@ -2,6 +2,8 @@
  * Text-to-speech endpoint (Vercel Function): Rahul's cloned voice via Inworld TTS.
  *
  * POST { text } -> audio/mpeg. GET -> { configured } (no secrets). The API key never reaches the browser.
+ * The audio comes with its phoneme timings in an X-Phones header ("viseme start duration" per phone,
+ * semicolon separated, in seconds), which the avatar uses to time the lips (phonemeMouth.ts).
  * 503 { error: 'not-configured' } when no key/voice is set, so the client switches to its
  * built-in browser voice for the rest of the session instead of retrying every sentence.
  *
@@ -17,6 +19,26 @@
 
 const MAX_TEXT_CHARS = 600 // one or two sentences per request; the client sends sentence by sentence
 const RATE_LIMIT_PER_MINUTE = 40 // a reply is several sentences
+// Headers have size limits; a 600-character request makes well under this
+const MAX_PHONES_HEADER = 7000
+
+interface InworldPhone {
+  phoneSymbol: string
+  startTimeSeconds: number
+  durationSeconds: number
+  visemeSymbol: string
+}
+
+/** Inworld's phoneme timings as a compact header value ("bmp 0.00 0.13;ee 0.13 0.04;..."), silences as "sil" */
+const encodePhones = (timestampInfo: unknown): string => {
+  const details = (timestampInfo as { wordAlignment?: { phoneticDetails?: { phones?: InworldPhone[] }[] } })?.wordAlignment?.phoneticDetails
+  if (!Array.isArray(details)) return ''
+  const value = details
+    .flatMap((word) => word.phones ?? [])
+    .map((p) => `${p.phoneSymbol.startsWith('[') ? 'sil' : p.visemeSymbol} ${p.startTimeSeconds.toFixed(2)} ${p.durationSeconds.toFixed(2)}`)
+    .join(';')
+  return /^[\x20-\x7e]*$/.test(value) && value.length <= MAX_PHONES_HEADER ? value : ''
+}
 
 const DEFAULT_ALLOWED_HOSTS = [
   'rahulghosh.com',
@@ -60,6 +82,7 @@ const corsHeaders = (origin: string | null): Record<string, string> =>
         'Access-Control-Allow-Origin': origin,
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Expose-Headers': 'X-Phones',
         Vary: 'Origin'
       }
     : {}
@@ -112,7 +135,9 @@ export default {
           text,
           voiceId,
           modelId: process.env.INWORLD_MODEL || 'inworld-tts-2',
-          audioConfig: { audioEncoding: 'MP3', sampleRateHertz: 24000 }
+          audioConfig: { audioEncoding: 'MP3', sampleRateHertz: 24000 },
+          // Phoneme timings for the lips; costs no noticeable time
+          timestampType: 'WORD'
         }),
         signal: request.signal
       })
@@ -122,11 +147,12 @@ export default {
         // Quota/auth problems: let the client fall back to its own voice
         return json(upstream.status === 401 || upstream.status === 403 ? 503 : 502, { error: 'upstream-failed' }, cors)
       }
-      const { audioContent } = (await upstream.json()) as { audioContent?: string }
+      const { audioContent, timestampInfo } = (await upstream.json()) as { audioContent?: string; timestampInfo?: unknown }
       if (!audioContent) return json(502, { error: 'empty-audio' }, cors)
+      const phones = encodePhones(timestampInfo)
       return new Response(Buffer.from(audioContent, 'base64'), {
         status: 200,
-        headers: { 'Content-Type': 'audio/mpeg', 'Cache-Control': 'no-store', ...cors }
+        headers: { 'Content-Type': 'audio/mpeg', 'Cache-Control': 'no-store', ...(phones && { 'X-Phones': phones }), ...cors }
       })
     } catch (error) {
       console.error('[tts] failed:', error instanceof Error ? error.message : error)

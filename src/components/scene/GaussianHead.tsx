@@ -56,6 +56,10 @@ const SPEECH_FACE_CHANNELS = A2E_CHANNELS.map((name, i) => [name, i] as const).f
 const LID_FOLLOW_DOWN = 0.35
 const LID_FOLLOW_UP = 0.2
 
+// ?mouth=off leaves the jaw blendshape and inner lips as LAM made them, for comparing against
+// the reshaped mouth (see mouthInterior.ts)
+const MOUTH_INTERIOR = typeof location === 'undefined' || new URLSearchParams(location.search).get('mouth') !== 'off'
+
 // Framing: the frame runs from just above the hair down to where the bust's splats end, so the
 // reconstruction's cut-off sits exactly on the tile's bottom edge and nothing looks chopped off
 // Headroom above the hair as a share of the frame, so the built-in nods don't clip it
@@ -303,7 +307,7 @@ const GaussianHeadComponent = ({
         // Wait a moment after loading: the renderer can still refresh its splat data just after it reports 100%
         if (updateSort === undefined && loaded && sortTarget && now - loadedAt > 2000) {
           // First, since it reshapes the jaw blendshape the depth sort reads
-          updateMouth = createMouthInterior(sortTarget)
+          updateMouth = MOUTH_INTERIOR ? createMouthInterior(sortTarget) : null
           updateSort = createBlendshapeSort(sortTarget)
           updateOpacity = createBlendshapeOpacity(sortTarget)
           balanceBlink = createBlinkBalance(sortTarget)

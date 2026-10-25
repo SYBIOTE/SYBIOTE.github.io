@@ -16,13 +16,27 @@ export const stopSpeechFace = () => {
   active = null
 }
 
-/** The 52 ARKit weights for `now`, or null when no audio-driven frames cover this moment. */
+const blended = new Float32Array(CHANNELS)
+
+/**
+ * The 52 ARKit weights for `now`, or null when no audio-driven frames cover this moment. Blends the
+ * two frames either side of `now`: the model gives 30 a second, and holding each one until the next
+ * made the mouth step and trail the voice on 60-120Hz screens.
+ */
 export const sampleSpeechFace = (now: number): Float32Array | null => {
   if (!active) return null
   const { track, startedAt } = active
-  const frame = Math.floor(((now - startedAt) / 1000) * track.fps)
+  const position = ((now - startedAt) / 1000) * track.fps
+  const frame = Math.floor(position)
   if (frame < 0 || frame >= track.frameCount) return null
-  return track.frames.subarray(frame * CHANNELS, (frame + 1) * CHANNELS)
+  const next = Math.min(frame + 1, track.frameCount - 1)
+  const t = position - frame
+  const { frames } = track
+  for (let c = 0; c < CHANNELS; c++) {
+    const a = frames[frame * CHANNELS + c]
+    blended[c] = a + (frames[next * CHANNELS + c] - a) * t
+  }
+  return blended
 }
 
 export interface SpeechCueHits {

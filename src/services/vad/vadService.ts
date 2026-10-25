@@ -41,13 +41,16 @@ interface UseVADServiceProps {
   onVADResult?: (result: VADResult) => void
   onSpeechStart?: () => void
   onSpeechEnd?: (audio: ArrayBuffer) => void
+  /** Speech started but was too short to count (a click, a breath) */
+  onMisfire?: () => void
 }
 
 export const useVADService = ({
   config: configPartial = {},
   onVADResult,
   onSpeechStart,
-  onSpeechEnd
+  onSpeechEnd,
+  onMisfire
 }: UseVADServiceProps = {}) => {
   const config = useMemo(() => ({ ...defaultVadConfig, ...configPartial }), [configPartial])
 
@@ -102,6 +105,11 @@ export const useVADService = ({
             })
           }
         },
+        // Too short to be speech (a click, a breath): it's over, so don't stay "detecting"
+        onVADMisfire: () => {
+          setIsDetecting(false)
+          onMisfire?.()
+        },
         onSpeechStart: () => {
           logger.log('Speech started')
           setIsDetecting(true)
@@ -131,7 +139,7 @@ export const useVADService = ({
     } catch (error) {
       logger.error('Failed to initialize VAD:', error)
     }
-  }, [config.vadThreshold, handleVADResult, onSpeechStart, onSpeechEnd])
+  }, [config.vadThreshold, handleVADResult, onSpeechStart, onSpeechEnd, onMisfire])
 
   const startListening = useCallback(async () => {
     if (!vadInstance) {

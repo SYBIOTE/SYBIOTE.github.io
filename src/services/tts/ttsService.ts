@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react'
 
 
 import { expressionTrackFor, type ExpressionTrack } from '../audio2expression/audio2expression'
+import { parsePhones, withPhonemeMouth, type Phone } from '../audio2expression/phonemeMouth'
 import { startSpeechFace, stopSpeechFace } from '../audio2expression/speechFace'
 import { getAudioContext } from './audioContext'
 import { pickMaleVoice } from './browserVoice'
@@ -72,7 +73,13 @@ const TRACK_WAIT_MS = 1200
 // Set once /api/tts reports it isn't configured: stop asking for the rest of the session
 let cloudUnavailable = false
 
-const fetchCloudSpeech = async (url: string, text: string): Promise<ArrayBuffer> => {
+interface CloudClip {
+  audio: ArrayBuffer
+  /** When each sound is made, for timing the lips (empty if the server didn't send them) */
+  phones: Phone[]
+}
+
+const fetchCloudSpeech = async (url: string, text: string): Promise<CloudClip> => {
   const response = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -80,11 +87,11 @@ const fetchCloudSpeech = async (url: string, text: string): Promise<ArrayBuffer>
   })
   if (response.status === 503) cloudUnavailable = true
   if (!response.ok) throw new Error(`TTS ${response.status}`)
-  return response.arrayBuffer()
+  return { audio: await response.arrayBuffer(), phones: parsePhones(response.headers.get('X-Phones')) }
 }
 
 // Clips requested ahead of time (the greeting, while the visitor is being let in), by text
-const prefetched = new Map<string, Promise<ArrayBuffer>>()
+const prefetched = new Map<string, Promise<CloudClip>>()
 
 /** Starts fetching a line in Rahul's voice so speaking it later doesn't wait on the network. */
 export const prefetchCloudSpeech = (line: string, url = defaultTTSConfig.cloudUrl || '/api/tts') => {
@@ -322,9 +329,12 @@ export const useTTSService = (options: TTSServiceOptions = {}) => {
       try {
         const clip = prefetched.get(message.text) ?? fetchCloudSpeech(config.cloudUrl || '/api/tts', message.text)
         prefetched.delete(message.text)
-        message.decoded = await getAudioContext().decodeAudioData(await clip)
-        // Face frames are computed in the background while earlier clips play
-        message.track = expressionTrackFor(message.decoded)
+        const { audio, phones } = await clip
+        const decoded = await getAudioContext().decodeAudioData(audio)
+        message.decoded = decoded
+        // Face frames are computed in the background while earlier clips play; the phonemes time the
+        // lips on top (or alone, where the audio model doesn't run)
+        message.track = expressionTrackFor(decoded).then((track) => withPhonemeMouth(track, decoded, phones))
       } catch (error) {
         logger.warn('Cloud TTS unavailable, using a fallback voice:', error)
         await fallbackVoice(message)

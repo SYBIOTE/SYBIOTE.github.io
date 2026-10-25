@@ -12,7 +12,7 @@
  * - the jaw blendshape is reshaped so the lip corners come down part of the way with the jaw and the
  *   upper lip bends to meet them: one oval opening, corners joined. Below the lips the jaw moves as before
  * - the inner lip surfaces (everything reachable from the ring without facing the camera) are
- *   recoloured as the mouth opens: a soft shadow tone while it's slightly open, darker the deeper and the
+ *   recoloured as the mouth opens: the pink-red of inner lips while it's slightly open, deeper reds the deeper and the
  *   wider. The upper-teeth splats keep their colour; big blurry splats, which spill past the lips, keep
  *   theirs and fade out; and splats right at the lip edge only turn solid a few millimetres in, so the
  *   edge never shows as a line
@@ -54,10 +54,12 @@ const UPPER_LIP_REACH = 0.015
 
 // Inner surfaces facing the camera more than this (normal's z) count as the outside of the lips
 const INNER_MAX_FACING = 0.3
-// Colour inside (sRGB bytes): deep in the mouth, nearer the lips, and the soft shadow tone it starts from
-const DEEP = [22, 7, 8] as const
-const NEAR = [58, 27, 29] as const
-const SHADOW = [96, 62, 58] as const
+// Colour inside (sRGB bytes): deep in the mouth, nearer the lips, and the inner lips' pink-red it starts from
+const DEEP = [56, 12, 16] as const
+const NEAR = [128, 38, 46] as const
+const INNER_LIP = [176, 80, 86] as const
+// The soft shadow over the opening: a dark red while slightly open, deepening to DEEP
+const SHADOW = [104, 36, 42] as const
 // Distance from the ring (along the surface, metres) over which the colour goes from deep to near,
 // and distance from the lip edge over which it takes over from the reconstructed lip colour
 const DEPTH_SHADE = [0.004, 0.017] as const
@@ -71,10 +73,10 @@ const INNER_MAX_LENGTH = [0.004, 0.008] as const
 const TEETH_MIN_LUMA = 0.7
 const TEETH_MIN_OPACITY = 150
 const TEETH_MAX_TRAVEL = 0.008
-// Jaw opening over which the inside appears, and over which it goes from the soft shadow tone to dark.
-// Speech mostly sits below 0.3, so it stays soft there
-const OPEN_RANGE = [0.06, 0.3] as const
-const DARK_RANGE = [0.25, 0.6] as const
+// Jaw opening over which the inside appears, and over which it goes from the inner lips' pink-red to the
+// deeper reds. Phoneme-timed speech opens the jaw to about 0.25 (phonemeMouth.ts), so both happen within it
+const OPEN_RANGE = [0.04, 0.2] as const
+const DARK_RANGE = [0.12, 0.35] as const
 const WEIGHT_EPSILON = 0.01
 
 // The soft shadow: starts once the opening passes this share of OPEN_RANGE; its opacity in the middle while
@@ -489,7 +491,7 @@ export const createMouthInterior = (renderer: unknown) => {
       const tc = t * (1 - innerSize[j])
       for (let c = 0; c < 3; c++) {
         const cavity = DEEP[c] + (NEAR[c] - DEEP[c]) * innerShade[j]
-        const tone = SHADOW[c] + (cavity - SHADOW[c]) * darkness
+        const tone = INNER_LIP[c] + (cavity - INNER_LIP[c]) * darkness
         current[o + c] = Math.round(original[o + c] + (tone - original[o + c]) * tc)
       }
       // The rest turn solid only away from the lip edge

@@ -1,5 +1,6 @@
 import type { VRM } from '@pixiv/three-vrm'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { useAnimationService } from './animation/useAnimationService'
 import { useConversationService } from './conversation/useConversationService'
@@ -12,6 +13,8 @@ import { createReactionFromMessage } from '../integration/reactionIntegration'
 import { parseActions, runAvatarAction } from './actions/avatarActions'
 import portfolioData from '../content/data/portfolio.json'
 import { useSTTService } from './stt/sttService'
+import { recognitionLanguage } from './stt/recognitionLanguage'
+import { pickTranscript, polishTranscript, RECOGNITION_PHRASES } from './stt/vocabulary'
 import { useVADService } from './vad/vadService'
 import { endOfTurnProbability, preloadSmartTurn } from './smartTurn/smartTurn'
 import { TurnGate } from './smartTurn/turnGate'
@@ -29,6 +32,15 @@ import type { AnimationAction, AnimationMixer, Camera, Object3D } from 'three'
 import type { AnimationClip, AnimationPerformanceData, AnimationState } from './animation/animationTypes'
 
 const PROJECT_IDS: ReadonlySet<string> = new Set(portfolioData.items.map((item) => item.id))
+// Speech recognition stays on for as long as the mic is, so it's already listening when the visitor
+// starts talking. Except on phones: Android beeps every time recognition starts, so there it runs
+// only while the VAD hears speech, and for this long after each pause
+const STT_ALWAYS_ON = typeof navigator !== 'undefined' && !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+const STT_LINGER_MS = 1500
+// The avatar's voice can still be arriving as transcripts this long after it stops talking
+const ECHO_TAIL_MS = 1200
+// Speech the VAD heard this recently counts as the visitor's, not the avatar's
+const VISITOR_SPEECH_MS = 2000
 
 // STT service result interface (defined locally in sttService.ts)
 interface STTPerformResult {
@@ -234,7 +246,8 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
   // Merge configurations with defaults
   const vadConfig = { ...defaultVadConfig, ...config.vad }
   const ttsConfig = { ...defaultTTSConfig, ...config.tts }
-  const sttConfig = { ...defaultSTTConfig, ...config.stt }
+  const { i18n } = useTranslation()
+  const sttConfig = { ...defaultSTTConfig, language: recognitionLanguage(i18n.language), ...config.stt }
   const llmConfig = { ...defaultLLMConfig, ...config.llm }
   const appConfig = {
     autoSubmitEnabled: config.autoSubmitEnabled ?? defaultAppConfig.autoSubmitEnabled,
@@ -329,6 +342,9 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
   callbacksRef.current = callbacks
   const turnGateRef = useRef<TurnGate | null>(null)
   const bargeInRef = useRef<BargeIn | null>(null)
+  // Whether the VAD hears the visitor, and since when (or when it last stopped)
+  const visitorSpeechRef = useRef({ speaking: false, at: 0 })
+  const ttsEndedAtRef = useRef(0)
   if (!turnGateRef.current) {
     turnGateRef.current = new TurnGate({
       classify: endOfTurnProbability,
@@ -346,18 +362,25 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
       callbacks.onVADResult?.(result)
     },
     onSpeechStart: useCallback(() => {
+      visitorSpeechRef.current = { speaking: true, at: Date.now() }
       turnGate.speechStart()
       bargeInRef.current?.speechStart()
       callbacksRef.current.onSpeechStart?.()
     }, [turnGate]),
     onSpeechEnd: useCallback(
       (audio: ArrayBuffer) => {
+        visitorSpeechRef.current = { speaking: false, at: Date.now() }
         bargeInRef.current?.speechEnd()
         void turnGate.speechEnd(new Float32Array(audio))
         callbacksRef.current.onSpeechEnd?.(audio)
       },
       [turnGate]
-    )
+    ),
+    // A click or breath ducked the avatar's voice: bring it straight back
+    onMisfire: useCallback(() => {
+      visitorSpeechRef.current = { ...visitorSpeechRef.current, speaking: false }
+      bargeInRef.current?.speechEnd()
+    }, [])
   })
 
   useEffect(() => {
@@ -365,10 +388,27 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
     else turnGate.reset()
   }, [vad.state.isListening, turnGate])
 
+  // Recognition runs while the avatar talks (so the visitor can interrupt), and hears its voice too
+  // wherever echo cancellation lets some through. While the avatar is audible, a transcript only
+  // counts if the VAD heard the visitor and it isn't just the avatar's own words coming back
+  const isAvatarEcho = (text: string) => {
+    const audible = tts.actions.isSpeakingNow() || Date.now() - ttsEndedAtRef.current < ECHO_TAIL_MS
+    if (!audible) return false
+    const { speaking, at } = visitorSpeechRef.current
+    const visitorSpoke = speaking || Date.now() - at < VISITOR_SPEECH_MS
+    return !visitorSpoke || (bargeInRef.current?.isEcho(text) ?? false)
+  }
+
   // Initialize STT service
   const stt = useSTTService({
     config: sttConfig,
+    phrases: RECOGNITION_PHRASES,
+    chooseTranscript: (alternatives) => polishTranscript(pickTranscript(alternatives)),
     onPerform: (result) => {
+      if (isAvatarEcho(result.text)) {
+        logger.log('STT: ignored the avatar\'s own voice:', result.text)
+        return
+      }
       if (result.final) {
         const interrupt = Date.now()
         // Handle barge-in if detected
@@ -389,6 +429,7 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
       callbacks.onSTTResult?.(result)
     },
     onInterimTranscript: (text) => {
+      if (text && isAvatarEcho(text)) return
       bargeInRef.current?.transcript(text, false)
       setCurrentInterimTranscript(withHeld(text))
       callbacks.onInterimTranscript?.(text)
@@ -407,10 +448,29 @@ export const useAgent = (config: AgentConfig = {}, callbacks: AgentCallbacks = {
     startReply(text)
   }
 
+  // When the avatar last stopped talking, for telling its voice from the visitor's (isAvatarEcho)
+  useEffect(() => {
+    if (!tts.state.isSpeaking) ttsEndedAtRef.current = Date.now()
+  }, [tts.state.isSpeaking])
+
   // Service coordination effects
-  useEffect(() => { 
-    stt.actions.setDesired(vad.state.isDetecting)
-  }, [vad.state.isDetecting, stt.actions])
+  useEffect(() => {
+    if (STT_ALWAYS_ON) {
+      stt.actions.setDesired(vad.state.isListening)
+      return
+    }
+    if (vad.state.isDetecting) {
+      stt.actions.setDesired(true)
+      return
+    }
+    // Once the avatar starts replying, stop straight away so it doesn't transcribe its own voice
+    if (tts.state.isSpeaking) {
+      stt.actions.setDesired(false)
+      return
+    }
+    const timer = setTimeout(() => stt.actions.setDesired(false), STT_LINGER_MS)
+    return () => clearTimeout(timer)
+  }, [vad.state.isListening, vad.state.isDetecting, tts.state.isSpeaking, stt.actions])
 
   useEffect(() => {
     // Always allow STT if barge-in is enabled, otherwise only allow if not speaking
