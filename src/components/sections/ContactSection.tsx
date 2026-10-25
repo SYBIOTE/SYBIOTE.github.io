@@ -4,10 +4,12 @@
  */
 
 import type { FormEvent, ReactNode } from 'react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { CheckIcon, CopyIcon, LinkedInIcon, MailIcon, PhoneIcon, XLogoIcon } from '../../call/callIcons'
+import { readGuestName } from '../../call/guestName'
+import { AvatarUIState } from '../../services/actions/avatarActions'
 import { sendContactMessage } from '../../services/contact/sendMessage'
 
 const displayUrl = (url: string) => url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')
@@ -46,10 +48,22 @@ const Method = ({ icon, label, value, href, action }: MethodProps) => {
 
 export const ContactSection = () => {
   const { t } = useTranslation()
-  const [form, setForm] = useState({ name: '', email: '', message: '' })
+  // Starts with the name they gave in the waiting room
+  const [form, setForm] = useState(() => ({ name: readGuestName(), email: '', message: '' }))
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
   const [copied, setCopied] = useState(false)
   const email = t('core.email')
+  const formRef = useRef<HTMLFormElement>(null)
+  // Opened from "Get yours": bring the form into view, ready to type, and tag the enquiry
+  const [topic, setTopic] = useState(() => AvatarUIState.get().contactTopic ?? null)
+
+  useEffect(() => {
+    if (!topic) return
+    formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    // The first field still to fill: email when the name came from the waiting room
+    const fields = formRef.current?.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input, textarea') ?? []
+    ;[...fields].find((field) => !field.value)?.focus({ preventScroll: true })
+  }, [topic])
 
   // The "sent" note fades back to the empty form after a few seconds
   useEffect(() => {
@@ -71,9 +85,10 @@ export const ContactSection = () => {
     e.preventDefault()
     setStatus('sending')
     try {
-      await sendContactMessage(form)
+      await sendContactMessage(topic === 'aiTwin' ? { ...form, message: `[AI twin enquiry]\n\n${form.message}` } : form)
       setStatus('sent')
-      setForm({ name: '', email: '', message: '' })
+      setForm((prev) => ({ name: prev.name, email: '', message: '' }))
+      setTopic(null)
     } catch (error) {
       logger.error('Error sending email:', error)
       setStatus('error')
@@ -119,7 +134,7 @@ export const ContactSection = () => {
         </ul>
       </aside>
 
-      <form className="contact-form ctab-form" onSubmit={submit}>
+      <form ref={formRef} className="contact-form ctab-form" onSubmit={submit}>
         <div className="contact-row">
           <label htmlFor="ctab-name">
             <span>{t('call.contact.name', 'Your name')}</span>
@@ -138,7 +153,11 @@ export const ContactSection = () => {
             value={form.message}
             onChange={update('message')}
             required
-            placeholder={t('call.contact.placeholder', 'What are you building, and how can Rahul help?')}
+            placeholder={
+              topic === 'aiTwin'
+                ? t('services.items.aiTwin.formPrompt')
+                : t('call.contact.placeholder', 'What are you building, and how can Rahul help?')
+            }
           />
         </label>
         {status === 'sent' && (

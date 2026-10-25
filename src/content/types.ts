@@ -10,6 +10,7 @@ export interface PortfolioLink {
 export interface PortfolioItem {
   id: string
   image?: string
+  imageFit?: 'cover' | 'contain' // contain: logos, shown whole and centred instead of cropped to the card
   videoId?: string
   videos?: string[]            // additional video IDs for carousel
   order: number
@@ -104,6 +105,8 @@ export interface ServiceItem {
   /** Featured services only (see ServicesSection) */
   tag?: string
   cta?: string
+  more?: string
+  formPrompt?: string
 }
 
 export interface ServicesContent {

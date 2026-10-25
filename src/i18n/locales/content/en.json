@@ -159,7 +159,9 @@
         "name": "Your own AI twin",
         "desc": "Everything on this call, built for you: a 3D head made from your photos, your cloned voice, and answers drawn only from your own work. It lives on your site and takes calls from visitors around the clock.",
         "tag": "You're talking to one",
-        "cta": "Get yours"
+        "cta": "Get yours",
+        "more": "How it works",
+        "formPrompt": "What do you do, and where would you use your AI twin?"
       },
       "web3d": {
         "name": "Web 3D Apps & Editors",
@@ -261,5 +263,14 @@
         "role": "Engineer, Team V"
       }
     }
+  },
+  "seo": {
+    "title": "Rahul Ghosh · Full-Stack & Web 3D Engineer",
+    "description": "Rahul Ghosh, full-stack & web 3D engineer in Bengaluru (Three.js, WebXR, AI for 3D). Video-call my AI twin, or get an AI twin of your own.",
+    "image": "/assets/img/profile-img.jpg",
+    "sameAs": [
+      "https://github.com/sybiote",
+      "https://sybiote.itch.io"
+    ]
   }
 }

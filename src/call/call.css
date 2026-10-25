@@ -195,13 +195,14 @@
   margin: -8px 0 4px;
   color: var(--c-muted);
   font-size: 14px;
+  font-weight: 400;
   text-align: center;
 }
 .lobby-intro {
   grid-area: intro;
   text-align: center;
 }
-.lobby-intro h1 {
+.lobby-intro h2 {
   margin: 0 0 6px;
   font-size: clamp(26px, 3vw, 34px);
   font-weight: 500;
@@ -810,6 +811,11 @@
   border-bottom: 1px solid var(--c-line);
   background: rgba(255, 255, 255, 0.06);
 }
+/* Logos: whole and centred, with room around them */
+.project-card img.contain {
+  object-fit: contain;
+  padding: 12% 0;
+}
 .project-card-body {
   display: flex;
   flex: 1;
@@ -1023,6 +1029,10 @@
   object-fit: cover;
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.06);
+}
+.project-switcher-menu img.contain {
+  object-fit: contain;
+  padding: 3px 0;
 }
 .project-switcher-menu button > span {
   flex: 1;
@@ -1993,9 +2003,26 @@
   background: #34c759;
   box-shadow: 0 0 0 3px rgba(52, 199, 89, 0.2);
 }
+/* Matches the "Let's talk" button below the grid */
+.service-proof .pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 18px;
+  color: var(--c-text);
+}
 .service-proof .pill svg {
   width: 18px;
   height: 18px;
+}
+.service-more {
+  margin-left: 6px;
+  color: var(--c-muted);
+  font-size: 13px;
+}
+.service-more:hover {
+  color: var(--c-text);
 }
 
 /* Resume tab: mirrors the post-call resume page (.timeline, .tags) inside the share panel */
@@ -2093,8 +2120,11 @@ a.rtab-chip:hover {
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
 }
 .rtab-logo img {
-  max-width: 100%;
-  max-height: 100%;
+  /* A definite box (max-height alone doesn't apply in the auto-sized grid track), so tall logos fit too */
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
   object-fit: contain;
 }
 .rtab-logo img.invert {

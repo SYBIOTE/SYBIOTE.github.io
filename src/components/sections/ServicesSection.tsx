@@ -34,6 +34,7 @@ export const ServicesSection = () => {
 
   const showProject = (id: string) => AvatarUIState.set({ openSectionId: 'portfolio', focusProjectId: id })
   const openContact = () => AvatarUIState.set({ openSectionId: 'contact', focusProjectId: null })
+  const enquireAboutTwin = () => AvatarUIState.set({ openSectionId: 'contact', focusProjectId: null, contactTopic: 'aiTwin' })
 
   return (
     <div className="services">
@@ -51,9 +52,12 @@ export const ServicesSection = () => {
             {s.featured ? (
               <div className="service-proof">
                 <span className="service-tag">{t(`services.items.${s.id}.tag`)}</span>
-                <button className="pill primary" onClick={openContact}>
+                <button className="pill primary" onClick={enquireAboutTwin}>
                   {t(`services.items.${s.id}.cta`)} <ArrowIcon />
                 </button>
+                <a className="service-more" href="/ai-twin">
+                  {t(`services.items.${s.id}.more`)}
+                </a>
               </div>
             ) : (
               <div className="service-proof">

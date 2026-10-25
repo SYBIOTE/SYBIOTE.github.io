@@ -6,6 +6,7 @@ import dotenv from 'dotenv'
 import { fileURLToPath } from 'url'
 import { defineConfig, type PluginOption, type ViteDevServer } from 'vite'
 import type { IncomingMessage, ServerResponse } from 'http'
+import { buildSeo } from './scripts/seo.mjs'
 
 // The folder this config lives in. (app-root-path guessed it from its own install location,
 // which breaks with package managers that keep packages in a global store.)
@@ -34,6 +35,19 @@ function knowledgePlugin(): PluginOption {
         if (file.startsWith(dir) && file.endsWith('.md')) compile()
       }
       server.watcher.on('add', onChange).on('change', onChange).on('unlink', onChange)
+    }
+  }
+}
+
+// Title, meta and share tags, JSON-LD and a crawlable copy of the content, from the content files
+function seoPlugin(): PluginOption {
+  return {
+    name: 'seo',
+    transformIndexHtml(html, ctx) {
+      // Static pages like ai-twin.html carry their own tags
+      if (ctx.path !== '/index.html') return html
+      const { head, body } = buildSeo(projectRoot)
+      return html.replace(/<title>.*?<\/title>/, head).replace('<div id="root"></div>', `<div id="root">${body}</div>`)
     }
   }
 }
@@ -187,6 +201,14 @@ export default defineConfig(({ command }) => ({
   optimizeDeps: {
     include: ['three']
   },
+  build: {
+    rollupOptions: {
+      input: {
+        main: path.join(projectRoot, 'index.html'),
+        aiTwin: path.join(projectRoot, 'ai-twin.html')
+      }
+    }
+  },
   server: {
     host: true,
     ...(command === 'serve'
@@ -198,5 +220,5 @@ export default defineConfig(({ command }) => ({
         }
       : {})
   },
-  plugins: [react(), knowledgePlugin(), contentApiPlugin(), apiFunctionsPlugin()]
+  plugins: [react(), seoPlugin(), knowledgePlugin(), contentApiPlugin(), apiFunctionsPlugin()]
 }))

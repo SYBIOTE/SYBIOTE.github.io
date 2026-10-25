@@ -60,7 +60,7 @@ const ProjectSwitcher = ({ current, groups, onOpen }: { current: string } & Pick
                     onOpen(item.id)
                   }}
                 >
-                  {item.image && <img src={item.image} alt="" loading="lazy" />}
+                  {item.image && <img src={item.image} alt="" loading="lazy" className={item.imageFit === 'contain' ? 'contain' : undefined} />}
                   <span>{t(`portfolio.items.${item.id}.title`)}</span>
                   {item.date && !item.featured && <small>{item.date.slice(0, 4)}</small>}
                 </button>

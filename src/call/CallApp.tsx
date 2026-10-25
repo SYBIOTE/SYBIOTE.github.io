@@ -46,6 +46,7 @@ import {
   ScreenIcon
 } from './callIcons'
 import { playChime, primeAudio } from './chime'
+import { readGuestName, saveGuestName } from './guestName'
 import { ContactPage } from './postcall/ContactPage'
 import { ResumePage } from './postcall/ResumePage'
 import { SharePanel } from './SharePanel'
@@ -55,19 +56,11 @@ type Phase = 'lobby' | 'joining' | 'call' | 'ended'
 type Panel = 'chat' | 'people' | 'info' | null
 
 const PROFILE_IMAGE = '/assets/img/profile-img.jpg'
-const NAME_KEY = 'call.guestName'
 const ADMIT_DELAY_MS = 1400
 const RETURN_AFTER_S = 30
 // If the head isn't ready by then, greet anyway with Rahul's camera off
 const GREET_FALLBACK_MS = 3000
 
-const readSavedName = () => {
-  try {
-    return localStorage.getItem(NAME_KEY) ?? ''
-  } catch {
-    return ''
-  }
-}
 const LANGUAGES = [
   ['en', 'English'],
   ['de', 'Deutsch'],
@@ -119,7 +112,7 @@ const CallAppComponent = () => {
   const [captionsOn, setCaptionsOn] = useState(true)
   const [handRaised, setHandRaised] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [guestName, setGuestName] = useState(readSavedName)
+  const [guestName, setGuestName] = useState(readGuestName)
   const [toasts, setToasts] = useState<{ id: number; text: string }[]>([])
   // Waiting-room mic choice: it only turns on once you're in, so nothing listens before joining
   const [micPref, setMicPref] = useState(false)
@@ -236,11 +229,7 @@ const CallAppComponent = () => {
       // markVisit: joined a call here before
       greetingRef.current = buildGreeting({ name: guestName.trim(), locale: i18n.language, returning: markVisit() })
       if (!greetedRef.current) prefetchCloudSpeech(greetingRef.current)
-      try {
-        localStorage.setItem(NAME_KEY, guestName.trim())
-      } catch {
-        // storage unavailable
-      }
+      saveGuestName(guestName.trim())
 
       // "Asking to be let in…", then admitted with a chime
       setPhase('joining')
@@ -372,9 +361,10 @@ const CallAppComponent = () => {
         {inWaitingRoom && (
           <>
             <div className="lobby-intro">
-              <h1>{phase === 'joining' ? t('call.lobby.asking', 'Asking to be let in…') : t('call.lobby.title', 'Ready to join?')}</h1>
+              <h2>{phase === 'joining' ? t('call.lobby.asking', 'Asking to be let in…') : t('call.lobby.title', 'Ready to join?')}</h2>
             </div>
-            <p className="in-call">{t('call.lobby.inCall', '{{name}} is in this call', { name })}</p>
+            {/* The page's h1, so search engines get the name rather than "Ready to join?" */}
+            <h1 className="in-call">{t('call.lobby.inCall', '{{name}} is in this call', { name })}</h1>
             <div className="lobby-actions">
               {phase === 'lobby' ? (
                 <>

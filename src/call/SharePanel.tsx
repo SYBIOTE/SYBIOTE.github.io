@@ -114,7 +114,7 @@ const SharePanelComponent = () => {
           <div className="project-grid">
             {gridItems.map((item) => (
               <button key={item.id} className="project-card" onClick={() => openProject(item)}>
-                {item.image && <img src={item.image} alt="" loading="lazy" />}
+                {item.image && <img src={item.image} alt="" loading="lazy" className={item.imageFit === 'contain' ? 'contain' : undefined} />}
                 <div className="project-card-body">
                   <div className="project-card-head">
                     <span className="project-card-title">{title(item.id)}</span>

@@ -159,7 +159,9 @@
         "name": "Ton propre jumeau IA",
         "desc": "Tout ce que tu vois dans cet appel, construit pour toi : une tête 3D créée à partir de tes photos, ta voix clonée et des réponses tirées uniquement de ton propre travail. Il vit sur ton site et répond aux visiteurs à toute heure.",
         "tag": "Tu parles à l'un d'eux",
-        "cta": "Obtenir le tien"
+        "cta": "Obtenir le tien",
+        "more": "Comment ça marche",
+        "formPrompt": "Que fais-tu, et où utiliserais-tu ton jumeau IA ?"
       },
       "web3d": {
         "name": "Apps et éditeurs web 3D",

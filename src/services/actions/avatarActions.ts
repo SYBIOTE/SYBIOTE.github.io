@@ -74,6 +74,8 @@ export interface AvatarUIState {
   focusProjectId: string | null
   /** Portfolio folder being browsed (e.g. otherProjects); setting a whole new state closes it */
   openFolderId?: string | null
+  /** Set when the contact form was opened for an enquiry (e.g. "Get yours" on the AI twin card) */
+  contactTopic?: 'aiTwin' | null
 }
 
 export const AvatarUIState = createSimpleStore<AvatarUIState>({ openSectionId: null, focusProjectId: null })

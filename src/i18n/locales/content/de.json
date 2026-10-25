@@ -159,7 +159,9 @@
         "name": "Dein eigener KI-Zwilling",
         "desc": "Alles aus diesem Call, für dich gebaut: ein 3D-Kopf aus deinen Fotos, deine geklonte Stimme und Antworten nur aus deiner eigenen Arbeit. Er lebt auf deiner Website und nimmt rund um die Uhr Anrufe von Besuchern an.",
         "tag": "Du sprichst gerade mit einem",
-        "cta": "Hol dir deinen"
+        "cta": "Hol dir deinen",
+        "more": "So funktioniert es",
+        "formPrompt": "Was machst du, und wo würdest du deinen KI-Zwilling einsetzen?"
       },
       "web3d": {
         "name": "Web-3D-Apps & Editoren",

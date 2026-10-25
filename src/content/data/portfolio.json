@@ -33,6 +33,7 @@
       "id": "etherealEngine",
       "featured": true,
       "image": "/assets/img/portfolio/engine/IREnginelogo.png",
+      "imageFit": "contain",
       "order": 2,
       "videoId": "NqCLg1R0odk",
       "links": [
