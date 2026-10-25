@@ -54,12 +54,13 @@ const UPPER_LIP_REACH = 0.015
 
 // Inner surfaces facing the camera more than this (normal's z) count as the outside of the lips
 const INNER_MAX_FACING = 0.3
-// Colour inside (sRGB bytes): deep in the mouth, nearer the lips, and the inner lips' pink-red it starts from
-const DEEP = [56, 12, 16] as const
-const NEAR = [128, 38, 46] as const
-const INNER_LIP = [176, 80, 86] as const
-// The soft shadow over the opening: a dark red while slightly open, deepening to DEEP
-const SHADOW = [104, 36, 42] as const
+// Colour inside (sRGB bytes), as a real mouth looks on camera: mostly in shadow, a muted red-brown, with
+// only the inner lips catching light (a little darker and redder than this avatar's pale lips, ~153,133,128)
+const DEEP = [40, 18, 20] as const
+const NEAR = [92, 46, 47] as const
+const INNER_LIP = [132, 80, 79] as const
+// The soft shadow over the opening: a dim red-brown while slightly open, deepening to DEEP
+const SHADOW = [72, 36, 38] as const
 // Distance from the ring (along the surface, metres) over which the colour goes from deep to near,
 // and distance from the lip edge over which it takes over from the reconstructed lip colour
 const DEPTH_SHADE = [0.004, 0.017] as const
