@@ -1967,6 +1967,36 @@
     grid-column: 1 / -1;
   }
 }
+/* The AI twin: full width at every size, above the rest */
+.service-card.featured {
+  grid-column: 1 / -1;
+  border-color: var(--c-accent-border);
+  background:
+    radial-gradient(90% 160% at 0% 100%, rgba(30, 136, 229, 0.28) 0%, rgba(30, 136, 229, 0) 65%),
+    rgba(255, 255, 255, 0.05);
+}
+.service-card.featured h3 {
+  font-size: clamp(18px, 3.2cqi, 22px);
+}
+.service-proof > .service-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 8px;
+  color: var(--c-text);
+}
+.service-tag::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #34c759;
+  box-shadow: 0 0 0 3px rgba(52, 199, 89, 0.2);
+}
+.service-proof .pill svg {
+  width: 18px;
+  height: 18px;
+}
 
 /* Resume tab: mirrors the post-call resume page (.timeline, .tags) inside the share panel */
 .rtab {

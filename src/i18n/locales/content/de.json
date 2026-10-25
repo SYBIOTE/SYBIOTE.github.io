@@ -155,6 +155,12 @@
     "ctaText": "Hast du ein 3D-Produkt im Kopf?",
     "ctaButton": "Lass uns reden",
     "items": {
+      "aiTwin": {
+        "name": "Dein eigener KI-Zwilling",
+        "desc": "Alles aus diesem Call, für dich gebaut: ein 3D-Kopf aus deinen Fotos, deine geklonte Stimme und Antworten nur aus deiner eigenen Arbeit. Er lebt auf deiner Website und nimmt rund um die Uhr Anrufe von Besuchern an.",
+        "tag": "Du sprichst gerade mit einem",
+        "cta": "Hol dir deinen"
+      },
       "web3d": {
         "name": "Web-3D-Apps & Editoren",
         "desc": "Schnelle 3D-Produkte im Browser mit Three.js und React: Editoren, Viewer und Konfiguratoren, die auf jedem Gerät laufen."

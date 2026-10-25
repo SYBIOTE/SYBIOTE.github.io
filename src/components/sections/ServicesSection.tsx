@@ -1,12 +1,13 @@
 /**
- * Services as a bento grid: AI for 3D leads as the wide card, and every service links to
- * the projects that prove it. Styles live in call.css (.services*).
+ * Services as a bento grid. The AI twin tops it as a full-width card whose proof is the call the
+ * visitor is on, with a button to the contact form; below it AI for 3D leads as the wide card, and
+ * every other service links to the projects that prove it. Styles live in call.css (.services*).
  */
 
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { ArrowIcon, CubeIcon, GamepadIcon, HeadsetIcon, ServerIcon, SparkleIcon } from '../../call/callIcons'
+import { ArrowIcon, CameraIcon, CubeIcon, GamepadIcon, HeadsetIcon, ServerIcon, SparkleIcon } from '../../call/callIcons'
 import { AvatarUIState } from '../../services/actions/avatarActions'
 
 interface Service {
@@ -15,9 +16,12 @@ interface Service {
   /** Portfolio item ids shown as "Seen in" links */
   proof: string[]
   wide?: boolean
+  /** Full width, with a "you're talking to one" tag and its own contact button in place of proof */
+  featured?: boolean
 }
 
 const SERVICES: Service[] = [
+  { id: 'aiTwin', icon: <CameraIcon />, proof: [], featured: true },
   { id: 'ai3d', icon: <SparkleIcon />, proof: ['niraAnimates', 'assetHub', 'autov'], wide: true },
   { id: 'web3d', icon: <CubeIcon />, proof: ['etherealEngine', 'assetHub'] },
   { id: 'xr', icon: <HeadsetIcon />, proof: ['godotOculusPlatform', 'mrEarthViewer'] },
@@ -37,21 +41,30 @@ export const ServicesSection = () => {
 
       <div className="services-grid">
         {SERVICES.map((s, i) => (
-          <article key={s.id} className={`service-card${s.wide ? ' wide' : ''}`}>
+          <article key={s.id} className={`service-card${s.wide ? ' wide' : ''}${s.featured ? ' featured' : ''}`}>
             <div className="service-top">
               <span className="service-icon">{s.icon}</span>
               <span className="service-num">{String(i + 1).padStart(2, '0')}</span>
             </div>
             <h3>{t(`services.items.${s.id}.name`)}</h3>
             <p>{t(`services.items.${s.id}.desc`)}</p>
-            <div className="service-proof">
-              <span>{t('services.seenIn')}</span>
-              {s.proof.map((id) => (
-                <button key={id} className="service-chip" onClick={() => showProject(id)}>
-                  {t(`portfolio.items.${id}.title`)}
+            {s.featured ? (
+              <div className="service-proof">
+                <span className="service-tag">{t(`services.items.${s.id}.tag`)}</span>
+                <button className="pill primary" onClick={openContact}>
+                  {t(`services.items.${s.id}.cta`)} <ArrowIcon />
                 </button>
-              ))}
-            </div>
+              </div>
+            ) : (
+              <div className="service-proof">
+                <span>{t('services.seenIn')}</span>
+                {s.proof.map((id) => (
+                  <button key={id} className="service-chip" onClick={() => showProject(id)}>
+                    {t(`portfolio.items.${id}.title`)}
+                  </button>
+                ))}
+              </div>
+            )}
           </article>
         ))}
       </div>

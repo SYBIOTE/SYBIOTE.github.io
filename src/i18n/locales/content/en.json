@@ -155,6 +155,12 @@
     "ctaText": "Have a 3D product in mind?",
     "ctaButton": "Let's talk",
     "items": {
+      "aiTwin": {
+        "name": "Your own AI twin",
+        "desc": "Everything on this call, built for you: a 3D head made from your photos, your cloned voice, and answers drawn only from your own work. It lives on your site and takes calls from visitors around the clock.",
+        "tag": "You're talking to one",
+        "cta": "Get yours"
+      },
       "web3d": {
         "name": "Web 3D Apps & Editors",
         "desc": "Fast browser 3D products in Three.js and React: editors, viewers and configurators that hold up on every device."

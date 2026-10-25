@@ -155,6 +155,12 @@
     "ctaText": "¿Tienes un producto 3D en mente?",
     "ctaButton": "Hablemos",
     "items": {
+      "aiTwin": {
+        "name": "Tu propio gemelo de IA",
+        "desc": "Todo lo de esta llamada, hecho para ti: una cabeza 3D creada a partir de tus fotos, tu voz clonada y respuestas basadas solo en tu propio trabajo. Vive en tu web y atiende a los visitantes a cualquier hora.",
+        "tag": "Estás hablando con uno",
+        "cta": "Consigue el tuyo"
+      },
       "web3d": {
         "name": "Apps y editores web 3D",
         "desc": "Productos 3D rápidos en el navegador con Three.js y React: editores, visores y configuradores que funcionan en cualquier dispositivo."

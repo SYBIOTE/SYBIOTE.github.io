@@ -101,6 +101,9 @@ export interface ResumeContent {
 export interface ServiceItem {
   name: string
   desc: string
+  /** Featured services only (see ServicesSection) */
+  tag?: string
+  cta?: string
 }
 
 export interface ServicesContent {

@@ -79,6 +79,29 @@
     "text": "# How this AI twin works\n\nThis site is the project: instead of a portfolio page, you get a video call with an AI version of me. The head is a 3D Gaussian splat avatar of me, rendered in the browser. My replies come from a language model that only knows what I've written about myself, and they're spoken in a clone of my voice. The face and lip sync are driven by the actual audio, by a model that runs on your device. When you talk, voice detection runs locally, and a small turn-taking model decides when you've finished speaking, so I don't cut you off. I can also share my screen to show you my projects, resume and contact page while we talk."
   },
   {
+    "id": "topics/aiTwinService",
+    "always": false,
+    "aliases": [
+      "one for me",
+      "one of these",
+      "my own",
+      "build me one",
+      "make me one",
+      "get one",
+      "get yours",
+      "for my site",
+      "for my website",
+      "your own ai twin",
+      "own ai twin",
+      "own avatar",
+      "how much",
+      "price",
+      "pricing",
+      "cost"
+    ],
+    "text": "# Getting your own AI twin\n\nYes, I build AI twins like this one for other people, live on their own website. For anything about how it works for them, pricing or timing, ask them to get in touch: the \"Get yours\" button in my services opens the contact form, or they can email me."
+  },
+  {
     "id": "topics/games",
     "always": false,
     "aliases": [
